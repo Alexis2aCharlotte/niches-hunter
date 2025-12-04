@@ -8,6 +8,7 @@ export default function Home() {
   const [activeBlip, setActiveBlip] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
   const niches = [
     { name: "Fitness", x: 25, y: 30 },
@@ -54,6 +55,7 @@ export default function Home() {
       if (response.ok) {
         setMessage({ type: 'success', text: data.message || 'Welcome aboard! 🎯' });
         setEmail("");
+        setShowModal(true);
       } else {
         setMessage({ type: 'error', text: data.error || 'Something went wrong' });
       }
@@ -609,6 +611,112 @@ export default function Home() {
           <div className="font-mono text-xs" style={{ color: 'rgba(255, 255, 255, 0.3)' }}>© 2024</div>
         </div>
       </footer>
+
+      {/* SUCCESS MODAL */}
+      {showModal && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+          style={{ background: 'rgba(0, 0, 0, 0.9)', backdropFilter: 'blur(10px)' }}
+          onClick={() => setShowModal(false)}
+        >
+          <div 
+            className="relative w-full max-w-md p-6 md:p-8"
+            style={{ 
+              background: '#0A0A0A', 
+              border: '1px solid #00FF88',
+              boxShadow: '0 0 60px rgba(0, 255, 136, 0.3)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Corner decorations */}
+            <div className="corner-decoration corner-tl" />
+            <div className="corner-decoration corner-tr" />
+            <div className="corner-decoration corner-bl" />
+            <div className="corner-decoration corner-br" />
+
+            {/* Close button */}
+            <button 
+              onClick={() => setShowModal(false)}
+              className="absolute top-4 right-4 font-mono text-xl transition-colors"
+              style={{ color: 'rgba(255, 255, 255, 0.4)' }}
+            >
+              ✕
+            </button>
+
+            {/* Success icon */}
+            <div className="text-center mb-6">
+              <div 
+                className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4"
+                style={{ background: 'rgba(0, 255, 136, 0.1)', border: '2px solid #00FF88' }}
+              >
+                <span className="text-3xl">✓</span>
+              </div>
+              <h3 className="text-2xl md:text-3xl font-bold" style={{ color: '#00FF88' }}>
+                You're In! 🎯
+              </h3>
+            </div>
+
+            {/* Check inbox message */}
+            <div 
+              className="p-4 mb-6 text-center"
+              style={{ background: 'rgba(0, 255, 136, 0.05)', border: '1px solid rgba(0, 255, 136, 0.2)' }}
+            >
+              <p className="font-mono text-sm mb-2" style={{ color: '#FFFFFF' }}>
+                📬 Check your inbox (and spam folder!)
+              </p>
+              <p className="text-xs" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
+                Your welcome email + first newsletter are on the way.
+              </p>
+            </div>
+
+            {/* PRO upgrade */}
+            <div 
+              className="p-4 text-center"
+              style={{ background: 'rgba(0, 0, 0, 0.5)', border: '1px solid rgba(0, 255, 136, 0.3)' }}
+            >
+              <div className="font-mono text-[10px] mb-2" style={{ color: 'rgba(0, 255, 136, 0.5)' }}>
+                🚀 WANT MORE?
+              </div>
+              <h4 className="font-bold text-lg mb-2" style={{ color: '#FFFFFF' }}>
+                Upgrade to Hunter Pro
+              </h4>
+              <div className="font-mono text-2xl mb-3" style={{ color: '#00FF88' }}>
+                $10<span className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.4)' }}>/month</span>
+              </div>
+              <ul className="text-left space-y-2 mb-4 font-mono text-xs" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                <li className="flex items-center gap-2">
+                  <span style={{ color: '#00FF88' }}>✓</span> Full niche database
+                </li>
+                <li className="flex items-center gap-2">
+                  <span style={{ color: '#00FF88' }}>✓</span> Revenue estimates
+                </li>
+                <li className="flex items-center gap-2">
+                  <span style={{ color: '#00FF88' }}>✓</span> Custom alerts
+                </li>
+                <li className="flex items-center gap-2">
+                  <span style={{ color: '#00FF88' }}>✓</span> Priority support
+                </li>
+              </ul>
+              <button 
+                className="w-full py-3 font-mono text-sm font-bold"
+                style={{ background: 'rgba(0, 255, 136, 0.1)', border: '1px solid #00FF88', color: '#00FF88' }}
+                disabled
+              >
+                COMING SOON
+              </button>
+            </div>
+
+            {/* Continue button */}
+            <button 
+              onClick={() => setShowModal(false)}
+              className="w-full mt-4 py-3 font-mono text-sm transition-colors"
+              style={{ color: 'rgba(255, 255, 255, 0.4)' }}
+            >
+              Continue to site →
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
