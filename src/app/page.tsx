@@ -5,14 +5,36 @@ import { useState, useEffect } from "react";
 export default function Home() {
   const [email, setEmail] = useState("");
   const [time, setTime] = useState("");
+  const [activeBlips, setActiveBlips] = useState<number[]>([0, 2, 4]);
+
+  const niches = [
+    { name: "Fitness", x: 25, y: 30 },
+    { name: "Education", x: 72, y: 25 },
+    { name: "Finance", x: 65, y: 68 },
+    { name: "Gaming", x: 30, y: 72 },
+    { name: "Health", x: 78, y: 52 },
+    { name: "Productivity", x: 20, y: 50 },
+  ];
 
   useEffect(() => {
     const updateTime = () => {
       setTime(new Date().toLocaleTimeString("en-US", { hour12: false }));
     };
     updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
+    const timeInt = setInterval(updateTime, 1000);
+
+    // Rotate active blips to simulate radar detection
+    const blipInt = setInterval(() => {
+      setActiveBlips(prev => {
+        const newActive = prev.map(i => (i + 1) % niches.length);
+        return newActive;
+      });
+    }, 2000);
+
+    return () => {
+      clearInterval(timeInt);
+      clearInterval(blipInt);
+    };
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -66,73 +88,136 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-16 px-6">
-        <div className="max-w-6xl mx-auto">
-          {/* Main headline */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#00FF88]/30 bg-[#00FF88]/5 mb-6">
-              <span className="w-2 h-2 rounded-full bg-[#00FF88] animate-pulse" />
-              <span className="font-mono text-xs text-[#00FF88]">DAILY NEWSLETTER - FREE</span>
-            </div>
-
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.1] mb-6">
-              <span className="text-white">Spot </span>
-              <span className="neon-text">Profitable iOS Niches</span>
-              <br />
-              <span className="text-white">Before Anyone Else</span>
-            </h1>
-
-            <p className="text-lg md:text-xl text-white/50 max-w-2xl mx-auto mb-4">
-              Every day, get <span className="text-[#00FF88]">trending apps</span>, <span className="text-[#00FF88]">market insights</span> (US vs EU), 
-              and <span className="text-[#00FF88]">2-3 niches</span> with full analysis.
-            </p>
-            
-            <p className="font-mono text-sm text-white/30">
-              Join 2,100+ indie developers • 100% Free
-            </p>
-          </div>
-
-          {/* EMAIL SUBSCRIBE - TRÈS VISIBLE */}
-          <div id="subscribe" className="max-w-2xl mx-auto mb-20">
-            <div className="terminal-card p-8 neon-border relative">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#00FF88] text-black font-mono text-xs font-bold px-4 py-1.5">
-                🎯 GET DAILY INSIGHTS
+      <section className="relative pt-28 pb-12 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left - Content */}
+            <div>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#00FF88]/30 bg-[#00FF88]/5 mb-6">
+                <span className="w-2 h-2 rounded-full bg-[#00FF88] animate-pulse" />
+                <span className="font-mono text-xs text-[#00FF88]">DAILY NEWSLETTER - FREE</span>
               </div>
-              
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="flex flex-col sm:flex-row gap-3">
+
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] mb-6">
+                <span className="text-white">Spot </span>
+                <span className="neon-text">Profitable iOS Niches</span>
+                <span className="text-white"> Before Anyone Else</span>
+              </h1>
+
+              <p className="text-lg text-white/50 mb-6">
+                Every day, get <span className="text-[#00FF88]">trending apps</span>, <span className="text-[#00FF88]">market insights</span> (US vs EU), 
+                and <span className="text-[#00FF88]">2-3 niches</span> with full analysis.
+              </p>
+
+              {/* EMAIL SUBSCRIBE */}
+              <div id="subscribe" className="mb-6">
+                <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email address"
+                    placeholder="Enter your email"
                     required
-                    className="terminal-input flex-1 text-base py-5"
+                    className="terminal-input flex-1 py-4"
                   />
-                  <button type="submit" className="btn-terminal text-base py-5 px-8 neon-glow whitespace-nowrap">
+                  <button type="submit" className="btn-terminal py-4 px-6 neon-glow whitespace-nowrap">
                     SUBSCRIBE FREE →
                   </button>
+                </form>
+                <div className="flex items-center gap-4 mt-3 font-mono text-xs text-white/40">
+                  <span>✓ Daily insights</span>
+                  <span>✓ 2,100+ devs</span>
+                  <span>✓ 100% Free</span>
                 </div>
-                <div className="flex items-center justify-center gap-6 font-mono text-xs text-white/40">
-                  <span>✓ Daily emails</span>
-                  <span>✓ No spam</span>
-                  <span>✓ Unsubscribe anytime</span>
+              </div>
+            </div>
+
+            {/* Right - RADAR */}
+            <div className="hidden lg:flex items-center justify-center">
+              <div className="radar-container relative">
+                {/* Circles */}
+                {[25, 50, 75, 100].map((size, i) => (
+                  <div
+                    key={i}
+                    className="radar-circle"
+                    style={{ width: `${size}%`, height: `${size}%` }}
+                  />
+                ))}
+
+                {/* Cross lines */}
+                <div className="radar-line radar-line-h" />
+                <div className="radar-line radar-line-v" />
+
+                {/* Sweep */}
+                <div className="radar-sweep" />
+
+                {/* Center */}
+                <div className="radar-center" />
+
+                {/* Niche Blips with Labels */}
+                {niches.map((niche, i) => (
+                  <div
+                    key={i}
+                    className="absolute transition-all duration-500"
+                    style={{
+                      left: `${niche.x}%`,
+                      top: `${niche.y}%`,
+                      transform: 'translate(-50%, -50%)',
+                    }}
+                  >
+                    {/* Blip dot */}
+                    <div
+                      className={`w-3 h-3 rounded-full transition-all duration-500 ${
+                        activeBlips.includes(i)
+                          ? 'bg-[#00FF88] shadow-[0_0_10px_#00FF88,0_0_20px_#00FF88]'
+                          : 'bg-[#00FF88]/30'
+                      }`}
+                    />
+                    
+                    {/* Label that appears when active */}
+                    <div
+                      className={`absolute left-5 top-1/2 -translate-y-1/2 whitespace-nowrap transition-all duration-300 ${
+                        activeBlips.includes(i)
+                          ? 'opacity-100 translate-x-0'
+                          : 'opacity-0 -translate-x-2'
+                      }`}
+                    >
+                      <div className="bg-[#00FF88] text-black font-mono text-xs font-bold px-2 py-1">
+                        {niche.name}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Radar labels */}
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 font-mono text-xs text-[#00FF88]/40">N</div>
+                <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 font-mono text-xs text-[#00FF88]/40">S</div>
+                <div className="absolute top-1/2 -left-6 -translate-y-1/2 font-mono text-xs text-[#00FF88]/40">W</div>
+                <div className="absolute top-1/2 -right-6 -translate-y-1/2 font-mono text-xs text-[#00FF88]/40">E</div>
+
+                {/* Corner info */}
+                <div className="absolute -bottom-12 left-0 right-0 text-center font-mono text-xs text-[#00FF88]/50">
+                  SCANNING FOR OPPORTUNITIES...
                 </div>
-              </form>
+              </div>
             </div>
           </div>
+        </div>
+      </section>
 
-          {/* 3 PILLARS */}
-          <div className="grid md:grid-cols-3 gap-4 mb-20">
+      {/* 3 PILLARS */}
+      <section className="py-12 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-4">
             {[
-              { icon: "📈", title: "Trending Apps", desc: "5 rising apps daily with rankings & market data" },
-              { icon: "🌍", title: "US vs EU Intel", desc: "Compare markets, spot regional opportunities" },
-              { icon: "💎", title: "Niche Analysis", desc: "2-3 niches/day with full breakdown & potential" },
+              { icon: "📈", title: "Trending Apps", desc: "5 rising apps daily with rankings" },
+              { icon: "🌍", title: "US vs EU Intel", desc: "Compare markets, spot opportunities" },
+              { icon: "💎", title: "Niche Analysis", desc: "2-3 niches/day with full breakdown" },
             ].map((pillar, i) => (
-              <div key={i} className="stat-box text-center py-8">
-                <div className="text-4xl mb-4">{pillar.icon}</div>
-                <h3 className="font-mono text-[#00FF88] font-bold mb-2">{pillar.title}</h3>
-                <p className="text-white/40 text-sm">{pillar.desc}</p>
+              <div key={i} className="stat-box text-center py-6">
+                <div className="text-3xl mb-3">{pillar.icon}</div>
+                <h3 className="font-mono text-[#00FF88] font-bold text-sm mb-1">{pillar.title}</h3>
+                <p className="text-white/40 text-xs">{pillar.desc}</p>
               </div>
             ))}
           </div>
@@ -140,7 +225,7 @@ export default function Home() {
       </section>
 
       {/* TODAY'S BRIEF - Preview */}
-      <section id="today" className="py-20 px-6 border-y border-[#00FF88]/20 bg-[#00FF88]/[0.02]">
+      <section id="today" className="py-16 px-6 border-y border-[#00FF88]/20 bg-[#00FF88]/[0.02]">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -169,7 +254,7 @@ export default function Home() {
               {/* Key Insight */}
               <div className="mb-8 p-4 border-l-2 border-[#00FF88] bg-[#00FF88]/5">
                 <div className="font-mono text-xs text-[#00FF88] mb-2">💡 KEY INSIGHT</div>
-                <p className="text-white/70">
+                <p className="text-white/70 text-sm">
                   <strong className="text-white">US-led growth is strong</strong> with apps like GoWish and Youtify 
                   performing well domestically but with limited EU presence — 
                   <span className="text-[#00FF88]"> indicating opportunities for regional expansion.</span>
@@ -210,10 +295,9 @@ export default function Home() {
                 <div className="font-mono text-xs text-[#00FF88] mb-3">🎯 NICHE TO EXPLORE</div>
                 <h4 className="text-lg font-bold text-white mb-2">AI-powered Education Tools</h4>
                 <p className="text-white/50 text-sm mb-4">
-                  With increasing demand for personalized study aids, AI-driven education apps represent a promising niche. 
-                  The education sector's scalability and high engagement rates amplify business potential.
+                  With increasing demand for personalized study aids, AI-driven education apps represent a promising niche.
                 </p>
-                <div className="flex gap-4 font-mono text-xs">
+                <div className="flex flex-wrap gap-4 font-mono text-xs">
                   <span className="text-[#00FF88]">Competition: Low</span>
                   <span className="text-white/30">|</span>
                   <span className="text-[#00FF88]">Potential: High</span>
@@ -222,7 +306,7 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Blur overlay for rest */}
+              {/* Blur overlay */}
               <div className="relative mt-6 pt-6 border-t border-[#00FF88]/10">
                 <div className="blur-sm opacity-50">
                   <div className="font-mono text-xs text-white/30 mb-2">+ 2 more niches...</div>
@@ -245,17 +329,17 @@ export default function Home() {
           <div className="text-center mb-12">
             <div className="font-mono text-xs text-[#00FF88]/50 mb-2">// WHAT YOU GET</div>
             <h2 className="text-3xl md:text-4xl font-bold">
-              <span className="text-white">Everything You Need to</span>{" "}
+              <span className="text-white">Everything to</span>{" "}
               <span className="neon-text">Find Your Niche</span>
             </h2>
           </div>
 
           <div className="grid md:grid-cols-2 gap-4">
             {[
-              { num: "01", title: "Daily Trending Apps", desc: "5 rising apps with rankings, categories, and growth metrics. Know what's working right now." },
-              { num: "02", title: "Market Intelligence", desc: "US vs EU comparison. Spot regional opportunities and expansion potential." },
-              { num: "03", title: "Niche Deep Dives", desc: "2-3 analyzed niches per day with competition level, potential, and strategic insights." },
-              { num: "04", title: "Actionable Insights", desc: "Not just data — concrete recommendations you can act on today." },
+              { num: "01", title: "Daily Trending Apps", desc: "5 rising apps with rankings, categories, and growth metrics." },
+              { num: "02", title: "Market Intelligence", desc: "US vs EU comparison. Spot regional opportunities." },
+              { num: "03", title: "Niche Deep Dives", desc: "2-3 analyzed niches per day with competition & potential." },
+              { num: "04", title: "Actionable Insights", desc: "Concrete recommendations you can act on today." },
             ].map((feature, i) => (
               <div key={i} className="feature-card">
                 <span className="feature-number">{feature.num}</span>
@@ -268,7 +352,7 @@ export default function Home() {
       </section>
 
       {/* Stats */}
-      <section className="py-16 px-6 border-y border-[#00FF88]/20">
+      <section className="py-12 px-6 border-y border-[#00FF88]/20">
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
@@ -278,7 +362,7 @@ export default function Home() {
               { value: "94%", label: "OPEN RATE" },
             ].map((stat, i) => (
               <div key={i} className="text-center">
-                <div className="font-mono text-3xl md:text-4xl font-bold text-[#00FF88] mb-1">{stat.value}</div>
+                <div className="font-mono text-2xl md:text-3xl font-bold text-[#00FF88] mb-1">{stat.value}</div>
                 <div className="font-mono text-xs text-white/30">{stat.label}</div>
               </div>
             ))}
@@ -295,7 +379,6 @@ export default function Home() {
               <span className="text-white">Start Free,</span>{" "}
               <span className="neon-text">Upgrade for More</span>
             </h2>
-            <p className="text-white/40">The daily newsletter is 100% free. Pro tools available.</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
@@ -318,7 +401,6 @@ export default function Home() {
                   "5 trending apps/day",
                   "2-3 niche analyses/day",
                   "US vs EU market intel",
-                  "Key insights & recommendations",
                 ].map((item, i) => (
                   <li key={i} className="flex items-center gap-3 text-white/60">
                     <span className="text-[#00FF88]">✓</span>
@@ -354,10 +436,8 @@ export default function Home() {
                   "Everything in Free",
                   "Full dashboard access",
                   "Historical niche database",
-                  "Advanced filters & search",
                   "Revenue estimates",
                   "Custom alerts",
-                  "Export data (CSV)",
                 ].map((item, i) => (
                   <li key={i} className="flex items-center gap-3 text-white/60">
                     <span className="text-[#00FF88]">✓</span>
@@ -392,9 +472,9 @@ export default function Home() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="your@email.com"
               required
-              className="terminal-input flex-1 py-5"
+              className="terminal-input flex-1 py-4"
             />
-            <button type="submit" className="btn-terminal py-5 px-8 neon-glow">
+            <button type="submit" className="btn-terminal py-4 px-8 neon-glow">
               JOIN FREE →
             </button>
           </form>
