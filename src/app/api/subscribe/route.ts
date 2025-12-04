@@ -24,8 +24,7 @@ export async function POST(request: Request) {
       .from('newsletter_subscribers')
       .insert({
         email: email.toLowerCase().trim(),
-        status: 'subscribed',
-        source: 'landing_page'
+        status: 'subscribed'
       })
       .select()
       .single()
