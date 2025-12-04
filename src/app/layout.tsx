@@ -1,21 +1,10 @@
 import type { Metadata } from "next";
-import { Outfit, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const outfit = Outfit({
-  subsets: ["latin"],
-  variable: "--font-outfit",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-jetbrains",
-});
-
 export const metadata: Metadata = {
-  title: "Niches Hunter | Find Winning iOS App Niches",
+  title: "NICHES HUNTER | Hunt Profitable iOS Niches",
   description:
-    "Free weekly newsletter revealing untapped iOS App Store opportunities. Discover profitable niches before everyone else.",
+    "Free weekly intel on untapped iOS App Store opportunities. Discover profitable niches before the competition.",
   keywords: [
     "iOS niche",
     "app store",
@@ -33,12 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${outfit.variable} ${jetbrainsMono.variable} font-sans antialiased`}
-      >
-        <div className="noise" />
-        {children}
-      </body>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }
