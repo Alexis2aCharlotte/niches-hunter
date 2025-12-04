@@ -6,6 +6,8 @@ export default function Home() {
   const [email, setEmail] = useState("");
   const [time, setTime] = useState("");
   const [activeBlip, setActiveBlip] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
   const niches = [
     { name: "Fitness", x: 25, y: 30 },
@@ -33,10 +35,33 @@ export default function Home() {
     };
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert("Welcome aboard! Check your inbox 🎯");
-    setEmail("");
+    setIsLoading(true);
+    setMessage(null);
+
+    try {
+      const response = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage({ type: 'success', text: data.message || 'Welcome aboard! 🎯' });
+        setEmail("");
+      } else {
+        setMessage({ type: 'error', text: data.error || 'Something went wrong' });
+      }
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Network error. Please try again.' });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const trendingApps = [
@@ -86,10 +111,9 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative pt-24 md:pt-28 pb-8 md:pb-12 px-4 md:px-6">
         <div className="max-w-7xl mx-auto">
-          {/* RADAR - Now visible on mobile too */}
+          {/* RADAR - Mobile */}
           <div className="flex items-center justify-center mb-8 md:hidden">
             <div className="relative" style={{ width: '280px', height: '280px' }}>
-              {/* Circles */}
               {[25, 50, 75, 100].map((size, i) => (
                 <div
                   key={i}
@@ -104,18 +128,11 @@ export default function Home() {
                   }}
                 />
               ))}
-
-              {/* Cross lines */}
               <div className="absolute" style={{ width: '100%', height: '1px', background: 'rgba(0, 255, 136, 0.1)', top: '50%', left: 0 }} />
               <div className="absolute" style={{ width: '1px', height: '100%', background: 'rgba(0, 255, 136, 0.1)', top: 0, left: '50%' }} />
-
-              {/* Sweep */}
               <div className="radar-sweep" />
-
-              {/* Center */}
               <div className="radar-center" />
 
-              {/* Niche Blips - Mobile */}
               {niches.map((niche, i) => {
                 const isActive = activeBlip === i;
                 return (
@@ -158,7 +175,6 @@ export default function Home() {
                 );
               })}
 
-              {/* Status text mobile */}
               <div className="absolute -bottom-8 left-0 right-0 text-center">
                 <span className="font-mono text-[10px]" style={{ color: 'rgba(0, 255, 136, 0.5)' }}>
                   DETECTED: <span style={{ color: '#00FF88' }}>{niches[activeBlip].name}</span>
@@ -195,13 +211,33 @@ export default function Home() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email"
                     required
-                    className="terminal-input flex-1 py-4 text-sm md:text-base"
+                    disabled={isLoading}
+                    className="terminal-input flex-1 py-4 text-sm md:text-base disabled:opacity-50"
                     style={{ color: '#00FF88' }}
                   />
-                  <button type="submit" className="btn-terminal py-4 px-6 neon-glow whitespace-nowrap text-sm md:text-base">
-                    SUBSCRIBE FREE →
+                  <button 
+                    type="submit" 
+                    disabled={isLoading}
+                    className="btn-terminal py-4 px-6 neon-glow whitespace-nowrap text-sm md:text-base disabled:opacity-50"
+                  >
+                    {isLoading ? 'CONNECTING...' : 'SUBSCRIBE FREE →'}
                   </button>
                 </form>
+                
+                {/* Message feedback */}
+                {message && (
+                  <div 
+                    className="mt-3 font-mono text-sm py-2 px-4 rounded"
+                    style={{ 
+                      background: message.type === 'success' ? 'rgba(0, 255, 136, 0.1)' : 'rgba(255, 0, 0, 0.1)',
+                      color: message.type === 'success' ? '#00FF88' : '#FF6B6B',
+                      border: `1px solid ${message.type === 'success' ? 'rgba(0, 255, 136, 0.3)' : 'rgba(255, 0, 0, 0.3)'}`
+                    }}
+                  >
+                    {message.text}
+                  </div>
+                )}
+                
                 <div className="flex items-center justify-center lg:justify-start gap-3 md:gap-4 mt-3 font-mono text-[10px] md:text-xs" style={{ color: 'rgba(255, 255, 255, 0.4)' }}>
                   <span>✓ Daily insights</span>
                   <span>✓ 2,100+ devs</span>
@@ -341,7 +377,7 @@ export default function Home() {
                 </p>
               </div>
 
-              {/* Trending Apps - Mobile optimized */}
+              {/* Trending Apps */}
               <div className="mb-6 md:mb-8">
                 <div className="font-mono text-[10px] md:text-xs mb-3 md:mb-4" style={{ color: 'rgba(0, 255, 136, 0.5)' }}>📊 TRENDING TODAY</div>
                 <div className="space-y-2">
@@ -527,13 +563,32 @@ export default function Home() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="your@email.com"
               required
-              className="terminal-input flex-1 py-4"
+              disabled={isLoading}
+              className="terminal-input flex-1 py-4 disabled:opacity-50"
               style={{ color: '#00FF88' }}
             />
-            <button type="submit" className="btn-terminal py-4 px-6 md:px-8 neon-glow">
-              JOIN FREE →
+            <button 
+              type="submit" 
+              disabled={isLoading}
+              className="btn-terminal py-4 px-6 md:px-8 neon-glow disabled:opacity-50"
+            >
+              {isLoading ? 'CONNECTING...' : 'JOIN FREE →'}
             </button>
           </form>
+          
+          {/* Message feedback for bottom form */}
+          {message && (
+            <div 
+              className="mt-4 font-mono text-sm py-2 px-4 rounded inline-block"
+              style={{ 
+                background: message.type === 'success' ? 'rgba(0, 255, 136, 0.1)' : 'rgba(255, 0, 0, 0.1)',
+                color: message.type === 'success' ? '#00FF88' : '#FF6B6B',
+                border: `1px solid ${message.type === 'success' ? 'rgba(0, 255, 136, 0.3)' : 'rgba(255, 0, 0, 0.3)'}`
+              }}
+            >
+              {message.text}
+            </div>
+          )}
         </div>
       </section>
 
