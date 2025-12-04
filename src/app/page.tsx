@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 export default function Home() {
   const [email, setEmail] = useState("");
   const [time, setTime] = useState("");
-  const [activeBlips, setActiveBlips] = useState<number[]>([0, 2, 4]);
+  const [activeBlip, setActiveBlip] = useState(0);
 
   const niches = [
     { name: "Fitness", x: 25, y: 30 },
@@ -23,13 +23,10 @@ export default function Home() {
     updateTime();
     const timeInt = setInterval(updateTime, 1000);
 
-    // Rotate active blips to simulate radar detection
+    // Rotate through niches one by one
     const blipInt = setInterval(() => {
-      setActiveBlips(prev => {
-        const newActive = prev.map(i => (i + 1) % niches.length);
-        return newActive;
-      });
-    }, 2000);
+      setActiveBlip(prev => (prev + 1) % niches.length);
+    }, 1500);
 
     return () => {
       clearInterval(timeInt);
@@ -154,40 +151,67 @@ export default function Home() {
                 {/* Center */}
                 <div className="radar-center" />
 
-                {/* Niche Blips with Labels */}
-                {niches.map((niche, i) => (
-                  <div
-                    key={i}
-                    className="absolute transition-all duration-500"
-                    style={{
-                      left: `${niche.x}%`,
-                      top: `${niche.y}%`,
-                      transform: 'translate(-50%, -50%)',
-                    }}
-                  >
-                    {/* Blip dot */}
+                {/* Niche Blips with Labels - One at a time */}
+                {niches.map((niche, i) => {
+                  const isActive = activeBlip === i;
+                  const wasActive = activeBlip === (i + 1) % niches.length; // Fading out
+                  
+                  return (
                     <div
-                      className={`w-3 h-3 rounded-full transition-all duration-500 ${
-                        activeBlips.includes(i)
-                          ? 'bg-[#00FF88] shadow-[0_0_10px_#00FF88,0_0_20px_#00FF88]'
-                          : 'bg-[#00FF88]/30'
-                      }`}
-                    />
-                    
-                    {/* Label that appears when active */}
-                    <div
-                      className={`absolute left-5 top-1/2 -translate-y-1/2 whitespace-nowrap transition-all duration-300 ${
-                        activeBlips.includes(i)
-                          ? 'opacity-100 translate-x-0'
-                          : 'opacity-0 -translate-x-2'
-                      }`}
+                      key={i}
+                      className="absolute"
+                      style={{
+                        left: `${niche.x}%`,
+                        top: `${niche.y}%`,
+                        transform: 'translate(-50%, -50%)',
+                      }}
                     >
-                      <div className="bg-[#00FF88] text-black font-mono text-xs font-bold px-2 py-1">
-                        {niche.name}
+                      {/* Blip dot */}
+                      <div
+                        className="transition-all duration-700 ease-out"
+                        style={{
+                          width: isActive ? '14px' : '8px',
+                          height: isActive ? '14px' : '8px',
+                          borderRadius: '50%',
+                          backgroundColor: isActive ? '#00FF88' : 'rgba(0, 255, 136, 0.2)',
+                          boxShadow: isActive 
+                            ? '0 0 10px #00FF88, 0 0 20px #00FF88, 0 0 30px #00FF88' 
+                            : 'none',
+                        }}
+                      />
+                      
+                      {/* Pulse ring when active */}
+                      {isActive && (
+                        <div 
+                          className="absolute inset-0 rounded-full animate-ping"
+                          style={{
+                            backgroundColor: 'rgba(0, 255, 136, 0.3)',
+                            animationDuration: '1s',
+                          }}
+                        />
+                      )}
+                      
+                      {/* Label */}
+                      <div
+                        className="absolute left-6 top-1/2 -translate-y-1/2 whitespace-nowrap transition-all duration-500 ease-out"
+                        style={{
+                          opacity: isActive ? 1 : 0,
+                          transform: `translateY(-50%) translateX(${isActive ? '0' : '-10px'})`,
+                        }}
+                      >
+                        <div className="flex items-center gap-2">
+                          <div 
+                            className="h-px bg-[#00FF88] transition-all duration-500"
+                            style={{ width: isActive ? '20px' : '0px' }}
+                          />
+                          <div className="bg-[#00FF88] text-black font-mono text-xs font-bold px-3 py-1.5 shadow-lg shadow-[#00FF88]/30">
+                            {niche.name}
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
 
                 {/* Radar labels */}
                 <div className="absolute -top-6 left-1/2 -translate-x-1/2 font-mono text-xs text-[#00FF88]/40">N</div>
@@ -195,9 +219,11 @@ export default function Home() {
                 <div className="absolute top-1/2 -left-6 -translate-y-1/2 font-mono text-xs text-[#00FF88]/40">W</div>
                 <div className="absolute top-1/2 -right-6 -translate-y-1/2 font-mono text-xs text-[#00FF88]/40">E</div>
 
-                {/* Corner info */}
-                <div className="absolute -bottom-12 left-0 right-0 text-center font-mono text-xs text-[#00FF88]/50">
-                  SCANNING FOR OPPORTUNITIES...
+                {/* Status text */}
+                <div className="absolute -bottom-12 left-0 right-0 text-center">
+                  <span className="font-mono text-xs text-[#00FF88]/50">
+                    DETECTED: <span className="text-[#00FF88]">{niches[activeBlip].name}</span>
+                  </span>
                 </div>
               </div>
             </div>
