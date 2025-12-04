@@ -177,11 +177,6 @@ export default function Home() {
                 );
               })}
 
-              <div className="absolute -bottom-8 left-0 right-0 text-center">
-                <span className="font-mono text-[10px]" style={{ color: 'rgba(0, 255, 136, 0.5)' }}>
-                  DETECTED: <span style={{ color: '#00FF88' }}>{niches[activeBlip].name}</span>
-                </span>
-              </div>
             </div>
           </div>
 
@@ -514,17 +509,17 @@ export default function Home() {
             </div>
 
             {/* Pro */}
-            <div className="terminal-card neon-border p-5 md:p-8 relative">
+            <div className="terminal-card neon-border p-5 md:p-8 relative mt-6 md:mt-0">
               <div className="corner-decoration corner-tl" />
               <div className="corner-decoration corner-tr" />
               <div className="corner-decoration corner-bl" />
               <div className="corner-decoration corner-br" />
 
-              <div className="absolute -top-3 md:-top-4 left-1/2 -translate-x-1/2 font-mono text-[10px] md:text-xs font-bold px-3 md:px-4 py-1" style={{ background: '#00FF88', color: '#000' }}>
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 font-mono text-[10px] font-bold px-3 py-1 z-10" style={{ background: '#00FF88', color: '#000' }}>
                 COMING SOON
               </div>
 
-              <div className="font-mono text-[10px] md:text-xs mb-2 md:mb-3" style={{ color: 'rgba(0, 255, 136, 0.4)' }}>PRO ACCESS</div>
+              <div className="font-mono text-[10px] md:text-xs mb-2 md:mb-3 mt-2 md:mt-0" style={{ color: 'rgba(0, 255, 136, 0.4)' }}>PRO ACCESS</div>
               <h3 className="text-xl md:text-2xl font-bold mb-2 font-mono" style={{ color: '#FFFFFF' }}>Hunter Dashboard</h3>
               <div className="font-mono text-3xl md:text-4xl neon-text mb-4 md:mb-6">
                 $10<span className="text-sm md:text-base" style={{ color: 'rgba(255, 255, 255, 0.3)' }}>/mo</span>
