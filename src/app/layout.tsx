@@ -3,9 +3,13 @@ import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "NICHES HUNTER | Hunt Profitable iOS Niches",
+  metadataBase: new URL("https://nicheshunter.app"),
+  title: {
+    default: "NICHES HUNTER | Hunt Profitable iOS Niches",
+    template: "%s | NICHES HUNTER",
+  },
   description:
-    "Free weekly intel on untapped iOS App Store opportunities. Discover profitable niches before the competition.",
+    "Free daily intel on untapped iOS App Store opportunities. Discover profitable niches before the competition. 2-3 niches analyzed daily.",
   keywords: [
     "iOS niche",
     "app store",
@@ -13,7 +17,57 @@ export const metadata: Metadata = {
     "market analysis",
     "newsletter",
     "indie developer",
+    "app store optimization",
+    "iOS app ideas",
+    "profitable app niches",
+    "mobile app market",
   ],
+  authors: [{ name: "Niches Hunter" }],
+  creator: "Niches Hunter",
+  publisher: "Niches Hunter",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://nicheshunter.app",
+    siteName: "NICHES HUNTER",
+    title: "NICHES HUNTER | Hunt Profitable iOS Niches",
+    description:
+      "Free daily intel on untapped iOS App Store opportunities. Discover profitable niches before the competition.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "NICHES HUNTER - Spot Profitable iOS Niches",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "NICHES HUNTER | Hunt Profitable iOS Niches",
+    description:
+      "Free daily intel on untapped iOS App Store opportunities. Discover profitable niches before the competition.",
+    images: ["/og-image.png"],
+  },
+  alternates: {
+    canonical: "https://nicheshunter.app",
+  },
+  verification: {
+    // Ajoute tes codes de vérification ici quand tu les auras
+    // google: "ton-code-google-search-console",
+    // yandex: "ton-code-yandex",
+  },
 };
 
 export default function RootLayout({
@@ -23,6 +77,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+      </head>
       <body className="antialiased">
         {children}
         <Analytics />
