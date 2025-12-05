@@ -246,7 +246,10 @@ body {
   border: 1px solid rgba(0, 255, 136, 0.3);
   backdrop-filter: blur(10px);
   position: relative;
-  overflow: hidden;
+}
+
+.terminal-card.overflow-visible {
+  overflow: visible;
 }
 
 .terminal-card::before {

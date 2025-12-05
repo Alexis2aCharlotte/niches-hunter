@@ -5,10 +5,12 @@ import { useState, useEffect } from "react";
 export default function Home() {
   const [email, setEmail] = useState("");
   const [time, setTime] = useState("");
+  const [currentDate, setCurrentDate] = useState("");
   const [activeBlip, setActiveBlip] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [showSubscribeModal, setShowSubscribeModal] = useState(false);
 
   const niches = [
     { name: "Fitness", x: 25, y: 30 },
@@ -21,7 +23,13 @@ export default function Home() {
 
   useEffect(() => {
     const updateTime = () => {
-      setTime(new Date().toLocaleTimeString("en-US", { hour12: false }));
+      const now = new Date();
+      setTime(now.toLocaleTimeString("en-US", { hour12: false }));
+      setCurrentDate(now.toLocaleDateString("en-US", { 
+        month: 'short', 
+        day: '2-digit', 
+        year: 'numeric' 
+      }).toUpperCase().replace(',', ''));
     };
     updateTime();
     const timeInt = setInterval(updateTime, 1000);
@@ -70,6 +78,8 @@ export default function Home() {
     { name: "GoWish", rank: "#32", category: "Lifestyle", market: "🇺🇸 US", trend: "+12%" },
     { name: "Call ID", rank: "#38", category: "Utility", market: "🇪🇺 EU", trend: "+8%" },
     { name: "Gauth", rank: "#63", category: "Education", market: "🇺🇸 US", trend: "+24%" },
+    { name: "FocusFlow", rank: "#89", category: "Productivity", market: "🇺🇸 US", trend: "+31%" },
+    { name: "PetTrack", rank: "#45", category: "Lifestyle", market: "🇪🇺 EU", trend: "+15%" },
   ];
 
   return (
@@ -104,9 +114,9 @@ export default function Home() {
             <a href="#pricing" className="transition-colors" style={{ color: 'rgba(255,255,255,0.4)' }}>[PRICING]</a>
           </div>
 
-          <a href="#subscribe" className="btn-terminal text-xs py-2 px-3 md:px-4">
-            GET ACCESS
-          </a>
+          <button onClick={() => setShowSubscribeModal(true)} className="btn-terminal text-xs py-2 px-3 md:px-4">
+            START HUNTING
+          </button>
         </div>
       </nav>
 
@@ -185,7 +195,7 @@ export default function Home() {
             <div className="text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-3 md:px-4 py-2 rounded-full mb-4 md:mb-6" style={{ border: '1px solid rgba(0, 255, 136, 0.3)', background: 'rgba(0, 255, 136, 0.05)' }}>
                 <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#00FF88' }} />
-                <span className="font-mono text-[10px] md:text-xs" style={{ color: '#00FF88' }}>DAILY NEWSLETTER - FREE</span>
+                <span className="font-mono text-[10px] md:text-xs" style={{ color: '#00FF88' }}>2-3 NEW NICHES IN YOUR INBOX DAILY</span>
               </div>
 
               <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold leading-[1.1] mb-4 md:mb-6">
@@ -217,7 +227,7 @@ export default function Home() {
                     disabled={isLoading}
                     className="btn-terminal py-4 px-6 neon-glow whitespace-nowrap text-sm md:text-base disabled:opacity-50"
                   >
-                    {isLoading ? 'CONNECTING...' : 'SUBSCRIBE FREE →'}
+                    {isLoading ? 'CONNECTING...' : 'GET MY FIRST NICHE →'}
                   </button>
                 </form>
                 
@@ -236,9 +246,9 @@ export default function Home() {
                 )}
                 
                 <div className="flex items-center justify-center lg:justify-start gap-3 md:gap-4 mt-3 font-mono text-[10px] md:text-xs" style={{ color: 'rgba(255, 255, 255, 0.4)' }}>
-                  <span>✓ Daily insights</span>
-                  <span>✓ 2,100+ devs</span>
-                  <span>✓ Free</span>
+                  <span>✓ Tomorrow's brief at 8am</span>
+                  <span>✓ 2,100+ hunters</span>
+                  <span>✓ 100% free</span>
                 </div>
               </div>
             </div>
@@ -341,17 +351,20 @@ export default function Home() {
       {/* TODAY'S BRIEF - Preview */}
       <section id="today" className="py-12 md:py-16 px-4 md:px-6" style={{ borderTop: '1px solid rgba(0, 255, 136, 0.2)', borderBottom: '1px solid rgba(0, 255, 136, 0.2)', background: 'rgba(0, 255, 136, 0.02)' }}>
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-6 md:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 mb-6 md:mb-8">
             <div>
               <div className="font-mono text-[10px] md:text-xs mb-2" style={{ color: 'rgba(0, 255, 136, 0.5)' }}>// PREVIEW</div>
-              <h2 className="text-2xl md:text-4xl font-bold">
+              <h2 className="text-xl sm:text-2xl md:text-4xl font-bold">
                 <span style={{ color: '#FFFFFF' }}>Today's </span>
                 <span className="neon-text">Brief</span>
               </h2>
             </div>
-            <div className="font-mono text-[10px] md:text-xs text-right" style={{ color: 'rgba(255, 255, 255, 0.3)' }}>
-              <div>DEC 04, 2024</div>
-              <div style={{ color: '#00FF88' }}>LIVE</div>
+            <div className="font-mono text-[10px] md:text-xs sm:text-right flex-shrink-0" style={{ color: 'rgba(255, 255, 255, 0.3)' }}>
+              <div className="flex sm:block gap-2">
+                <span>{currentDate || 'LOADING...'}</span>
+                <span className="sm:hidden">•</span>
+                <span style={{ color: '#00FF88' }}>LIVE</span>
+              </div>
             </div>
           </div>
 
@@ -361,32 +374,43 @@ export default function Home() {
               <div className="terminal-dot bg-red-500/70" />
               <div className="terminal-dot bg-yellow-500/70" />
               <div className="terminal-dot bg-green-500/70" />
-              <span className="font-mono text-[10px] md:text-xs ml-4" style={{ color: 'rgba(255, 255, 255, 0.3)' }}>daily.email</span>
+              <span className="font-mono text-[10px] md:text-xs ml-4" style={{ color: 'rgba(255, 255, 255, 0.3)' }}>daily_brief.email</span>
             </div>
 
             <div className="p-4 md:p-8">
               {/* Key Insight */}
               <div className="mb-6 md:mb-8 p-3 md:p-4" style={{ borderLeft: '2px solid #00FF88', background: 'rgba(0, 255, 136, 0.05)' }}>
-                <div className="font-mono text-[10px] md:text-xs mb-2" style={{ color: '#00FF88' }}>💡 KEY INSIGHT</div>
+                <div className="font-mono text-[10px] md:text-xs mb-2" style={{ color: '#00FF88' }}>💡 KEY INSIGHT OF THE DAY</div>
                 <p className="text-xs md:text-sm" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
                   <strong style={{ color: '#FFFFFF' }}>US-led growth is strong</strong> — apps like GoWish performing well domestically with limited EU presence
-                  <span style={{ color: '#00FF88' }}> = expansion opportunity.</span>
+                  <span style={{ color: '#00FF88' }}> = expansion opportunity.</span> Education apps seeing <span style={{ color: '#00FF88' }}>+31% surge</span> this week.
                 </p>
               </div>
 
+
               {/* Trending Apps */}
               <div className="mb-6 md:mb-8">
-                <div className="font-mono text-[10px] md:text-xs mb-3 md:mb-4" style={{ color: 'rgba(0, 255, 136, 0.5)' }}>📊 TRENDING TODAY</div>
-                <div className="space-y-2">
+                <div className="font-mono text-[10px] md:text-xs mb-3 md:mb-4" style={{ color: 'rgba(0, 255, 136, 0.5)' }}>📊 TOP 5 TRENDING TODAY</div>
+                <div className="space-y-1 md:space-y-2">
+                  <div className="hidden sm:grid grid-cols-5 gap-2 py-2 font-mono text-[9px] md:text-[10px]" style={{ color: 'rgba(255, 255, 255, 0.3)', borderBottom: '1px solid rgba(0, 255, 136, 0.1)' }}>
+                    <span>APP</span>
+                    <span>CATEGORY</span>
+                    <span>MARKET</span>
+                    <span className="text-center">RANK</span>
+                    <span className="text-right">TREND</span>
+                  </div>
                   {trendingApps.map((app, i) => (
-                    <div key={i} className="flex items-center justify-between py-2 md:py-3" style={{ borderBottom: '1px solid rgba(0, 255, 136, 0.1)' }}>
-                      <div>
+                    <div key={i} className="flex flex-col sm:grid sm:grid-cols-5 gap-1 sm:gap-2 py-2 md:py-3" style={{ borderBottom: '1px solid rgba(0, 255, 136, 0.1)' }}>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-[10px] w-4" style={{ color: 'rgba(0, 255, 136, 0.4)' }}>#{i+1}</span>
                         <span className="font-mono text-xs md:text-sm font-medium" style={{ color: '#FFFFFF' }}>{app.name}</span>
-                        <span className="font-mono text-[10px] md:text-xs ml-2" style={{ color: 'rgba(255, 255, 255, 0.4)' }}>{app.category}</span>
                       </div>
-                      <div className="flex items-center gap-2 md:gap-3">
-                        <span className="text-[10px] md:text-xs">{app.market}</span>
-                        <span className="font-mono text-[10px] md:text-xs" style={{ color: '#00FF88' }}>{app.trend}</span>
+                      <span className="font-mono text-[10px] md:text-xs hidden sm:block" style={{ color: 'rgba(255, 255, 255, 0.4)' }}>{app.category}</span>
+                      <span className="text-[10px] md:text-xs hidden sm:block">{app.market}</span>
+                      <span className="font-mono text-[10px] md:text-xs hidden sm:block text-center" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>{app.rank}</span>
+                      <div className="flex sm:justify-end items-center gap-2 sm:gap-0">
+                        <span className="sm:hidden font-mono text-[10px]" style={{ color: 'rgba(255, 255, 255, 0.4)' }}>{app.category} • {app.market}</span>
+                        <span className="font-mono text-[10px] md:text-xs font-bold" style={{ color: '#00FF88' }}>{app.trend}</span>
                       </div>
                     </div>
                   ))}
@@ -394,27 +418,64 @@ export default function Home() {
               </div>
 
               {/* Niche to Explore */}
-              <div className="p-3 md:p-5" style={{ border: '1px solid rgba(0, 255, 136, 0.2)', background: 'rgba(0, 0, 0, 0.3)' }}>
-                <div className="font-mono text-[10px] md:text-xs mb-2 md:mb-3" style={{ color: '#00FF88' }}>🎯 NICHE TO EXPLORE</div>
+              <div className="p-3 md:p-5 mb-4 md:mb-6" style={{ border: '1px solid rgba(0, 255, 136, 0.3)', background: 'rgba(0, 0, 0, 0.3)' }}>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+                  <div className="font-mono text-[10px] md:text-xs" style={{ color: '#00FF88' }}>🎯 NICHE #1 — HIGH POTENTIAL</div>
+                  <div className="flex gap-2">
+                    <span className="font-mono text-[9px] md:text-[10px] px-2 py-0.5" style={{ background: 'rgba(0, 255, 136, 0.15)', color: '#00FF88' }}>LOW COMPETITION</span>
+                    <span className="font-mono text-[9px] md:text-[10px] px-2 py-0.5" style={{ background: 'rgba(0, 255, 136, 0.15)', color: '#00FF88' }}>TRENDING</span>
+                  </div>
+                </div>
                 <h4 className="text-sm md:text-lg font-bold mb-2" style={{ color: '#FFFFFF' }}>AI-powered Education Tools</h4>
                 <p className="text-[11px] md:text-sm mb-3 md:mb-4" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
-                  Rising demand for personalized study aids. High engagement, scalable market.
+                  Rising demand for personalized study aids. Apps like Gauth (+24%) show high engagement with scalable subscription models. 
+                  EU market significantly underserved — only 12% of US presence.
                 </p>
-                <div className="flex flex-wrap gap-2 md:gap-4 font-mono text-[9px] md:text-xs" style={{ color: '#00FF88' }}>
-                  <span>Competition: Low</span>
-                  <span>Potential: High</span>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-4 font-mono text-[9px] md:text-xs">
+                  <div className="p-2" style={{ background: 'rgba(0, 255, 136, 0.05)' }}>
+                    <div style={{ color: 'rgba(255, 255, 255, 0.4)' }}>Competition</div>
+                    <div style={{ color: '#00FF88' }}>Low (3/10)</div>
+                  </div>
+                  <div className="p-2" style={{ background: 'rgba(0, 255, 136, 0.05)' }}>
+                    <div style={{ color: 'rgba(255, 255, 255, 0.4)' }}>Potential</div>
+                    <div style={{ color: '#00FF88' }}>High (8/10)</div>
+                  </div>
+                  <div className="p-2" style={{ background: 'rgba(0, 255, 136, 0.05)' }}>
+                    <div style={{ color: 'rgba(255, 255, 255, 0.4)' }}>Avg Revenue</div>
+                    <div style={{ color: '#00FF88' }}>$8.2K/mo</div>
+                  </div>
+                  <div className="p-2" style={{ background: 'rgba(0, 255, 136, 0.05)' }}>
+                    <div style={{ color: 'rgba(255, 255, 255, 0.4)' }}>Best Market</div>
+                    <div style={{ color: '#00FF88' }}>🇪🇺 EU</div>
+                  </div>
                 </div>
               </div>
 
-              {/* CTA */}
-              <div className="relative mt-4 md:mt-6 pt-4 md:pt-6" style={{ borderTop: '1px solid rgba(0, 255, 136, 0.1)' }}>
-                <div className="blur-sm opacity-50">
-                  <div className="font-mono text-[10px] md:text-xs" style={{ color: 'rgba(255, 255, 255, 0.3)' }}>+ 2 more niches...</div>
+              {/* Second Niche Preview */}
+              <div className="p-3 md:p-5 mb-4 md:mb-6" style={{ border: '1px solid rgba(0, 255, 136, 0.15)', background: 'rgba(0, 0, 0, 0.2)' }}>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+                  <div className="font-mono text-[10px] md:text-xs" style={{ color: 'rgba(0, 255, 136, 0.7)' }}>🎯 NICHE #2 — GROWING FAST</div>
+                  <div className="flex gap-2">
+                    <span className="font-mono text-[9px] md:text-[10px] px-2 py-0.5" style={{ background: 'rgba(0, 255, 136, 0.1)', color: 'rgba(0, 255, 136, 0.7)' }}>MEDIUM COMPETITION</span>
+                  </div>
                 </div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <a href="#subscribe" className="btn-terminal text-xs md:text-sm py-2 px-4">
-                    GET FULL ACCESS →
-                  </a>
+                <h4 className="text-sm md:text-lg font-bold mb-2" style={{ color: '#FFFFFF' }}>Pet Care & Tracking Apps</h4>
+                <p className="text-[11px] md:text-sm" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
+                  Health monitoring and activity tracking for pets. PetTrack showing strong EU traction (+15%). 
+                  Premium subscriptions with 68% retention rate.
+                </p>
+              </div>
+
+              {/* CTA */}
+              <div className="relative pt-4 md:pt-6" style={{ borderTop: '1px solid rgba(0, 255, 136, 0.1)' }}>
+                <div className="blur-sm opacity-50 mb-3">
+                  <div className="font-mono text-[10px] md:text-xs mb-1" style={{ color: 'rgba(255, 255, 255, 0.3)' }}>🎯 NICHE #3 — Sleep & Wellness tracking...</div>
+                  <div className="font-mono text-[10px] md:text-xs" style={{ color: 'rgba(255, 255, 255, 0.2)' }}>+ Full revenue breakdown, keyword analysis, competitor deep-dive...</div>
+                </div>
+                <div className="flex items-center justify-center">
+                  <button onClick={() => setShowSubscribeModal(true)} className="btn-terminal text-xs md:text-sm py-3 px-6">
+                    UNLOCK ALL NICHES FREE →
+                  </button>
                 </div>
               </div>
             </div>
@@ -503,13 +564,13 @@ export default function Home() {
                 ))}
               </ul>
 
-              <a href="#subscribe" className="btn-outline w-full block text-center text-xs md:text-sm">
-                SUBSCRIBE FREE →
-              </a>
+              <button onClick={() => setShowSubscribeModal(true)} className="btn-outline w-full text-center text-xs md:text-sm">
+                GET DAILY NICHES →
+              </button>
             </div>
 
             {/* Pro */}
-            <div className="terminal-card neon-border p-5 md:p-8 relative mt-6 md:mt-0">
+            <div className="terminal-card overflow-visible neon-border p-5 md:p-8 relative mt-6 md:mt-0">
               <div className="corner-decoration corner-tl" />
               <div className="corner-decoration corner-tr" />
               <div className="corner-decoration corner-bl" />
@@ -546,11 +607,12 @@ export default function Home() {
       <section className="py-12 md:py-20 px-4 md:px-6" style={{ borderTop: '1px solid rgba(0, 255, 136, 0.2)' }}>
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-2xl md:text-4xl font-bold mb-3 md:mb-4">
-            <span style={{ color: '#FFFFFF' }}>Ready to Find Your </span>
-            <span className="neon-text">Next App Idea?</span>
+            <span style={{ color: '#FFFFFF' }}>Your Next </span>
+            <span className="neon-text">Profitable App</span>
+            <span style={{ color: '#FFFFFF' }}> Starts Here</span>
           </h2>
           <p className="mb-6 md:mb-8" style={{ color: 'rgba(255, 255, 255, 0.4)' }}>
-            Join 2,100+ developers getting daily insights.
+            Get 2-3 validated niches in your inbox every morning. Like 2,100+ indie devs already do.
           </p>
 
           <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
@@ -569,7 +631,7 @@ export default function Home() {
               disabled={isLoading}
               className="btn-terminal py-4 px-6 md:px-8 neon-glow disabled:opacity-50"
             >
-              {isLoading ? 'CONNECTING...' : 'JOIN FREE →'}
+              {isLoading ? 'CONNECTING...' : 'SEND ME NICHES →'}
             </button>
           </form>
           
@@ -606,6 +668,121 @@ export default function Home() {
           <div className="font-mono text-xs" style={{ color: 'rgba(255, 255, 255, 0.3)' }}>© 2024</div>
         </div>
       </footer>
+
+      {/* SUBSCRIBE MODAL - Powerful CTA */}
+      {showSubscribeModal && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+          style={{ background: 'rgba(0, 0, 0, 0.95)', backdropFilter: 'blur(20px)' }}
+          onClick={() => setShowSubscribeModal(false)}
+        >
+          <div 
+            className="relative w-full max-w-lg p-6 md:p-10"
+            style={{ 
+              background: 'linear-gradient(180deg, #0A0A0A 0%, #0D1A0F 100%)', 
+              border: '2px solid #00FF88',
+              boxShadow: '0 0 100px rgba(0, 255, 136, 0.4), inset 0 0 60px rgba(0, 255, 136, 0.05)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Corner decorations */}
+            <div className="corner-decoration corner-tl" style={{ width: '30px', height: '30px' }} />
+            <div className="corner-decoration corner-tr" style={{ width: '30px', height: '30px' }} />
+            <div className="corner-decoration corner-bl" style={{ width: '30px', height: '30px' }} />
+            <div className="corner-decoration corner-br" style={{ width: '30px', height: '30px' }} />
+
+            {/* Close button */}
+            <button 
+              onClick={() => setShowSubscribeModal(false)}
+              className="absolute top-4 right-4 font-mono text-xl transition-colors hover:text-[#00FF88]"
+              style={{ color: 'rgba(255, 255, 255, 0.4)' }}
+            >
+              ✕
+            </button>
+
+            {/* Animated radar icon */}
+            <div className="flex justify-center mb-6">
+              <div className="relative w-16 h-16">
+                <div className="absolute inset-0 rounded-full" style={{ border: '2px solid rgba(0, 255, 136, 0.3)' }} />
+                <div className="absolute inset-2 rounded-full" style={{ border: '1px solid rgba(0, 255, 136, 0.2)' }} />
+                <div className="absolute top-1/2 left-1/2 w-3 h-3 -translate-x-1/2 -translate-y-1/2 rounded-full animate-pulse" style={{ background: '#00FF88', boxShadow: '0 0 20px #00FF88' }} />
+                <div className="absolute top-1/2 left-1/2 w-1/2 h-0.5 origin-left animate-spin" style={{ background: 'linear-gradient(90deg, #00FF88, transparent)', animationDuration: '2s' }} />
+              </div>
+            </div>
+
+            {/* Headline */}
+            <div className="text-center mb-6">
+              <div className="font-mono text-[10px] md:text-xs mb-3 tracking-widest" style={{ color: '#00FF88' }}>
+                🎯 FREE DAILY INTEL
+              </div>
+              <h3 className="text-2xl md:text-3xl font-bold leading-tight mb-3">
+                <span style={{ color: '#FFFFFF' }}>Spot </span>
+                <span className="neon-text">Profitable iOS Niches</span>
+                <span style={{ color: '#FFFFFF' }}> Before Anyone Else</span>
+              </h3>
+              <p className="text-sm md:text-base" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
+                Tomorrow at 8am, you'll receive your first niche analysis.
+              </p>
+            </div>
+
+            {/* What you get */}
+            <div className="grid grid-cols-3 gap-2 mb-6">
+              {[
+                { icon: "📈", text: "5 trending apps" },
+                { icon: "💎", text: "2-3 niches" },
+                { icon: "🌍", text: "US vs EU data" },
+              ].map((item, i) => (
+                <div key={i} className="text-center py-3 px-2" style={{ background: 'rgba(0, 255, 136, 0.05)', border: '1px solid rgba(0, 255, 136, 0.15)' }}>
+                  <div className="text-lg mb-1">{item.icon}</div>
+                  <div className="font-mono text-[9px] md:text-[10px]" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>{item.text}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Form */}
+            <form onSubmit={(e) => {
+              handleSubmit(e);
+              setShowSubscribeModal(false);
+            }} className="space-y-4">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                required
+                disabled={isLoading}
+                className="terminal-input w-full py-4 text-sm md:text-base text-center disabled:opacity-50"
+                style={{ color: '#00FF88', background: 'rgba(0, 255, 136, 0.08)', border: '1px solid rgba(0, 255, 136, 0.4)' }}
+              />
+              <button 
+                type="submit" 
+                disabled={isLoading}
+                className="btn-terminal w-full py-4 text-sm md:text-base neon-glow disabled:opacity-50 font-bold"
+                style={{ boxShadow: '0 0 30px rgba(0, 255, 136, 0.5)' }}
+              >
+                {isLoading ? 'CONNECTING...' : '🚀 SEND ME NICHES NOW'}
+              </button>
+            </form>
+
+            {/* Social proof */}
+            <div className="mt-5 text-center">
+              <div className="flex items-center justify-center gap-1 mb-2">
+                {[1,2,3,4,5].map((_, i) => (
+                  <span key={i} style={{ color: '#00FF88' }}>★</span>
+                ))}
+              </div>
+              <p className="font-mono text-[10px] md:text-xs" style={{ color: 'rgba(255, 255, 255, 0.4)' }}>
+                Join <span style={{ color: '#00FF88' }}>2,100+ indie devs</span> already hunting niches
+              </p>
+            </div>
+
+            {/* Guarantee */}
+            <div className="mt-4 text-center font-mono text-[10px]" style={{ color: 'rgba(255, 255, 255, 0.3)' }}>
+              100% free • Unsubscribe anytime • No spam ever
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* SUCCESS MODAL */}
       {showModal && (
