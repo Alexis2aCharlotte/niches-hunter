@@ -14,48 +14,35 @@ export default async function Image() {
     (
       <div
         style={{
-          background: '#0A0A0A',
+          background: 'linear-gradient(135deg, #0A0A0A 0%, #0D1A0F 50%, #0A0A0A 100%)',
           width: '100%',
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
+          fontFamily: 'system-ui, sans-serif',
           position: 'relative',
-          overflow: 'hidden',
         }}
       >
-        {/* Grid background */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage: `
-              linear-gradient(rgba(0, 255, 136, 0.03) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px)
-            `,
-            backgroundSize: '50px 50px',
-          }}
-        />
-
         {/* Radar circles */}
         <div
           style={{
             position: 'absolute',
-            width: '500px',
-            height: '500px',
-            borderRadius: '50%',
-            border: '1px solid rgba(0, 255, 136, 0.15)',
+            width: '450px',
+            height: '450px',
+            borderRadius: '225px',
+            border: '2px solid rgba(0, 255, 136, 0.1)',
             display: 'flex',
           }}
         />
         <div
           style={{
             position: 'absolute',
-            width: '375px',
-            height: '375px',
-            borderRadius: '50%',
-            border: '1px solid rgba(0, 255, 136, 0.2)',
+            width: '350px',
+            height: '350px',
+            borderRadius: '175px',
+            border: '2px solid rgba(0, 255, 136, 0.15)',
             display: 'flex',
           }}
         />
@@ -64,43 +51,31 @@ export default async function Image() {
             position: 'absolute',
             width: '250px',
             height: '250px',
-            borderRadius: '50%',
-            border: '1px solid rgba(0, 255, 136, 0.25)',
+            borderRadius: '125px',
+            border: '2px solid rgba(0, 255, 136, 0.2)',
             display: 'flex',
           }}
         />
         <div
           style={{
             position: 'absolute',
-            width: '125px',
-            height: '125px',
-            borderRadius: '50%',
-            border: '1px solid rgba(0, 255, 136, 0.3)',
+            width: '150px',
+            height: '150px',
+            borderRadius: '75px',
+            border: '2px solid rgba(0, 255, 136, 0.25)',
             display: 'flex',
           }}
         />
 
-        {/* Radar center dot */}
+        {/* Center glow */}
         <div
           style={{
             position: 'absolute',
-            width: '20px',
-            height: '20px',
-            borderRadius: '50%',
+            width: '24px',
+            height: '24px',
+            borderRadius: '12px',
             background: '#00FF88',
-            boxShadow: '0 0 30px #00FF88, 0 0 60px #00FF88',
-            display: 'flex',
-          }}
-        />
-
-        {/* Radar sweep effect */}
-        <div
-          style={{
-            position: 'absolute',
-            width: '250px',
-            height: '250px',
-            background: 'conic-gradient(from 0deg, transparent 0deg, rgba(0, 255, 136, 0.3) 30deg, transparent 60deg)',
-            borderRadius: '50%',
+            boxShadow: '0 0 40px 20px rgba(0, 255, 136, 0.4)',
             display: 'flex',
           }}
         />
@@ -109,13 +84,26 @@ export default async function Image() {
         <div
           style={{
             position: 'absolute',
+            width: '14px',
+            height: '14px',
+            borderRadius: '7px',
+            background: '#00FF88',
+            boxShadow: '0 0 20px 5px rgba(0, 255, 136, 0.5)',
+            top: '150px',
+            left: '400px',
+            display: 'flex',
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute',
             width: '12px',
             height: '12px',
-            borderRadius: '50%',
+            borderRadius: '6px',
             background: '#00FF88',
-            boxShadow: '0 0 15px #00FF88',
-            top: '180px',
-            left: '380px',
+            boxShadow: '0 0 15px 3px rgba(0, 255, 136, 0.4)',
+            top: '200px',
+            right: '380px',
             display: 'flex',
           }}
         />
@@ -124,36 +112,23 @@ export default async function Image() {
             position: 'absolute',
             width: '10px',
             height: '10px',
-            borderRadius: '50%',
-            background: 'rgba(0, 255, 136, 0.6)',
-            boxShadow: '0 0 10px rgba(0, 255, 136, 0.5)',
-            top: '280px',
-            right: '350px',
-            display: 'flex',
-          }}
-        />
-        <div
-          style={{
-            position: 'absolute',
-            width: '8px',
-            height: '8px',
-            borderRadius: '50%',
-            background: 'rgba(0, 255, 136, 0.4)',
-            top: '400px',
-            left: '500px',
-            display: 'flex',
-          }}
-        />
-        <div
-          style={{
-            position: 'absolute',
-            width: '10px',
-            height: '10px',
-            borderRadius: '50%',
+            borderRadius: '5px',
             background: 'rgba(0, 255, 136, 0.7)',
-            boxShadow: '0 0 12px rgba(0, 255, 136, 0.6)',
-            top: '220px',
-            right: '400px',
+            top: '420px',
+            left: '480px',
+            display: 'flex',
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            width: '12px',
+            height: '12px',
+            borderRadius: '6px',
+            background: '#00FF88',
+            boxShadow: '0 0 15px 3px rgba(0, 255, 136, 0.4)',
+            top: '380px',
+            right: '420px',
             display: 'flex',
           }}
         />
@@ -164,9 +139,7 @@ export default async function Image() {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'center',
             zIndex: 10,
-            marginTop: '50px',
           }}
         >
           {/* Logo */}
@@ -175,7 +148,7 @@ export default async function Image() {
               display: 'flex',
               alignItems: 'center',
               gap: '12px',
-              marginBottom: '30px',
+              marginBottom: '24px',
             }}
           >
             <div
@@ -183,17 +156,16 @@ export default async function Image() {
                 width: '16px',
                 height: '16px',
                 background: '#00FF88',
-                boxShadow: '0 0 20px #00FF88',
+                boxShadow: '0 0 15px 5px rgba(0, 255, 136, 0.5)',
                 display: 'flex',
               }}
             />
             <span
               style={{
-                fontSize: '24px',
-                fontWeight: 'bold',
+                fontSize: '22px',
+                fontWeight: 700,
                 color: '#00FF88',
-                letterSpacing: '0.2em',
-                fontFamily: 'monospace',
+                letterSpacing: '0.15em',
               }}
             >
               NICHES HUNTER
@@ -201,37 +173,53 @@ export default async function Image() {
           </div>
 
           {/* Headline */}
-          <h1
+          <div
             style={{
-              fontSize: '56px',
-              fontWeight: 'bold',
-              textAlign: 'center',
-              margin: 0,
-              lineHeight: 1.1,
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
+              textAlign: 'center',
             }}
           >
-            <span style={{ color: '#FFFFFF' }}>Spot </span>
             <span
               style={{
+                fontSize: '52px',
+                fontWeight: 700,
+                color: '#FFFFFF',
+                lineHeight: 1.1,
+              }}
+            >
+              Spot
+            </span>
+            <span
+              style={{
+                fontSize: '52px',
+                fontWeight: 700,
                 color: '#00FF88',
-                textShadow: '0 0 30px rgba(0, 255, 136, 0.5)',
+                lineHeight: 1.1,
+                textShadow: '0 0 40px rgba(0, 255, 136, 0.5)',
               }}
             >
               Profitable iOS Niches
             </span>
-            <span style={{ color: '#FFFFFF' }}>Before Anyone Else</span>
-          </h1>
+            <span
+              style={{
+                fontSize: '52px',
+                fontWeight: 700,
+                color: '#FFFFFF',
+                lineHeight: 1.1,
+              }}
+            >
+              Before Anyone Else
+            </span>
+          </div>
 
           {/* Tagline */}
           <p
             style={{
-              fontSize: '22px',
+              fontSize: '20px',
               color: 'rgba(255, 255, 255, 0.5)',
-              marginTop: '24px',
-              fontFamily: 'monospace',
+              marginTop: '28px',
             }}
           >
             2-3 analyzed niches in your inbox daily • 100% Free
@@ -245,18 +233,18 @@ export default async function Image() {
             bottom: '40px',
             display: 'flex',
             alignItems: 'center',
-            gap: '8px',
-            padding: '10px 20px',
-            border: '1px solid rgba(0, 255, 136, 0.3)',
-            background: 'rgba(0, 255, 136, 0.05)',
-            borderRadius: '4px',
+            gap: '10px',
+            padding: '12px 24px',
+            border: '1px solid rgba(0, 255, 136, 0.4)',
+            background: 'rgba(0, 255, 136, 0.1)',
+            borderRadius: '6px',
           }}
         >
           <div
             style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
+              width: '10px',
+              height: '10px',
+              borderRadius: '5px',
               background: '#00FF88',
               display: 'flex',
             }}
@@ -264,9 +252,9 @@ export default async function Image() {
           <span
             style={{
               color: '#00FF88',
-              fontSize: '14px',
-              fontFamily: 'monospace',
-              letterSpacing: '0.1em',
+              fontSize: '16px',
+              letterSpacing: '0.05em',
+              fontWeight: 600,
             }}
           >
             2,100+ INDIE DEVS ALREADY HUNTING
@@ -279,4 +267,3 @@ export default async function Image() {
     }
   )
 }
-
