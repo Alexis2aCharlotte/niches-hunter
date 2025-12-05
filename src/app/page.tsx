@@ -246,7 +246,7 @@ export default function Home() {
                 )}
                 
                 <div className="flex items-center justify-center lg:justify-start gap-3 md:gap-4 mt-3 font-mono text-[10px] md:text-xs" style={{ color: 'rgba(255, 255, 255, 0.4)' }}>
-                  <span>✓ Tomorrow's brief at 8am</span>
+                  <span>✓ Instant first brief</span>
                   <span>✓ 2,100+ hunters</span>
                   <span>✓ 100% free</span>
                 </div>
@@ -721,7 +721,7 @@ export default function Home() {
                 <span style={{ color: '#FFFFFF' }}> Before Anyone Else</span>
               </h3>
               <p className="text-sm md:text-base" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
-                Tomorrow at 8am, you'll receive your first niche analysis.
+                Get your first niche analysis <span style={{ color: '#00FF88' }}>instantly</span> in your inbox.
               </p>
             </div>
 
