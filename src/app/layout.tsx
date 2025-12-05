@@ -44,14 +44,21 @@ export const metadata: Metadata = {
     title: "NICHES HUNTER | Hunt Profitable iOS Niches",
     description:
       "Free daily intel on untapped iOS App Store opportunities. Discover profitable niches before the competition.",
-    // Image auto-générée par opengraph-image.tsx
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "NICHES HUNTER - Spot Profitable iOS Niches Before Anyone Else",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "NICHES HUNTER | Hunt Profitable iOS Niches",
     description:
       "Free daily intel on untapped iOS App Store opportunities. Discover profitable niches before the competition.",
-    // Image auto-générée par twitter-image.tsx
+    images: ["/og-image.png"],
   },
   alternates: {
     canonical: "https://nicheshunter.app",
