@@ -330,18 +330,18 @@ export default function Home() {
       </section>
 
       {/* 3 PILLARS */}
-      <section className="py-8 md:py-12 px-4 md:px-6">
+      <section className="py-10 md:py-14 px-4 md:px-6">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-3 gap-2 md:gap-4">
+          <div className="grid grid-cols-3 gap-3 md:gap-6">
             {[
               { icon: "📈", title: "Trending Apps", desc: "5 apps daily" },
               { icon: "🌍", title: "US vs EU", desc: "Market intel" },
               { icon: "💎", title: "Niches", desc: "2-3 per day" },
             ].map((pillar, i) => (
-              <div key={i} className="stat-box text-center py-4 md:py-6">
-                <div className="text-2xl md:text-3xl mb-2 md:mb-3">{pillar.icon}</div>
-                <h3 className="font-mono font-bold text-[10px] md:text-sm mb-1" style={{ color: '#00FF88' }}>{pillar.title}</h3>
-                <p className="text-[9px] md:text-xs" style={{ color: 'rgba(255, 255, 255, 0.4)' }}>{pillar.desc}</p>
+              <div key={i} className="stat-box text-center py-6 md:py-8 px-2 md:px-4">
+                <div className="text-3xl md:text-4xl mb-3 md:mb-4">{pillar.icon}</div>
+                <h3 className="font-mono font-bold text-sm md:text-lg mb-1 md:mb-2" style={{ color: '#00FF88' }}>{pillar.title}</h3>
+                <p className="text-xs md:text-sm" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>{pillar.desc}</p>
               </div>
             ))}
           </div>
@@ -379,9 +379,9 @@ export default function Home() {
 
             <div className="p-4 md:p-8">
               {/* Key Insight */}
-              <div className="mb-6 md:mb-8 p-3 md:p-4" style={{ borderLeft: '2px solid #00FF88', background: 'rgba(0, 255, 136, 0.05)' }}>
-                <div className="font-mono text-[10px] md:text-xs mb-2" style={{ color: '#00FF88' }}>💡 KEY INSIGHT OF THE DAY</div>
-                <p className="text-xs md:text-sm" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+              <div className="mb-6 md:mb-8 p-4 md:p-5" style={{ borderLeft: '3px solid #00FF88', background: 'rgba(0, 255, 136, 0.05)' }}>
+                <div className="font-mono text-xs md:text-sm mb-2" style={{ color: '#00FF88' }}>💡 KEY INSIGHT OF THE DAY</div>
+                <p className="text-sm md:text-base leading-relaxed" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
                   <strong style={{ color: '#FFFFFF' }}>US-led growth is strong</strong> — apps like GoWish performing well domestically with limited EU presence
                   <span style={{ color: '#00FF88' }}> = expansion opportunity.</span> Education apps seeing <span style={{ color: '#00FF88' }}>+31% surge</span> this week.
                 </p>
@@ -390,9 +390,9 @@ export default function Home() {
 
               {/* Trending Apps */}
               <div className="mb-6 md:mb-8">
-                <div className="font-mono text-[10px] md:text-xs mb-3 md:mb-4" style={{ color: 'rgba(0, 255, 136, 0.5)' }}>📊 TOP 5 TRENDING TODAY</div>
+                <div className="font-mono text-xs md:text-sm mb-3 md:mb-4" style={{ color: 'rgba(0, 255, 136, 0.5)' }}>📊 TOP 5 TRENDING TODAY</div>
                 <div className="space-y-1 md:space-y-2">
-                  <div className="hidden sm:grid grid-cols-5 gap-2 py-2 font-mono text-[9px] md:text-[10px]" style={{ color: 'rgba(255, 255, 255, 0.3)', borderBottom: '1px solid rgba(0, 255, 136, 0.1)' }}>
+                  <div className="hidden sm:grid grid-cols-5 gap-2 py-3 font-mono text-xs md:text-sm" style={{ color: 'rgba(255, 255, 255, 0.4)', borderBottom: '1px solid rgba(0, 255, 136, 0.15)' }}>
                     <span>APP</span>
                     <span>CATEGORY</span>
                     <span>MARKET</span>
@@ -400,17 +400,17 @@ export default function Home() {
                     <span className="text-right">TREND</span>
                   </div>
                   {trendingApps.map((app, i) => (
-                    <div key={i} className="flex flex-col sm:grid sm:grid-cols-5 gap-1 sm:gap-2 py-2 md:py-3" style={{ borderBottom: '1px solid rgba(0, 255, 136, 0.1)' }}>
+                    <div key={i} className="flex flex-col sm:grid sm:grid-cols-5 gap-1 sm:gap-2 py-3 md:py-4" style={{ borderBottom: '1px solid rgba(0, 255, 136, 0.1)' }}>
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-[10px] w-4" style={{ color: 'rgba(0, 255, 136, 0.4)' }}>#{i+1}</span>
-                        <span className="font-mono text-xs md:text-sm font-medium" style={{ color: '#FFFFFF' }}>{app.name}</span>
+                        <span className="font-mono text-xs w-5" style={{ color: 'rgba(0, 255, 136, 0.4)' }}>#{i+1}</span>
+                        <span className="font-mono text-sm md:text-base font-semibold" style={{ color: '#FFFFFF' }}>{app.name}</span>
                       </div>
-                      <span className="font-mono text-[10px] md:text-xs hidden sm:block" style={{ color: 'rgba(255, 255, 255, 0.4)' }}>{app.category}</span>
-                      <span className="text-[10px] md:text-xs hidden sm:block">{app.market}</span>
-                      <span className="font-mono text-[10px] md:text-xs hidden sm:block text-center" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>{app.rank}</span>
+                      <span className="font-mono text-xs md:text-sm hidden sm:block self-center" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>{app.category}</span>
+                      <span className="text-xs md:text-sm hidden sm:block self-center">{app.market}</span>
+                      <span className="font-mono text-xs md:text-sm hidden sm:block text-center self-center" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>{app.rank}</span>
                       <div className="flex sm:justify-end items-center gap-2 sm:gap-0">
-                        <span className="sm:hidden font-mono text-[10px]" style={{ color: 'rgba(255, 255, 255, 0.4)' }}>{app.category} • {app.market}</span>
-                        <span className="font-mono text-[10px] md:text-xs font-bold" style={{ color: '#00FF88' }}>{app.trend}</span>
+                        <span className="sm:hidden font-mono text-xs" style={{ color: 'rgba(255, 255, 255, 0.4)' }}>{app.category} • {app.market}</span>
+                        <span className="font-mono text-xs md:text-sm font-bold" style={{ color: '#00FF88' }}>{app.trend}</span>
                       </div>
                     </div>
                   ))}
@@ -418,62 +418,62 @@ export default function Home() {
               </div>
 
               {/* Niche to Explore */}
-              <div className="p-3 md:p-5 mb-4 md:mb-6" style={{ border: '1px solid rgba(0, 255, 136, 0.3)', background: 'rgba(0, 0, 0, 0.3)' }}>
+              <div className="p-4 md:p-6 mb-4 md:mb-6" style={{ border: '1px solid rgba(0, 255, 136, 0.3)', background: 'rgba(0, 0, 0, 0.3)' }}>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
-                  <div className="font-mono text-[10px] md:text-xs" style={{ color: '#00FF88' }}>🎯 NICHE #1 — HIGH POTENTIAL</div>
+                  <div className="font-mono text-xs md:text-sm" style={{ color: '#00FF88' }}>🎯 NICHE #1 — HIGH POTENTIAL</div>
                   <div className="flex gap-2">
-                    <span className="font-mono text-[9px] md:text-[10px] px-2 py-0.5" style={{ background: 'rgba(0, 255, 136, 0.15)', color: '#00FF88' }}>LOW COMPETITION</span>
-                    <span className="font-mono text-[9px] md:text-[10px] px-2 py-0.5" style={{ background: 'rgba(0, 255, 136, 0.15)', color: '#00FF88' }}>TRENDING</span>
+                    <span className="font-mono text-[10px] md:text-xs px-2 py-1" style={{ background: 'rgba(0, 255, 136, 0.15)', color: '#00FF88' }}>LOW COMPETITION</span>
+                    <span className="font-mono text-[10px] md:text-xs px-2 py-1" style={{ background: 'rgba(0, 255, 136, 0.15)', color: '#00FF88' }}>TRENDING</span>
                   </div>
                 </div>
-                <h4 className="text-sm md:text-lg font-bold mb-2" style={{ color: '#FFFFFF' }}>AI-powered Education Tools</h4>
-                <p className="text-[11px] md:text-sm mb-3 md:mb-4" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
+                <h4 className="text-base md:text-xl font-bold mb-2" style={{ color: '#FFFFFF' }}>AI-powered Education Tools</h4>
+                <p className="text-sm md:text-base mb-4 leading-relaxed" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
                   Rising demand for personalized study aids. Apps like Gauth (+24%) show high engagement with scalable subscription models. 
                   EU market significantly underserved — only 12% of US presence.
                 </p>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-4 font-mono text-[9px] md:text-xs">
-                  <div className="p-2" style={{ background: 'rgba(0, 255, 136, 0.05)' }}>
-                    <div style={{ color: 'rgba(255, 255, 255, 0.4)' }}>Competition</div>
-                    <div style={{ color: '#00FF88' }}>Low (3/10)</div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 font-mono text-xs md:text-sm">
+                  <div className="p-3" style={{ background: 'rgba(0, 255, 136, 0.05)' }}>
+                    <div style={{ color: 'rgba(255, 255, 255, 0.5)' }}>Competition</div>
+                    <div className="font-semibold mt-1" style={{ color: '#00FF88' }}>Low (3/10)</div>
                   </div>
-                  <div className="p-2" style={{ background: 'rgba(0, 255, 136, 0.05)' }}>
-                    <div style={{ color: 'rgba(255, 255, 255, 0.4)' }}>Potential</div>
-                    <div style={{ color: '#00FF88' }}>High (8/10)</div>
+                  <div className="p-3" style={{ background: 'rgba(0, 255, 136, 0.05)' }}>
+                    <div style={{ color: 'rgba(255, 255, 255, 0.5)' }}>Potential</div>
+                    <div className="font-semibold mt-1" style={{ color: '#00FF88' }}>High (8/10)</div>
                   </div>
-                  <div className="p-2" style={{ background: 'rgba(0, 255, 136, 0.05)' }}>
-                    <div style={{ color: 'rgba(255, 255, 255, 0.4)' }}>Avg Revenue</div>
-                    <div style={{ color: '#00FF88' }}>$8.2K/mo</div>
+                  <div className="p-3" style={{ background: 'rgba(0, 255, 136, 0.05)' }}>
+                    <div style={{ color: 'rgba(255, 255, 255, 0.5)' }}>Avg Revenue</div>
+                    <div className="font-semibold mt-1" style={{ color: '#00FF88' }}>$8.2K/mo</div>
                   </div>
-                  <div className="p-2" style={{ background: 'rgba(0, 255, 136, 0.05)' }}>
-                    <div style={{ color: 'rgba(255, 255, 255, 0.4)' }}>Best Market</div>
-                    <div style={{ color: '#00FF88' }}>🇪🇺 EU</div>
+                  <div className="p-3" style={{ background: 'rgba(0, 255, 136, 0.05)' }}>
+                    <div style={{ color: 'rgba(255, 255, 255, 0.5)' }}>Best Market</div>
+                    <div className="font-semibold mt-1" style={{ color: '#00FF88' }}>🇪🇺 EU</div>
                   </div>
                 </div>
               </div>
 
               {/* Second Niche Preview */}
-              <div className="p-3 md:p-5 mb-4 md:mb-6" style={{ border: '1px solid rgba(0, 255, 136, 0.15)', background: 'rgba(0, 0, 0, 0.2)' }}>
+              <div className="p-4 md:p-6 mb-4 md:mb-6" style={{ border: '1px solid rgba(0, 255, 136, 0.15)', background: 'rgba(0, 0, 0, 0.2)' }}>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
-                  <div className="font-mono text-[10px] md:text-xs" style={{ color: 'rgba(0, 255, 136, 0.7)' }}>🎯 NICHE #2 — GROWING FAST</div>
+                  <div className="font-mono text-xs md:text-sm" style={{ color: 'rgba(0, 255, 136, 0.7)' }}>🎯 NICHE #2 — GROWING FAST</div>
                   <div className="flex gap-2">
-                    <span className="font-mono text-[9px] md:text-[10px] px-2 py-0.5" style={{ background: 'rgba(0, 255, 136, 0.1)', color: 'rgba(0, 255, 136, 0.7)' }}>MEDIUM COMPETITION</span>
+                    <span className="font-mono text-[10px] md:text-xs px-2 py-1" style={{ background: 'rgba(0, 255, 136, 0.1)', color: 'rgba(0, 255, 136, 0.7)' }}>MEDIUM COMPETITION</span>
                   </div>
                 </div>
-                <h4 className="text-sm md:text-lg font-bold mb-2" style={{ color: '#FFFFFF' }}>Pet Care & Tracking Apps</h4>
-                <p className="text-[11px] md:text-sm" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
+                <h4 className="text-base md:text-xl font-bold mb-2" style={{ color: '#FFFFFF' }}>Pet Care & Tracking Apps</h4>
+                <p className="text-sm md:text-base leading-relaxed" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
                   Health monitoring and activity tracking for pets. PetTrack showing strong EU traction (+15%). 
                   Premium subscriptions with 68% retention rate.
                 </p>
               </div>
 
               {/* CTA */}
-              <div className="relative pt-4 md:pt-6" style={{ borderTop: '1px solid rgba(0, 255, 136, 0.1)' }}>
-                <div className="blur-sm opacity-50 mb-3">
-                  <div className="font-mono text-[10px] md:text-xs mb-1" style={{ color: 'rgba(255, 255, 255, 0.3)' }}>🎯 NICHE #3 — Sleep & Wellness tracking...</div>
-                  <div className="font-mono text-[10px] md:text-xs" style={{ color: 'rgba(255, 255, 255, 0.2)' }}>+ Full revenue breakdown, keyword analysis, competitor deep-dive...</div>
+              <div className="relative pt-5 md:pt-6" style={{ borderTop: '1px solid rgba(0, 255, 136, 0.1)' }}>
+                <div className="blur-sm opacity-50 mb-4">
+                  <div className="font-mono text-xs md:text-sm mb-1" style={{ color: 'rgba(255, 255, 255, 0.3)' }}>🎯 NICHE #3 — Sleep & Wellness tracking...</div>
+                  <div className="font-mono text-xs md:text-sm" style={{ color: 'rgba(255, 255, 255, 0.2)' }}>+ Full revenue breakdown, keyword analysis, competitor deep-dive...</div>
                 </div>
                 <div className="flex items-center justify-center">
-                  <button onClick={() => setShowSubscribeModal(true)} className="btn-terminal text-xs md:text-sm py-3 px-6">
+                  <button onClick={() => setShowSubscribeModal(true)} className="btn-terminal text-sm md:text-base py-3 px-8">
                     UNLOCK ALL NICHES FREE →
                   </button>
                 </div>
