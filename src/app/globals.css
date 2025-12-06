@@ -101,6 +101,15 @@ body {
   animation: neon-flicker 4s ease-in-out infinite;
 }
 
+/* Mobile: lighter neon effect to avoid box rendering */
+@media (max-width: 768px) {
+  .neon-text {
+    text-shadow: 
+      0 0 4px var(--neon),
+      0 0 8px var(--neon);
+  }
+}
+
 @keyframes neon-flicker {
   0%, 100% { opacity: 1; }
   92% { opacity: 1; }

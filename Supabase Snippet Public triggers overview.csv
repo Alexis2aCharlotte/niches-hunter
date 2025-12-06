@@ -1,0 +1,97 @@
+proname,prosrc
+update_app_opportunities,"
+BEGIN
+  INSERT INTO public.app_opportunities (
+    app_id, name, developer, source_country, best_rank, runDate,
+    category, eu_countries, opportunity_type
+  )
+  WITH latest_us_run AS (
+    SELECT MAX(""runDate"") AS runDate
+    FROM public.app_rankings_clean
+    WHERE country = 'US'
+  ),
+
+  us_top AS (
+    SELECT ar.*
+    FROM public.app_rankings_clean ar
+    JOIN latest_us_run lr 
+      ON ar.""runDate"" = lr.runDate
+    WHERE ar.country = 'US'
+      AND ar.rank <= 100  -- élargi le top US
+      AND ar.developer NOT IN (
+          SELECT developer FROM developer_blacklist
+      )
+  ),
+
+  eu_presence AS (
+    SELECT
+        app_id,
+        ARRAY_AGG(DISTINCT country) AS eu_countries,
+        MIN(rank) AS best_eu_rank
+    FROM public.app_rankings_clean
+    WHERE country IN ('FR','DE','IT','ES','GB')
+    GROUP BY app_id
+  )
+
+  SELECT 
+    u.app_id,
+    u.name,
+    u.developer,
+    u.country AS source_country,
+    u.rank AS best_rank,
+    u.""runDate"",
+    u.category,
+    COALESCE(e.eu_countries, ARRAY[]::TEXT[]) AS eu_countries,
+    CASE
+      WHEN e.app_id IS NULL THEN 'US_top_no_EU'
+      ELSE 'US_top_weak_EU'
+    END AS opportunity_type
+  FROM us_top u
+  LEFT JOIN eu_presence e 
+    ON u.app_id = e.app_id
+  WHERE
+    (
+      e.app_id IS NULL        -- pas en EU
+      OR e.best_eu_rank > 30  -- en EU mais encore faible
+    )
+    AND NOT EXISTS (
+      SELECT 1 FROM app_opportunities ao
+      WHERE ao.app_id = u.app_id
+    );
+
+  RETURN NULL;
+END;
+"
+update_clean_table,"
+BEGIN
+  -- Si dev blacklisté : on ignore
+  IF EXISTS (
+    SELECT 1
+    FROM public.developer_blacklist bl
+    WHERE bl.developer = NEW.developer
+  ) THEN
+    RETURN NEW; 
+  END IF;
+
+  -- Sinon : on insère dans app_rankings_clean
+  INSERT INTO public.app_rankings_clean (
+    id, country, rank, ""runDate"", app_id, name, developer, category,
+    ""releaseDate"", url, image
+  )
+  VALUES (
+    NEW.id,
+    NEW.country,
+    NEW.rank,
+    NEW.""runDate"",
+    NEW.app_id,
+    NEW.name,
+    NEW.developer,
+    NEW.category,
+    NEW.""releaseDate"",
+    NEW.url,
+    NEW.image
+  );
+
+  RETURN NEW;
+END;
+"
