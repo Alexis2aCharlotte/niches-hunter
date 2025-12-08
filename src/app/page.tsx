@@ -227,7 +227,7 @@ export default function Home() {
                     disabled={isLoading}
                     className="btn-terminal py-4 px-6 neon-glow whitespace-nowrap text-sm md:text-base disabled:opacity-50"
                   >
-                    {isLoading ? 'CONNECTING...' : 'GET MY FIRST NICHE →'}
+                    {isLoading ? 'CONNECTING...' : 'GET FREE NICHE IDEA →'}
                   </button>
                 </form>
                 
@@ -631,7 +631,7 @@ export default function Home() {
               disabled={isLoading}
               className="btn-terminal py-4 px-6 md:px-8 neon-glow disabled:opacity-50"
             >
-              {isLoading ? 'CONNECTING...' : 'SEND ME NICHES →'}
+              {isLoading ? 'CONNECTING...' : 'GET FREE NICHE IDEA →'}
             </button>
           </form>
           
