@@ -289,10 +289,21 @@ export default function Home() {
     setMessage(null);
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      setMessage({ type: 'success', text: 'Welcome aboard! 🎯' });
-      setEmail("");
-      setShowModal(true);
+      const response = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage({ type: 'success', text: data.message || 'Welcome aboard! 🎯' });
+        setEmail("");
+        setShowModal(true);
+      } else {
+        setMessage({ type: 'error', text: data.error || 'Something went wrong.' });
+      }
     } catch (error) {
       setMessage({ type: 'error', text: 'Network error. Please try again.' });
     } finally {
