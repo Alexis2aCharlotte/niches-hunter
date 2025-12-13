@@ -354,6 +354,17 @@ export default function Home() {
                 {isLoading ? 'Processing...' : 'Get Free Niches'}
               </button>
             </form>
+            
+            {/* Feedback Message */}
+            {message && (
+              <div className={`mt-4 p-3 rounded-xl text-center text-sm font-medium ${
+                message.type === 'success' 
+                  ? 'bg-[var(--primary)]/20 text-[var(--primary)] border border-[var(--primary)]/30' 
+                  : 'bg-red-500/20 text-red-400 border border-red-500/30'
+              }`}>
+                {message.text}
+              </div>
+            )}
 
             <div className="mt-8 flex items-center justify-center lg:justify-start gap-6 text-xs text-[rgba(255,255,255,0.4)] font-mono">
               <span className="flex items-center gap-2"><span className="text-[var(--primary)]">●</span> 2,100+ smart builders</span>
