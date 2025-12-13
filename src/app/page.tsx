@@ -671,7 +671,7 @@ export default function Home() {
             enableReveal={false}
             className="w-full max-w-lg p-1 !p-1 relative animate-scale-up shadow-[0_0_150px_rgba(0,204,61,0.2)]"
           >
-            <div className="bg-[#050505] rounded-[22px] p-8 md:p-10 relative overflow-hidden">
+            <div className="bg-[#050505] rounded-[22px] p-8 md:p-10 relative overflow-hidden" onClick={(e) => e.stopPropagation()}>
               {/* Close Button */}
               <button onClick={(e) => { e.stopPropagation(); setShowSubscribeModal(false); }} className="absolute top-5 right-5 text-white/20 hover:text-white text-xl transition-colors z-20">✕</button>
 
