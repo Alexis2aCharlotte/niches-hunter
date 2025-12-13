@@ -60,6 +60,7 @@ function useScrollReveal() {
 
 export default function Home() {
   const [email, setEmail] = useState("");
+  const [modalEmail, setModalEmail] = useState("");
   const [activeBlip, setActiveBlip] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -718,11 +719,11 @@ export default function Home() {
                   const response = await fetch('/api/subscribe', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email }),
+                    body: JSON.stringify({ email: modalEmail }),
                   });
                   const data = await response.json();
                   if (response.ok) {
-                    setEmail("");
+                    setModalEmail("");
                     setShowSubscribeModal(false);
                     setShowModal(true);
                   } else {
@@ -736,8 +737,8 @@ export default function Home() {
               }} className="space-y-4">
                 <input
                   type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={modalEmail}
+                  onChange={(e) => setModalEmail(e.target.value)}
                   placeholder="Enter your email address"
                   required
                   className="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 text-white text-center focus:border-[var(--primary)] focus:bg-black/80 focus:ring-0 outline-none transition-all placeholder:text-white/20 font-mono text-sm"
