@@ -711,7 +711,29 @@ export default function Home() {
                 ))}
               </div>
 
-              <form onSubmit={(e) => { handleSubmit(e); setShowSubscribeModal(false); }} className="space-y-4">
+              <form onSubmit={async (e) => { 
+                e.preventDefault();
+                setIsLoading(true);
+                try {
+                  const response = await fetch('/api/subscribe', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email }),
+                  });
+                  const data = await response.json();
+                  if (response.ok) {
+                    setEmail("");
+                    setShowSubscribeModal(false);
+                    setShowModal(true);
+                  } else {
+                    alert(data.error || 'Something went wrong.');
+                  }
+                } catch (error) {
+                  alert('Network error. Please try again.');
+                } finally {
+                  setIsLoading(false);
+                }
+              }} className="space-y-4">
                 <input
                   type="email"
                   value={email}
