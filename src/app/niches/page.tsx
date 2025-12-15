@@ -58,9 +58,9 @@ function NicheCard({ niche, index, isUnlocked }: { niche: Niche; index: number; 
       >
         {/* Badge Promo - seulement sur les niches verrouillées */}
         {!isUnlocked && (
-          <div className="absolute -bottom-2 -right-2 z-20">
-            <div className="bg-gradient-to-r from-yellow-500 to-orange-500 text-black text-[10px] font-bold px-2 py-1 rounded-full shadow-lg animate-pulse">
-              🎁 EARLYHUNT -90%
+          <div className="absolute bottom-3 right-3 md:bottom-4 md:right-4 z-20">
+            <div className="bg-gradient-to-r from-yellow-500 to-orange-500 text-black text-[9px] md:text-[10px] font-bold px-2 py-1 md:px-3 md:py-1.5 rounded-full shadow-lg">
+              🎁 <span className="font-black">-90%</span> code : <span className="font-mono">EARLYHUNT</span>
             </div>
           </div>
         )}
