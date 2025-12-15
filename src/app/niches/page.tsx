@@ -58,9 +58,9 @@ function NicheCard({ niche, index, isUnlocked }: { niche: Niche; index: number; 
       >
         {/* Badge Promo - seulement sur les niches verrouillées */}
         {!isUnlocked && (
-          <div className="absolute -top-2 -right-2 z-20">
+          <div className="absolute -bottom-2 -right-2 z-20">
             <div className="bg-gradient-to-r from-yellow-500 to-orange-500 text-black text-[10px] font-bold px-2 py-1 rounded-full shadow-lg animate-pulse">
-              🎁 EARLYBIRD -90%
+              🎁 EARLYHUNT -90%
             </div>
           </div>
         )}
@@ -233,24 +233,8 @@ export default function NichesPage() {
         <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-500/5 blur-[150px] rounded-full" />
       </div>
 
-      {/* Promo Banner */}
-      <div className="relative pt-24 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="bg-gradient-to-r from-yellow-500/20 via-orange-500/20 to-yellow-500/20 border border-yellow-500/30 rounded-2xl p-4 mb-6 flex flex-col sm:flex-row items-center justify-center gap-3 text-center sm:text-left">
-            <span className="text-2xl">🎉</span>
-            <div>
-              <span className="text-white font-bold">Early Bird Offer!</span>
-              <span className="text-white/70 ml-2">Use code</span>
-              <span className="mx-2 px-3 py-1 bg-yellow-500 text-black font-mono font-bold rounded text-sm">EARLYBIRD</span>
-              <span className="text-white/70">for <span className="text-yellow-400 font-bold">90% OFF</span></span>
-            </div>
-            <span className="text-white/50 text-xs">Limited time only</span>
-          </div>
-        </div>
-      </div>
-
       {/* Header */}
-      <section className="relative pt-4 pb-8 px-6">
+      <section className="relative pt-32 pb-8 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8">
             <div>
