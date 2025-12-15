@@ -1,0 +1,105 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
+
+// Client Supabase avec la clé service pour créer des utilisateurs
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
+
+export async function POST(request: NextRequest) {
+  try {
+    const { email, password, stripeCustomerId } = await request.json()
+
+    if (!email || !password) {
+      return NextResponse.json(
+        { error: 'Email and password are required' },
+        { status: 400 }
+      )
+    }
+
+    if (password.length < 6) {
+      return NextResponse.json(
+        { error: 'Password must be at least 6 characters' },
+        { status: 400 }
+      )
+    }
+
+    // Créer l'utilisateur avec Supabase Auth
+    const { data: authData, error: authError } = await supabaseAdmin.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          stripe_customer_id: stripeCustomerId,
+        },
+      },
+    })
+
+    if (authError) {
+      console.error('Auth error:', authError)
+      return NextResponse.json(
+        { error: authError.message },
+        { status: 400 }
+      )
+    }
+
+    // Ajouter l'email dans subscribers s'il n'existe pas déjà
+    const { data: existingSubscriber } = await supabaseAdmin
+      .from('subscribers')
+      .select('id')
+      .eq('email', email)
+      .single()
+
+    if (!existingSubscriber) {
+      const { error: subscriberError } = await supabaseAdmin
+        .from('subscribers')
+        .insert({
+          email: email,
+          source: 'stripe_pro',
+          is_active: true,
+        })
+      
+      if (subscriberError) {
+        console.error('Error adding subscriber:', subscriberError)
+      }
+    }
+
+    // Mettre à jour la subscription existante avec le user_id
+    if (authData.user && stripeCustomerId) {
+      // Mettre à jour l'entrée existante (créée par l'API session)
+      const { error: updateError } = await supabaseAdmin
+        .from('subscriptions')
+        .update({ user_id: authData.user.id })
+        .eq('stripe_customer_id', stripeCustomerId)
+
+      if (updateError) {
+        console.error('Error updating subscription with user_id:', updateError)
+        
+        // Si pas d'entrée existante, en créer une nouvelle
+        await supabaseAdmin
+          .from('subscriptions')
+          .insert({
+            user_id: authData.user.id,
+            stripe_customer_id: stripeCustomerId,
+            status: 'active',
+          })
+      } else {
+        console.log('Subscription updated with user_id:', authData.user.id)
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      user: authData.user,
+      message: 'Account created successfully',
+    })
+  } catch (error) {
+    console.error('Signup error:', error)
+    return NextResponse.json(
+      { error: 'Failed to create account' },
+      { status: 500 }
+    )
+  }
+}
+

@@ -49,7 +49,7 @@ export const metadata: Metadata = {
         url: "https://nicheshunter.app/og-image.png",
         width: 1200,
         height: 630,
-        alt: "NICHES HUNTER - Build iOS Apps Users Want",
+        alt: "NICHES HUNTER - Spot Profitable iOS Niches Before Anyone Else",
       },
     ],
   },

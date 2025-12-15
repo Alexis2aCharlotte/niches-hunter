@@ -333,7 +333,7 @@ export default function Home() {
             </div>
 
             <h1 className="text-5xl md:text-7xl font-bold leading-[1.1] mb-8 tracking-tighter animate-title-enter">
-              Build <span className="text-flashy-green">iOS Apps</span> Users Want
+              Spot Profitable <span className="text-flashy-green">iOS Niches</span> Before Anyone Else
             </h1>
 
             <p className="text-lg md:text-xl text-[rgba(255,255,255,0.7)] mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed font-light">
@@ -351,7 +351,7 @@ export default function Home() {
                 className="bg-transparent border-none text-white px-4 py-3 flex-1 focus:ring-0 outline-none placeholder:text-white/30"
               />
               <button type="submit" disabled={isLoading} className="btn-primary whitespace-nowrap py-3 px-6 rounded-xl">
-                {isLoading ? 'Processing...' : 'Get Free Niches'}
+                {isLoading ? 'Processing...' : 'Get My First Niche'}
               </button>
             </form>
             
@@ -561,7 +561,7 @@ export default function Home() {
                   // --- LIST VIEW ---
                   <div className="flex flex-col h-full">
                     <h3 className="text-xl lg:text-2xl font-bold mb-6 flex items-center gap-3">
-                      <span className="text-2xl">📈</span> Trending Apps
+                      <span className="text-2xl">📈</span> Competitors Apps
                     </h3>
                     <div className="flex-1 flex flex-col justify-between space-y-4">
                       {focusNiches[activeFocusIndex].trending.map((app, i) => (
@@ -607,7 +607,7 @@ export default function Home() {
       <section id="features" className="py-24 px-6 relative">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-20 reveal-base reveal-up">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Hunt <span className="text-flashy-green">Smarter</span>, <br /><span className="text-flashy-green">Ship</span> Faster</h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Hunt <span className="text-flashy-green">Smarter</span> <br /><span className="text-flashy-green">Ship</span> Faster</h2>
             <p className="text-[rgba(255,255,255,0.6)] text-lg">We track 40,000+ apps daily so you don't have to. Get the intel, skip the research.</p>
           </div>
 
@@ -640,7 +640,7 @@ export default function Home() {
             <div className="relative z-10">
               <h2 className="text-4xl md:text-6xl font-bold mb-8">Start The Hunt Now</h2>
               <p className="text-xl text-[rgba(255,255,255,0.7)] mb-12 max-w-lg mx-auto">
-                One email with 5 rising apps and 2 validated ideas.<br />Every day.
+                One email with 3 rising apps and 2 validated ideas.<br />Every day.
               </p>
 
               <button
