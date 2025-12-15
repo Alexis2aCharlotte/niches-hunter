@@ -19,9 +19,12 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    console.log('Retrieving Stripe session:', sessionId)
     const session = await stripe.checkout.sessions.retrieve(sessionId)
     const customerId = session.customer as string
     const subscriptionId = session.subscription as string
+
+    console.log('Session retrieved:', { customerId, subscriptionId })
 
     // Récupérer les détails de la subscription si elle existe
     if (subscriptionId) {
@@ -33,26 +36,33 @@ export async function GET(request: NextRequest) {
       const periodStart = new Date(subscriptionDetails.current_period_start * 1000).toISOString()
       const periodEnd = new Date(subscriptionDetails.current_period_end * 1000).toISOString()
       
+      console.log('Subscription details:', { periodStart, periodEnd })
+      
       // Sauvegarder/mettre à jour dans la DB
-      const { data: existingSub } = await supabaseAdmin
+      const { data: existingSub, error: selectError } = await supabaseAdmin
         .from('subscriptions')
         .select('id')
         .eq('stripe_customer_id', customerId)
         .single()
 
+      console.log('Existing sub check:', { existingSub, selectError })
+
       if (existingSub) {
         // Mettre à jour l'entrée existante
-        await supabaseAdmin
+        const { error: updateError } = await supabaseAdmin
           .from('subscriptions')
           .update({
             stripe_subscription_id: subscriptionId,
             current_period_start: periodStart,
             current_period_end: periodEnd,
+            status: 'active',
           })
           .eq('stripe_customer_id', customerId)
+        
+        console.log('Update result:', { updateError })
       } else {
         // Créer une nouvelle entrée
-        await supabaseAdmin
+        const { error: insertError } = await supabaseAdmin
           .from('subscriptions')
           .insert({
             stripe_customer_id: customerId,
@@ -61,7 +71,22 @@ export async function GET(request: NextRequest) {
             current_period_start: periodStart,
             current_period_end: periodEnd,
           })
+        
+        console.log('Insert result:', { insertError })
       }
+    } else {
+      console.log('No subscriptionId found, creating basic entry...')
+      // Même sans subscription détaillée, créer une entrée
+      const { error: insertError } = await supabaseAdmin
+        .from('subscriptions')
+        .upsert({
+          stripe_customer_id: customerId,
+          status: 'active',
+        }, {
+          onConflict: 'stripe_customer_id'
+        })
+      
+      console.log('Upsert result:', { insertError })
     }
 
     // Créer la réponse avec le cookie pour tracker l'abonnement
