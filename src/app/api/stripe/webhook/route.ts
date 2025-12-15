@@ -52,9 +52,16 @@ export async function POST(request: NextRequest) {
         console.log('Checkout completed:', { customerEmail, customerId, subscriptionId })
 
         // Récupérer les détails de la subscription depuis Stripe
-        let subscriptionDetails = null
+        let periodStart = new Date().toISOString()
+        let periodEnd: string | null = null
+        
         if (subscriptionId) {
-          subscriptionDetails = await stripe.subscriptions.retrieve(subscriptionId)
+          const subscriptionDetails = await stripe.subscriptions.retrieve(subscriptionId) as unknown as {
+            current_period_start: number
+            current_period_end: number
+          }
+          periodStart = new Date(subscriptionDetails.current_period_start * 1000).toISOString()
+          periodEnd = new Date(subscriptionDetails.current_period_end * 1000).toISOString()
         }
 
         // Sauvegarder dans la table subscriptions
@@ -64,12 +71,8 @@ export async function POST(request: NextRequest) {
             stripe_customer_id: customerId,
             stripe_subscription_id: subscriptionId,
             status: 'active',
-            current_period_start: subscriptionDetails 
-              ? new Date(subscriptionDetails.current_period_start * 1000).toISOString()
-              : new Date().toISOString(),
-            current_period_end: subscriptionDetails
-              ? new Date(subscriptionDetails.current_period_end * 1000).toISOString()
-              : null,
+            current_period_start: periodStart,
+            current_period_end: periodEnd,
           })
 
         if (subError) {
@@ -107,7 +110,13 @@ export async function POST(request: NextRequest) {
 
       case 'customer.subscription.created':
       case 'customer.subscription.updated': {
-        const subscription = event.data.object as Stripe.Subscription
+        const subscription = event.data.object as unknown as {
+          id: string
+          status: string
+          current_period_start: number
+          current_period_end: number
+          cancel_at_period_end: boolean
+        }
         
         console.log('Subscription updated:', subscription.id, subscription.status)
 
@@ -128,7 +137,7 @@ export async function POST(request: NextRequest) {
       }
 
       case 'customer.subscription.deleted': {
-        const subscription = event.data.object as Stripe.Subscription
+        const subscription = event.data.object as unknown as { id: string }
         
         console.log('Subscription deleted:', subscription.id)
 
