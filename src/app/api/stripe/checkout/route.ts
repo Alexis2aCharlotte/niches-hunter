@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 
+// Promotion "Early Hunter" - 90% de réduction jusqu'au 20 décembre 2025
+const PROMO_COUPON_ID = 'op8sD02m'
+const PROMO_END_DATE = new Date('2025-12-20T23:59:59Z')
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
@@ -9,7 +13,9 @@ export async function POST(request: NextRequest) {
     const priceId = process.env.STRIPE_PRICE_ID
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
-    console.log('Checkout attempt:', { priceId, appUrl, nicheId })
+    // Vérifier si la promo est encore active
+    const isPromoActive = Date.now() < PROMO_END_DATE.getTime()
+    console.log('Checkout attempt:', { priceId, appUrl, nicheId, isPromoActive })
 
     if (!priceId) {
       console.error('STRIPE_PRICE_ID is not set')
@@ -29,6 +35,8 @@ export async function POST(request: NextRequest) {
           quantity: 1,
         },
       ],
+      // Appliquer automatiquement le coupon si la promo est active
+      ...(isPromoActive && { discounts: [{ coupon: PROMO_COUPON_ID }] }),
       // Metadata pour tracker la niche qui a déclenché l'achat
       metadata: {
         nicheId: nicheId || 'homepage',
@@ -37,7 +45,7 @@ export async function POST(request: NextRequest) {
       success_url: `${appUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${appUrl}/niches${nicheId ? `/${nicheId}` : ''}`,
       // Options pour une meilleure UX
-      allow_promotion_codes: true,
+      allow_promotion_codes: !isPromoActive, // Permettre les codes promo seulement si pas de promo auto
       billing_address_collection: 'auto',
     })
 
