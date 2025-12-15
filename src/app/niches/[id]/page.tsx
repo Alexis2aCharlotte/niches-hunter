@@ -225,6 +225,7 @@ export default function NicheDetailPage() {
 
           {/* Header */}
           <LiquidCard className="p-8 mb-6">
+            {/* Top row: Code, Category, Tags + Score */}
             <div className="flex justify-between items-start mb-4">
               <div className="flex flex-wrap items-center gap-3">
                 <span className="text-xs font-mono text-white/30">#{niche.displayCode}</span>
@@ -238,12 +239,31 @@ export default function NicheDetailPage() {
                 ))}
               </div>
               
-              {/* Save Button - Bookmark Style */}
+              {/* Score - Top Right */}
+              <div className="px-4 py-2 rounded-full bg-[var(--primary)] text-black text-sm font-bold shrink-0">
+                {niche.score}/100
+              </div>
+            </div>
+            
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">{niche.title}</h1>
+            
+            {/* Bottom row: Stats + Save Button */}
+            <div className="flex justify-between items-center">
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="px-4 py-2 rounded-full bg-white/10 text-white/70 text-sm">
+                  {niche.stats.market} Primary Market
+                </div>
+                <div className="px-4 py-2 rounded-full bg-white/10 text-white/70 text-sm">
+                  {niche.stats.timeToMVP} to MVP
+                </div>
+              </div>
+              
+              {/* Save Button - Bottom Right */}
               {hasSubscription && (
                 <button
                   onClick={handleSaveToggle}
                   disabled={saveLoading}
-                  className={`group flex items-center justify-center w-10 h-10 rounded-xl transition-all ${
+                  className={`group flex items-center justify-center w-10 h-10 rounded-xl transition-all shrink-0 ${
                     isSaved 
                       ? 'bg-[var(--primary)]/20 text-[var(--primary)]' 
                       : 'bg-white/5 text-white/40 hover:bg-white/10 hover:text-white'
@@ -263,20 +283,6 @@ export default function NicheDetailPage() {
                   )}
                 </button>
               )}
-            </div>
-            
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">{niche.title}</h1>
-            
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="px-4 py-2 rounded-full bg-[var(--primary)] text-black text-sm font-bold">
-                {niche.score}/100 SCORE
-              </div>
-              <div className="px-4 py-2 rounded-full bg-white/10 text-white/70 text-sm">
-                {niche.stats.market} Primary Market
-              </div>
-              <div className="px-4 py-2 rounded-full bg-white/10 text-white/70 text-sm">
-                {niche.stats.timeToMVP} to MVP
-              </div>
             </div>
           </LiquidCard>
 

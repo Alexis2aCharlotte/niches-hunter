@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Créer la réponse avec le cookie
+    // Créer la réponse avec les cookies
     const response = NextResponse.json({
       success: true,
       user: {
@@ -118,6 +118,18 @@ export async function POST(request: NextRequest) {
         email: authData.user.email,
       },
     })
+
+    // Stocker le access_token pour authentifier les requêtes
+    if (authData.session?.access_token) {
+      console.log('Setting access_token cookie')
+      response.cookies.set('access_token', authData.session.access_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 60 * 60 * 24 * 7, // 7 jours
+        path: '/',
+      })
+    }
 
     // Stocker le customer ID dans un cookie si disponible
     if (stripeCustomerId) {

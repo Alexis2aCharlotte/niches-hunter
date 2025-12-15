@@ -7,21 +7,41 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
+// Fonction helper pour récupérer le user_id
+async function getUserId(): Promise<string | null> {
+  const cookieStore = await cookies()
+  const accessToken = cookieStore.get('access_token')?.value
+
+  if (!accessToken) {
+    console.log('No access_token cookie found')
+    return null
+  }
+
+  const { data: { user }, error } = await supabaseAdmin.auth.getUser(accessToken)
+  
+  if (error || !user) {
+    console.error('Error getting user from token:', error)
+    return null
+  }
+
+  return user.id
+}
+
 // GET - Récupérer les niches sauvegardées
 export async function GET() {
   try {
-    const cookieStore = await cookies()
-    const customerId = cookieStore.get('stripe_customer_id')?.value
+    const userId = await getUserId()
 
-    if (!customerId) {
+    if (!userId) {
+      console.log('No user found for saved niches GET')
       return NextResponse.json({ savedNiches: [] })
     }
 
-    // Récupérer les niches sauvegardées par stripe_customer_id
+    // Récupérer les niches sauvegardées par user_id
     const { data: savedNiches, error } = await supabaseAdmin
       .from('saved_niches')
       .select('niche_id, saved_at')
-      .eq('stripe_customer_id', customerId)
+      .eq('user_id', userId)
       .order('saved_at', { ascending: false })
 
     if (error) {
@@ -29,6 +49,7 @@ export async function GET() {
       return NextResponse.json({ savedNiches: [] })
     }
 
+    console.log('Fetched saved niches for user:', userId, savedNiches?.length || 0, 'niches')
     return NextResponse.json({ savedNiches: savedNiches || [] })
   } catch (error) {
     console.error('Error:', error)
@@ -40,12 +61,11 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const { nicheId } = await request.json()
-    const cookieStore = await cookies()
-    const customerId = cookieStore.get('stripe_customer_id')?.value
+    const userId = await getUserId()
 
-    console.log('Saving niche:', { nicheId, customerId })
+    console.log('Saving niche:', { nicheId, userId })
 
-    if (!customerId) {
+    if (!userId) {
       return NextResponse.json(
         { error: 'Not authenticated' },
         { status: 401 }
@@ -63,19 +83,20 @@ export async function POST(request: NextRequest) {
     const { data: existing } = await supabaseAdmin
       .from('saved_niches')
       .select('id')
-      .eq('stripe_customer_id', customerId)
+      .eq('user_id', userId)
       .eq('niche_id', nicheId)
       .single()
 
     if (existing) {
+      console.log('Niche already saved:', nicheId)
       return NextResponse.json({ success: true, message: 'Already saved' })
     }
 
-    // Sauvegarder avec stripe_customer_id
+    // Sauvegarder avec user_id
     const { error } = await supabaseAdmin
       .from('saved_niches')
       .insert({
-        stripe_customer_id: customerId,
+        user_id: userId,
         niche_id: nicheId,
       })
 
@@ -87,7 +108,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('Niche saved successfully:', nicheId)
+    console.log('Niche saved successfully:', nicheId, 'for user:', userId)
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Error:', error)
@@ -102,21 +123,22 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const { nicheId } = await request.json()
-    const cookieStore = await cookies()
-    const customerId = cookieStore.get('stripe_customer_id')?.value
+    const userId = await getUserId()
 
-    if (!customerId) {
+    console.log('Deleting saved niche:', { nicheId, userId })
+
+    if (!userId) {
       return NextResponse.json(
         { error: 'Not authenticated' },
         { status: 401 }
       )
     }
 
-    // Supprimer par stripe_customer_id
+    // Supprimer par user_id
     const { error } = await supabaseAdmin
       .from('saved_niches')
       .delete()
-      .eq('stripe_customer_id', customerId)
+      .eq('user_id', userId)
       .eq('niche_id', nicheId)
 
     if (error) {
@@ -127,6 +149,7 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
+    console.log('Niche removed successfully:', nicheId)
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Error:', error)
