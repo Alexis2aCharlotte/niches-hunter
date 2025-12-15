@@ -24,9 +24,14 @@ export async function GET(request: NextRequest) {
     const subscriptionId = session.subscription as string
 
     // Récupérer les détails de la subscription si elle existe
-    let subscriptionDetails = null
     if (subscriptionId) {
-      subscriptionDetails = await stripe.subscriptions.retrieve(subscriptionId)
+      const subscriptionDetails = await stripe.subscriptions.retrieve(subscriptionId) as unknown as {
+        current_period_start: number
+        current_period_end: number
+      }
+      
+      const periodStart = new Date(subscriptionDetails.current_period_start * 1000).toISOString()
+      const periodEnd = new Date(subscriptionDetails.current_period_end * 1000).toISOString()
       
       // Sauvegarder/mettre à jour dans la DB
       const { data: existingSub } = await supabaseAdmin
@@ -41,8 +46,8 @@ export async function GET(request: NextRequest) {
           .from('subscriptions')
           .update({
             stripe_subscription_id: subscriptionId,
-            current_period_start: new Date(subscriptionDetails.current_period_start * 1000).toISOString(),
-            current_period_end: new Date(subscriptionDetails.current_period_end * 1000).toISOString(),
+            current_period_start: periodStart,
+            current_period_end: periodEnd,
           })
           .eq('stripe_customer_id', customerId)
       } else {
@@ -53,8 +58,8 @@ export async function GET(request: NextRequest) {
             stripe_customer_id: customerId,
             stripe_subscription_id: subscriptionId,
             status: 'active',
-            current_period_start: new Date(subscriptionDetails.current_period_start * 1000).toISOString(),
-            current_period_end: new Date(subscriptionDetails.current_period_end * 1000).toISOString(),
+            current_period_start: periodStart,
+            current_period_end: periodEnd,
           })
       }
     }
