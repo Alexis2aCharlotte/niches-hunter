@@ -224,37 +224,36 @@ export default function NicheDetailPage() {
           </Link>
 
           {/* Header */}
-          <LiquidCard className="p-5 md:p-8 mb-6">
-            {/* Mobile: Stacked layout / Desktop: Row layout */}
-            <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-3 mb-4">
-              {/* Tags row */}
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-mono text-white/40">#{niche.displayCode}</span>
-                <span className="px-2.5 py-1 rounded-full bg-white/10 text-xs text-white/80 font-medium">
+          <LiquidCard className="p-8 mb-6">
+            {/* Top row: Code, Category, Tags + Score */}
+            <div className="flex justify-between items-start mb-4">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="text-xs font-mono text-white/30">#{niche.displayCode}</span>
+                <span className="px-3 py-1 rounded-full bg-white/10 text-xs text-white/70 font-medium">
                   {niche.category}
                 </span>
                 {niche.tags.map(tag => (
-                  <span key={tag} className="px-2 py-0.5 rounded border border-[var(--primary)]/30 bg-[var(--primary)]/10 text-[10px] text-[var(--primary)] font-medium">
+                  <span key={tag} className="px-2 py-0.5 rounded border border-[var(--primary)]/20 bg-[var(--primary)]/10 text-[10px] text-[var(--primary)]">
                     {tag}
                   </span>
                 ))}
               </div>
               
-              {/* Score - Top Right on desktop, inline on mobile */}
-              <div className="px-4 py-2 rounded-full bg-[var(--primary)] text-black text-sm font-bold shrink-0 w-fit">
+              {/* Score - Top Right */}
+              <div className="px-4 py-2 rounded-full bg-[var(--primary)] text-black text-sm font-bold shrink-0">
                 {niche.score}/100
               </div>
             </div>
             
-            <h1 className="text-2xl md:text-4xl font-bold text-white mb-4">{niche.title}</h1>
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">{niche.title}</h1>
             
             {/* Bottom row: Stats + Save Button */}
-            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
-              <div className="flex flex-wrap items-center gap-2 md:gap-4">
-                <div className="px-3 md:px-4 py-1.5 md:py-2 rounded-full bg-white/10 text-white/80 text-xs md:text-sm">
+            <div className="flex justify-between items-center">
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="px-4 py-2 rounded-full bg-white/10 text-white/70 text-sm">
                   {niche.stats.market} Primary Market
                 </div>
-                <div className="px-3 md:px-4 py-1.5 md:py-2 rounded-full bg-white/10 text-white/80 text-xs md:text-sm">
+                <div className="px-4 py-2 rounded-full bg-white/10 text-white/70 text-sm">
                   {niche.stats.timeToMVP} to MVP
                 </div>
               </div>
@@ -312,23 +311,23 @@ export default function NicheDetailPage() {
           {activeTab === 'overview' && (
             <div className="space-y-6">
               {/* Opportunity Analysis */}
-              <LiquidCard className="p-5 md:p-8">
-                <h2 className="text-lg md:text-xl font-bold mb-5 md:mb-6 flex items-center gap-3">
+              <LiquidCard className="p-8">
+                <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
                   <span className="w-8 h-8 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[var(--primary)]">🎯</span>
                   Opportunity Analysis
                 </h2>
-                <div className="grid md:grid-cols-3 gap-5 md:gap-6">
+                <div className="grid md:grid-cols-3 gap-6">
                   <div>
                     <h4 className="text-xs font-bold text-[var(--primary)] uppercase tracking-wider mb-2">The Opportunity</h4>
-                    <p className="text-white/80 leading-relaxed text-sm">{niche.opportunity}</p>
+                    <p className="text-white/70 leading-relaxed text-sm">{niche.opportunity}</p>
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-yellow-400 uppercase tracking-wider mb-2">Market Gap</h4>
-                    <p className="text-white/80 leading-relaxed text-sm">{niche.gap}</p>
+                    <p className="text-white/70 leading-relaxed text-sm">{niche.gap}</p>
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-blue-400 uppercase tracking-wider mb-2">Recommended Move</h4>
-                    <p className="text-white/80 leading-relaxed text-sm">{niche.move}</p>
+                    <p className="text-white/70 leading-relaxed text-sm">{niche.move}</p>
                   </div>
                 </div>
               </LiquidCard>
@@ -344,8 +343,8 @@ export default function NicheDetailPage() {
                   { label: "Difficulty", value: niche.stats.difficulty, color: "text-white" },
                 ].map((stat, i) => (
                   <LiquidCard key={i} className="p-3 md:p-4">
-                    <div className="text-[10px] md:text-xs text-white/50 uppercase tracking-wide mb-1">{stat.label}</div>
-                    <div className={`font-bold text-sm md:text-base ${stat.color}`}>{stat.value}</div>
+                    <div className="text-[11px] md:text-[10px] text-white/50 uppercase tracking-wide mb-1.5 md:mb-1">{stat.label}</div>
+                    <div className={`text-sm md:text-base font-bold ${stat.color}`}>{stat.value}</div>
                   </LiquidCard>
                 ))}
               </div>
