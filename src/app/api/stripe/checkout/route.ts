@@ -6,14 +6,18 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { nicheId } = body
 
-    if (!process.env.STRIPE_PRICE_ID) {
+    const priceId = process.env.STRIPE_PRICE_ID
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+
+    console.log('Checkout attempt:', { priceId, appUrl, nicheId })
+
+    if (!priceId) {
+      console.error('STRIPE_PRICE_ID is not set')
       return NextResponse.json(
         { error: 'Stripe price not configured' },
         { status: 500 }
       )
     }
-
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
     // Créer la session Stripe Checkout
     const session = await stripe.checkout.sessions.create({
@@ -21,7 +25,7 @@ export async function POST(request: NextRequest) {
       payment_method_types: ['card'],
       line_items: [
         {
-          price: process.env.STRIPE_PRICE_ID,
+          price: priceId,
           quantity: 1,
         },
       ],
@@ -37,11 +41,26 @@ export async function POST(request: NextRequest) {
       billing_address_collection: 'auto',
     })
 
+    console.log('Checkout session created:', session.id, session.url)
+
+    if (!session.url) {
+      console.error('Session created but no URL returned')
+      return NextResponse.json(
+        { error: 'No checkout URL returned from Stripe' },
+        { status: 500 }
+      )
+    }
+
     return NextResponse.json({ url: session.url })
-  } catch (error) {
-    console.error('Stripe checkout error:', error)
+  } catch (error: unknown) {
+    const err = error as Error & { type?: string; code?: string }
+    console.error('Stripe checkout error:', {
+      message: err.message,
+      type: err.type,
+      code: err.code,
+    })
     return NextResponse.json(
-      { error: 'Failed to create checkout session' },
+      { error: `Stripe error: ${err.message}` },
       { status: 500 }
     )
   }
