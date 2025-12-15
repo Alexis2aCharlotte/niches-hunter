@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -10,7 +10,7 @@ interface SessionData {
   customerId: string | null
 }
 
-export default function SuccessPage() {
+function SuccessContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const sessionId = searchParams.get('session_id')
@@ -70,7 +70,7 @@ export default function SuccessPage() {
       setTimeout(() => {
         router.push('/niches')
       }, 2000)
-    } catch (err) {
+    } catch {
       setError('Something went wrong. Please try again.')
       setFormLoading(false)
     }
@@ -251,5 +251,22 @@ export default function SuccessPage() {
         </p>
       </div>
     </div>
+  )
+}
+
+// Loading fallback
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4">
+      <div className="w-8 h-8 border-2 border-[#00ff88] border-t-transparent rounded-full animate-spin" />
+    </div>
+  )
+}
+
+export default function SuccessPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <SuccessContent />
+    </Suspense>
   )
 }
