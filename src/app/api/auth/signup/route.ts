@@ -11,6 +11,8 @@ export async function POST(request: NextRequest) {
   try {
     const { email, password, stripeCustomerId } = await request.json()
 
+    console.log('Signup attempt:', { email, stripeCustomerId })
+
     if (!email || !password) {
       return NextResponse.json(
         { error: 'Email and password are required' },
@@ -89,11 +91,26 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({
+    // Créer la réponse avec le cookie
+    const response = NextResponse.json({
       success: true,
       user: authData.user,
       message: 'Account created successfully',
     })
+
+    // SET LE COOKIE stripe_customer_id pour que les niches soient déverrouillées
+    if (stripeCustomerId) {
+      console.log('Setting cookie for customer:', stripeCustomerId)
+      response.cookies.set('stripe_customer_id', stripeCustomerId, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 60 * 60 * 24 * 365, // 1 an
+        path: '/',
+      })
+    }
+
+    return response
   } catch (error) {
     console.error('Signup error:', error)
     return NextResponse.json(
