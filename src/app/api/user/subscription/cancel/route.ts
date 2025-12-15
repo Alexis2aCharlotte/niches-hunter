@@ -38,7 +38,7 @@ export async function POST() {
     const canceledSubscription = await stripe.subscriptions.update(
       subscription.stripe_subscription_id,
       { cancel_at_period_end: true }
-    )
+    ) as unknown as { current_period_end: number }
 
     // Mettre à jour la DB
     await supabaseAdmin
