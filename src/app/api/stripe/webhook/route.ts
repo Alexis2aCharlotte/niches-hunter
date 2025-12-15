@@ -56,12 +56,14 @@ export async function POST(request: NextRequest) {
         let periodEnd: string | null = null
         
         if (subscriptionId) {
-          const subscriptionDetails = await stripe.subscriptions.retrieve(subscriptionId) as unknown as {
-            current_period_start: number
-            current_period_end: number
-          }
-          periodStart = new Date(subscriptionDetails.current_period_start * 1000).toISOString()
-          periodEnd = new Date(subscriptionDetails.current_period_end * 1000).toISOString()
+          const subResponse = await stripe.subscriptions.retrieve(subscriptionId)
+          const periodStartTs = (subResponse as unknown as Record<string, unknown>).current_period_start as number | undefined
+          const periodEndTs = (subResponse as unknown as Record<string, unknown>).current_period_end as number | undefined
+          
+          if (periodStartTs) periodStart = new Date(periodStartTs * 1000).toISOString()
+          if (periodEndTs) periodEnd = new Date(periodEndTs * 1000).toISOString()
+          
+          console.log('Subscription periods:', { periodStartTs, periodEndTs, periodStart, periodEnd })
         }
 
         // Sauvegarder dans la table subscriptions

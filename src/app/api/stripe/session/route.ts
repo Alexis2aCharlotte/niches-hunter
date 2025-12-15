@@ -28,15 +28,17 @@ export async function GET(request: NextRequest) {
 
     // Récupérer les détails de la subscription si elle existe
     if (subscriptionId) {
-      const subscriptionDetails = await stripe.subscriptions.retrieve(subscriptionId) as unknown as {
-        current_period_start: number
-        current_period_end: number
-      }
+      const subResponse = await stripe.subscriptions.retrieve(subscriptionId)
+      console.log('Raw subscription response:', JSON.stringify(subResponse, null, 2))
       
-      const periodStart = new Date(subscriptionDetails.current_period_start * 1000).toISOString()
-      const periodEnd = new Date(subscriptionDetails.current_period_end * 1000).toISOString()
+      // Accéder aux propriétés de manière sûre
+      const periodStartTs = (subResponse as unknown as Record<string, unknown>).current_period_start as number | undefined
+      const periodEndTs = (subResponse as unknown as Record<string, unknown>).current_period_end as number | undefined
       
-      console.log('Subscription details:', { periodStart, periodEnd })
+      const periodStart = periodStartTs ? new Date(periodStartTs * 1000).toISOString() : new Date().toISOString()
+      const periodEnd = periodEndTs ? new Date(periodEndTs * 1000).toISOString() : null
+      
+      console.log('Subscription details:', { periodStartTs, periodEndTs, periodStart, periodEnd })
       
       // Sauvegarder/mettre à jour dans la DB
       const { data: existingSub, error: selectError } = await supabaseAdmin
