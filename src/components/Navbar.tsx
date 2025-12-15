@@ -10,6 +10,7 @@ interface NavbarProps {
 export default function Navbar({ onSubscribeClick }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   useEffect(() => {
     // Vérifier si l'utilisateur est connecté
@@ -24,6 +25,25 @@ export default function Navbar({ onSubscribeClick }: NavbarProps) {
     }
     checkAuth();
   }, []);
+
+  // Rediriger vers Stripe Checkout
+  const handleGetPro = async () => {
+    setCheckoutLoading(true);
+    try {
+      const response = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nicheId: 'navbar' }),
+      });
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      setCheckoutLoading(false);
+    }
+  };
 
   return (
     <>
@@ -76,9 +96,13 @@ export default function Navbar({ onSubscribeClick }: NavbarProps) {
             </div>
 
             {!isLoggedIn && (
-              <Link href="/niches" className="text-white hover:text-[var(--primary)] transition-colors">
-                Get Pro
-              </Link>
+              <button 
+                onClick={handleGetPro}
+                disabled={checkoutLoading}
+                className="text-white hover:text-[var(--primary)] transition-colors disabled:opacity-50"
+              >
+                {checkoutLoading ? 'Loading...' : 'Get Pro'}
+              </button>
             )}
           </div>
 
@@ -136,9 +160,13 @@ export default function Navbar({ onSubscribeClick }: NavbarProps) {
               About
             </Link>
             {!isLoggedIn && (
-              <Link href="/niches" onClick={() => setIsMobileMenuOpen(false)} className="text-white hover:text-[var(--primary)] transition-colors">
-                Get Pro
-              </Link>
+              <button 
+                onClick={() => { handleGetPro(); setIsMobileMenuOpen(false); }}
+                disabled={checkoutLoading}
+                className="text-white hover:text-[var(--primary)] transition-colors disabled:opacity-50"
+              >
+                {checkoutLoading ? 'Loading...' : 'Get Pro'}
+              </button>
             )}
             <button
               onClick={() => { onSubscribeClick?.(); setIsMobileMenuOpen(false); }}
