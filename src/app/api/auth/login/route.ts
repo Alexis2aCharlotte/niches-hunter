@@ -44,14 +44,16 @@ export async function POST(request: NextRequest) {
     console.log('User authenticated:', authData.user.id)
 
     // Récupérer la subscription - d'abord par user_id
-    let subscription = await supabaseAdmin
+    const { data: subscriptionData } = await supabaseAdmin
       .from('subscriptions')
       .select('stripe_customer_id')
       .eq('user_id', authData.user.id)
       .single()
 
+    let stripeCustomerId = subscriptionData?.stripe_customer_id || null
+
     // Si pas trouvé par user_id, chercher directement dans Stripe par email
-    if (!subscription.data?.stripe_customer_id) {
+    if (!stripeCustomerId) {
       console.log('No subscription found by user_id, searching Stripe by email...')
       
       try {
@@ -100,7 +102,7 @@ export async function POST(request: NextRequest) {
                 })
             }
 
-            subscription = { data: { stripe_customer_id: customerId }, error: null }
+            stripeCustomerId = customerId
           }
         }
       } catch (stripeError) {
@@ -118,9 +120,9 @@ export async function POST(request: NextRequest) {
     })
 
     // Stocker le customer ID dans un cookie si disponible
-    if (subscription.data?.stripe_customer_id) {
-      console.log('Setting cookie for customer:', subscription.data.stripe_customer_id)
-      response.cookies.set('stripe_customer_id', subscription.data.stripe_customer_id, {
+    if (stripeCustomerId) {
+      console.log('Setting cookie for customer:', stripeCustomerId)
+      response.cookies.set('stripe_customer_id', stripeCustomerId, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
