@@ -46,7 +46,7 @@ export const metadata: Metadata = {
       "Free daily intel on untapped iOS App Store opportunities. Discover profitable niches before the competition.",
     images: [
       {
-        url: "https://nicheshunter.app/og-image.png",
+        url: "https://nicheshunter.app/og-image.png?v=2",
         width: 1200,
         height: 630,
         alt: "NICHES HUNTER - Spot Profitable iOS Niches Before Anyone Else",
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     title: "NICHES HUNTER | Hunt Profitable iOS Niches",
     description:
       "Free daily intel on untapped iOS App Store opportunities. Discover profitable niches before the competition.",
-    images: ["https://nicheshunter.app/og-image.png"],
+    images: ["https://nicheshunter.app/og-image.png?v=2"],
   },
   alternates: {
     canonical: "https://nicheshunter.app",
