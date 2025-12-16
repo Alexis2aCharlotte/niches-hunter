@@ -49,8 +49,30 @@ export async function GET() {
       return NextResponse.json({ savedNiches: [] })
     }
 
-    console.log('Fetched saved niches for user:', userId, savedNiches?.length || 0, 'niches')
-    return NextResponse.json({ savedNiches: savedNiches || [] })
+    // Récupérer les détails des niches (titre)
+    if (savedNiches && savedNiches.length > 0) {
+      const nicheIds = savedNiches.map(n => n.niche_id)
+      
+      const { data: nichesData } = await supabaseAdmin
+        .from('niches')
+        .select('display_code, title')
+        .in('display_code', nicheIds)
+
+      // Fusionner les données
+      const enrichedNiches = savedNiches.map(saved => {
+        const nicheDetail = nichesData?.find(n => n.display_code === saved.niche_id)
+        return {
+          ...saved,
+          title: nicheDetail?.title || null
+        }
+      })
+
+      console.log('Fetched saved niches for user:', userId, enrichedNiches.length, 'niches')
+      return NextResponse.json({ savedNiches: enrichedNiches })
+    }
+
+    console.log('Fetched saved niches for user:', userId, '0 niches')
+    return NextResponse.json({ savedNiches: [] })
   } catch (error) {
     console.error('Error:', error)
     return NextResponse.json({ savedNiches: [] })

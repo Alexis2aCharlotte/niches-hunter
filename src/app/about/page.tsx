@@ -37,16 +37,16 @@ export default function AboutPage() {
           {/* Quick Stats */}
           <div className="liquid-card p-8 mb-12">
             <div className="grid grid-cols-3 gap-6">
-              {[
+                {[
                 { value: "40K+", label: "Apps tracked" },
                 { value: "2,100+", label: "Builders" },
                 { value: "12", label: "Markets" },
-              ].map((stat, i) => (
-                <div key={i}>
+                ].map((stat, i) => (
+                  <div key={i}>
                   <div className="text-2xl md:text-3xl font-bold text-[var(--primary)] mb-1">{stat.value}</div>
                   <div className="text-xs text-white/50">{stat.label}</div>
-                </div>
-              ))}
+                  </div>
+                ))}
             </div>
           </div>
 

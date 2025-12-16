@@ -49,12 +49,12 @@ export default function BlogPage() {
             ))}
           </div>
 
-          <Link 
-            href="/"
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-[var(--primary)] text-black font-bold hover:bg-[#00E847] transition-all shadow-[0_0_30px_rgba(0,204,61,0.3)]"
-          >
+                <Link 
+                  href="/"
+                  className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-[var(--primary)] text-black font-bold hover:bg-[#00E847] transition-all shadow-[0_0_30px_rgba(0,204,61,0.3)]"
+                >
             ← Back to Home
-          </Link>
+                </Link>
         </div>
       </section>
 
