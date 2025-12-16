@@ -36,6 +36,7 @@ export default function AccountPage() {
   const [loading, setLoading] = useState(true)
   const [cancelLoading, setCancelLoading] = useState(false)
   const [showCancelConfirm, setShowCancelConfirm] = useState(false)
+  const [showCancelSuccess, setShowCancelSuccess] = useState(false)
 
   useEffect(() => {
     async function fetchUserData() {
@@ -77,6 +78,8 @@ export default function AccountPage() {
       if (data.success) {
         setSubscription(prev => prev ? { ...prev, cancelAtPeriodEnd: true } : null)
         setShowCancelConfirm(false)
+        setShowCancelSuccess(true)
+        setTimeout(() => setShowCancelSuccess(false), 5000)
       }
     } catch (error) {
       console.error('Error canceling subscription:', error)
@@ -344,6 +347,19 @@ export default function AccountPage() {
           </LiquidCard>
         </div>
       </section>
+
+      {/* Success Message */}
+      {showCancelSuccess && (
+        <div className="fixed top-6 right-6 z-50 animate-slide-up">
+          <div className="liquid-card p-4 flex items-center gap-3 bg-green-500/10 border-green-500/30">
+            <span className="text-2xl">✓</span>
+            <div>
+              <div className="font-bold text-green-400">Subscription Canceled</div>
+              <div className="text-sm text-white/60">You'll keep access until the end of your billing period</div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Cancel Confirmation Modal */}
       {showCancelConfirm && (
