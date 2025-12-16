@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.86.2",
+    "@tailwindcss/typography": "^0.5.19",
     "@types/node": "^22.10.1",
     "@types/react": "^19.0.1",
     "@vercel/analytics": "^1.6.1",
