@@ -45,6 +45,7 @@ export async function GET() {
       subscription: {
         id: subscription.id,
         status: subscription.status,
+        currentPeriodStart: subscription.current_period_start,
         currentPeriodEnd: subscription.current_period_end,
         cancelAtPeriodEnd: subscription.cancel_at_period_end,
       },

@@ -68,6 +68,10 @@ export default function Navbar({ onSubscribeClick }: NavbarProps) {
               </Link>
             )}
 
+            <Link href="/niches" className="text-white font-bold hover:text-[var(--primary)] transition-colors">
+              Niche Ideas
+            </Link>
+
             {/* Resources Dropdown */}
             <div className="relative group">
               <button className="flex items-center gap-2 hover:text-[var(--primary)] transition-colors">
@@ -79,9 +83,6 @@ export default function Navbar({ onSubscribeClick }: NavbarProps) {
                 <div className="px-3 py-2">
                   <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest px-2">Explore</span>
                 </div>
-                <Link href="/niches" className="block mx-2 px-3 py-2.5 rounded-xl hover:bg-[var(--primary)]/10 text-white/80 hover:text-white transition-all">
-                  <div className="text-sm font-semibold">Niche Ideas</div>
-                </Link>
                 <Link href="/blog" className="block mx-2 px-3 py-2.5 rounded-xl hover:bg-[var(--primary)]/10 text-white/80 hover:text-white transition-all">
                   <div className="text-sm font-semibold">Blog</div>
                 </Link>

@@ -74,7 +74,7 @@ function NicheCard({ niche, index, isUnlocked }: { niche: Niche; index: number; 
                 {niche.category}
               </span>
             </div>
-            <h3 className="text-lg font-bold text-white group-hover:text-[var(--primary)] transition-colors line-clamp-2">
+            <h3 className={`text-lg font-bold text-white group-hover:text-[var(--primary)] transition-colors line-clamp-2 ${!isUnlocked ? 'blur-[6px] select-none' : ''}`}>
               {niche.title}
             </h3>
           </div>
@@ -87,26 +87,27 @@ function NicheCard({ niche, index, isUnlocked }: { niche: Niche; index: number; 
           </div>
         </div>
 
+        {/* Overlay cadenas - centré sur toute la carte */}
+        {!isUnlocked && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center">
+            <div className="text-center">
+              {checkoutLoading ? (
+                <>
+                  <div className="w-8 h-8 border-2 border-[var(--primary)] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+                  <span className="text-xs font-bold text-[var(--primary)]">Redirecting...</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-4xl mb-2 block">🔒</span>
+                  <span className="text-xs font-bold text-[var(--primary)]">Get Pro</span>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Contenu */}
         <div className="relative flex-grow flex flex-col">
-          {/* Overlay cadenas - seulement si locked */}
-          {!isUnlocked && (
-            <div className="absolute inset-0 z-10 flex items-center justify-center">
-              <div className="text-center">
-                {checkoutLoading ? (
-                  <>
-                    <div className="w-8 h-8 border-2 border-[var(--primary)] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-                    <span className="text-xs font-bold text-[var(--primary)]">Redirecting...</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="text-4xl mb-2 block">🔒</span>
-                    <span className="text-xs font-bold text-[var(--primary)]">Get Pro</span>
-                  </>
-                )}
-              </div>
-            </div>
-          )}
 
           {/* Contenu - flouté si locked */}
           <div className={`flex-grow flex flex-col ${!isUnlocked ? 'blur-[6px] select-none pointer-events-none' : ''}`}>

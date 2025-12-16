@@ -15,6 +15,7 @@ interface User {
 interface Subscription {
   id: string
   status: string
+  currentPeriodStart: string | null
   currentPeriodEnd: string | null
   cancelAtPeriodEnd: boolean
 }
@@ -178,8 +179,7 @@ export default function AccountPage() {
             
             {/* Subscription Card */}
             <LiquidCard className="p-8">
-              <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
-                <span className="w-10 h-10 rounded-xl bg-[var(--primary)]/20 flex items-center justify-center">💳</span>
+              <h2 className="text-xl font-bold mb-6">
                 Subscription
               </h2>
 
@@ -200,10 +200,23 @@ export default function AccountPage() {
                   <span className="text-white font-semibold">Pro Monthly</span>
                 </div>
 
+                {subscription?.currentPeriodStart && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/50 text-sm">Payment date</span>
+                    <span className="text-white font-mono text-sm">
+                      {new Date(subscription.currentPeriodStart).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}
+                    </span>
+                  </div>
+                )}
+
                 {subscription?.currentPeriodEnd && (
                   <div className="flex justify-between items-center">
                     <span className="text-white/50 text-sm">
-                      {subscription.cancelAtPeriodEnd ? 'Access until' : 'Next billing'}
+                      {subscription.cancelAtPeriodEnd ? 'Access until' : 'Renewal date'}
                     </span>
                     <span className="text-white font-mono text-sm">
                       {new Date(subscription.currentPeriodEnd).toLocaleDateString('en-US', {
@@ -234,8 +247,7 @@ export default function AccountPage() {
 
             {/* Account Actions */}
             <LiquidCard className="p-8">
-              <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
-                <span className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">⚙️</span>
+              <h2 className="text-xl font-bold mb-6">
                 Quick Actions
               </h2>
 
