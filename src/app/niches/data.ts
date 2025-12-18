@@ -158,45 +158,33 @@ export async function fetchAllNiches(): Promise<{ niches: Niche[], hasActiveSubs
 }
 
 /**
- * Récupère une niche par son display_code depuis Supabase
+ * Récupère une niche par son display_code depuis l'API sécurisée
  */
-export async function fetchNicheByCode(displayCode: string): Promise<Niche | null> {
-  const { data, error } = await supabase
-    .from('niches')
-    .select('*')
-    .eq('display_code', displayCode)
-    .single();
+export async function fetchNicheByCode(displayCode: string): Promise<{ niche: Niche | null, isLocked: boolean }> {
+  try {
+    const response = await fetch(`/api/niches/${displayCode}`, {
+      method: 'GET',
+      credentials: 'include',
+    });
 
-  if (error) {
+    if (!response.ok) {
+      console.error('Error fetching niche:', response.statusText);
+      return { niche: null, isLocked: false };
+    }
+
+    const data = await response.json();
+    
+    if (!data.niche) {
+      return { niche: null, isLocked: false };
+    }
+
+    return { 
+      niche: transformSupabaseToNiche(data.niche), 
+      isLocked: data.isLocked 
+    };
+  } catch (error) {
     console.error('Error fetching niche:', error);
-    return null;
+    return { niche: null, isLocked: false };
   }
-
-  if (!data) {
-    return null;
-  }
-
-  return transformSupabaseToNiche(data);
 }
 
-/**
- * Récupère les niches par catégorie
- */
-export async function fetchNichesByCategory(category: AppleCategory): Promise<Niche[]> {
-  if (category === 'All') {
-    return fetchAllNiches();
-  }
-
-  const { data, error } = await supabase
-    .from('niches')
-    .select('*')
-    .eq('category', category)
-    .order('score', { ascending: false });
-
-  if (error) {
-    console.error('Error fetching niches by category:', error);
-    return [];
-  }
-
-  return (data || []).map(transformSupabaseToNiche);
-}

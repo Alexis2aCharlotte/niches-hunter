@@ -7,14 +7,12 @@ import Navbar from "@/components/Navbar";
 import LiquidCard from "@/components/LiquidCard";
 import { fetchNicheByCode, type Niche, type TrendingApp } from "../data";
 
-// Niches gratuites (même liste que dans page.tsx)
-const FREE_NICHES = ["0030", "0024"];
-
 export default function NicheDetailPage() {
   const params = useParams();
   const nicheCode = params.id as string;
   
   const [niche, setNiche] = useState<Niche | null>(null);
+  const [isLocked, setIsLocked] = useState(false);
   const [loading, setLoading] = useState(true);
   const [selectedApp, setSelectedApp] = useState<TrendingApp | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'apps' | 'strategy'>('overview');
@@ -78,11 +76,8 @@ export default function NicheDetailPage() {
     }
   };
 
-  // Déterminer si la niche est verrouillée
-  // Pendant le chargement, considérer verrouillée sauf si gratuite
-  const isNicheLocked = subscriptionChecked 
-    ? (!FREE_NICHES.includes(nicheCode) && !hasSubscription)
-    : !FREE_NICHES.includes(nicheCode);
+  // Déterminer si la niche est verrouillée (vient de l'API)
+  const isNicheLocked = isLocked;
 
   // Fonction pour rediriger vers Stripe Checkout
   const handleUnlock = async () => {
@@ -106,8 +101,9 @@ export default function NicheDetailPage() {
   useEffect(() => {
     async function loadNiche() {
       setLoading(true);
-      const data = await fetchNicheByCode(nicheCode);
-      setNiche(data);
+      const { niche: nicheData, isLocked: locked } = await fetchNicheByCode(nicheCode);
+      setNiche(nicheData);
+      setIsLocked(locked);
       setLoading(false);
     }
     loadNiche();
