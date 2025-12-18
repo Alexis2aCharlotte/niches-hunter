@@ -34,7 +34,7 @@ export default function LoginPage() {
       }
 
       // Rediriger vers le compte ou les niches
-      router.push('/account');
+      router.push('/niches');
     } catch (err) {
       setError('Something went wrong. Please try again.');
       setIsLoading(false);
