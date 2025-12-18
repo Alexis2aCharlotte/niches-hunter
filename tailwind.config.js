@@ -24,6 +24,7 @@ module.exports = {
         gradient: "gradient 8s ease infinite",
         "slide-up": "slide-up 0.5s ease-out",
         "fade-in": "fade-in 0.8s ease-out",
+        "bounce-slow": "bounce-slow 2s ease-in-out infinite",
       },
       keyframes: {
         "pulse-glow": {
@@ -45,6 +46,10 @@ module.exports = {
         "fade-in": {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
+        },
+        "bounce-slow": {
+          "0%, 100%": { transform: "translateX(-50%) translateY(0)" },
+          "50%": { transform: "translateX(-50%) translateY(-8px)" },
         },
       },
     },

@@ -35,6 +35,7 @@ export default function AccountPage() {
   const [savedNiches, setSavedNiches] = useState<SavedNiche[]>([])
   const [loading, setLoading] = useState(true)
   const [cancelLoading, setCancelLoading] = useState(false)
+  const [portalLoading, setPortalLoading] = useState(false)
   const [showCancelConfirm, setShowCancelConfirm] = useState(false)
   const [showCancelSuccess, setShowCancelSuccess] = useState(false)
 
@@ -85,6 +86,26 @@ export default function AccountPage() {
       console.error('Error canceling subscription:', error)
     } finally {
       setCancelLoading(false)
+    }
+  }
+
+  const handleOpenPortal = async () => {
+    setPortalLoading(true)
+    try {
+      const res = await fetch('/api/stripe/portal', {
+        method: 'POST',
+      })
+      const data = await res.json()
+
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        console.error('No portal URL returned:', data.error)
+      }
+    } catch (error) {
+      console.error('Error opening portal:', error)
+    } finally {
+      setPortalLoading(false)
     }
   }
 
@@ -231,15 +252,40 @@ export default function AccountPage() {
                   </div>
                 )}
 
-                <div className="pt-5 border-t border-white/10">
+                <div className="pt-5 border-t border-white/10 space-y-3">
+                  {/* Bouton Manage Subscription - Portail Stripe */}
+                  <button
+                    onClick={handleOpenPortal}
+                    disabled={portalLoading}
+                    className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[var(--primary)]/10 text-[var(--primary)] text-sm font-semibold hover:bg-[var(--primary)]/20 transition-all disabled:opacity-50"
+                  >
+                    {portalLoading ? (
+                      <>
+                        <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                        </svg>
+                        Opening...
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Manage Subscription
+                      </>
+                    )}
+                  </button>
+
                   {subscription?.cancelAtPeriodEnd ? (
-                    <p className="text-xs text-white/40 leading-relaxed">
+                    <p className="text-xs text-white/40 leading-relaxed text-center">
                       Your subscription will end on the date above. You'll keep access until then.
                     </p>
                   ) : (
                     <button
                       onClick={() => setShowCancelConfirm(true)}
-                      className="text-red-400/70 hover:text-red-400 text-xs font-medium transition-colors"
+                      className="w-full text-red-400/70 hover:text-red-400 text-xs font-medium transition-colors text-center"
                     >
                       Cancel subscription →
                     </button>

@@ -1,4 +1,3 @@
-import { supabase } from '@/lib/supabase';
 import type { NicheRow } from '@/lib/database.types';
 
 // ─────────────────────────────────────────────────────────────────
@@ -131,20 +130,31 @@ function transformSupabaseToNiche(row: NicheRow): Niche {
 // ─────────────────────────────────────────────────────────────────
 
 /**
- * Récupère toutes les niches depuis Supabase
+ * Récupère toutes les niches depuis l'API sécurisée
+ * L'API masque les données sensibles pour les niches verrouillées
  */
-export async function fetchAllNiches(): Promise<Niche[]> {
-  const { data, error } = await supabase
-    .from('niches')
-    .select('*')
-    .order('published_at', { ascending: false, nullsFirst: false });
+export async function fetchAllNiches(): Promise<{ niches: Niche[], hasActiveSubscription: boolean }> {
+  try {
+    const response = await fetch('/api/niches', {
+      method: 'GET',
+      credentials: 'include', // Important pour envoyer les cookies
+    });
 
-  if (error) {
+    if (!response.ok) {
+      console.error('Error fetching niches:', response.statusText);
+      return { niches: [], hasActiveSubscription: false };
+    }
+
+    const data = await response.json();
+    
+    return {
+      niches: (data.niches || []).map(transformSupabaseToNiche),
+      hasActiveSubscription: data.hasActiveSubscription || false,
+    };
+  } catch (error) {
     console.error('Error fetching niches:', error);
-    return [];
+    return { niches: [], hasActiveSubscription: false };
   }
-
-  return (data || []).map(transformSupabaseToNiche);
 }
 
 /**

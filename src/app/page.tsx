@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 
 // --- Liquid Glass Card Component ---
@@ -9,13 +10,17 @@ function LiquidCard({
   className = "",
   style = {},
   animate = "",
-  enableReveal = true
+  enableReveal = true,
+  onClick,
+  clickableOnMobile = false
 }: {
   children: React.ReactNode,
   className?: string,
   style?: any,
   animate?: string,
-  enableReveal?: boolean
+  enableReveal?: boolean,
+  onClick?: () => void,
+  clickableOnMobile?: boolean
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -33,7 +38,8 @@ function LiquidCard({
     <div
       ref={cardRef}
       onMouseMove={handleMouseMove}
-      className={`liquid-card ${animate} ${enableReveal ? 'reveal-base' : ''} ${className}`}
+      onClick={onClick}
+      className={`liquid-card ${animate} ${enableReveal ? 'reveal-base' : ''} ${clickableOnMobile ? 'lg:cursor-default cursor-pointer' : ''} ${className}`}
       style={style}
     >
       {children}
@@ -59,6 +65,7 @@ function useScrollReveal() {
 }
 
 export default function Home() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [modalEmail, setModalEmail] = useState("");
   const [activeBlip, setActiveBlip] = useState(0);
@@ -78,6 +85,13 @@ export default function Home() {
 
   // Trigger Scroll Animations
   useScrollReveal();
+
+  // Redirection vers /niches sur mobile uniquement
+  const handleNicheCardClick = () => {
+    if (window.innerWidth < 1024) { // lg breakpoint
+      router.push('/niches');
+    }
+  };
 
   const niches = [
     { name: "Fitness AI", x: 25, y: 30 },
@@ -324,13 +338,17 @@ export default function Home() {
 
           {/* Left Content */}
           <div className="text-center lg:text-left z-10">
-            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-[var(--primary)]/20 bg-[var(--primary)]/10 mb-8 backdrop-blur-md animate-float">
+            <a 
+              href="/niches"
+              className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full border border-[var(--primary)]/30 bg-[var(--primary)]/10 mb-8 backdrop-blur-md animate-float hover:bg-[var(--primary)]/20 hover:border-[var(--primary)]/50 transition-all duration-300 shadow-[0_0_20px_rgba(0,204,61,0.15)] hover:shadow-[0_0_30px_rgba(0,204,61,0.3)] group"
+            >
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--primary)] opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--primary)]"></span>
               </span>
-              <span className="text-xs font-bold text-[var(--primary)] tracking-wide uppercase">🎯 12 Niches Discovered Today</span>
-            </div>
+              <span className="text-xs font-medium text-[var(--primary)] tracking-wide uppercase group-hover:text-white transition-colors">Browse all niches ideas available</span>
+              <span className="text-[var(--primary)] group-hover:translate-x-1 transition-transform">→</span>
+            </a>
 
             <h1 className="text-5xl md:text-7xl font-bold leading-[1.1] mb-8 tracking-tighter animate-title-enter">
               Spot Profitable <span className="text-flashy-green">iOS Niches</span> Before Anyone Else
@@ -371,6 +389,7 @@ export default function Home() {
               <span className="flex items-center gap-2"><span className="text-[var(--primary)]">●</span> $2.4M revenue tracked</span>
               <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[var(--primary)] animate-pulse" /> Updated live</span>
             </div>
+
           </div>
 
           {/* Right Visual - PRO FLAT RADAR (No Status Cards) */}
@@ -440,6 +459,8 @@ export default function Home() {
               key={activeFocusIndex} // Animation key
               animate="animate-flip-in"
               className="col-span-1 lg:col-span-2 p-6 sm:p-8 lg:p-10 group deep-relief flex flex-col justify-between h-full"
+              onClick={handleNicheCardClick}
+              clickableOnMobile={true}
             >
                 <div>
                   <div className="absolute top-0 right-0 p-40 bg-[var(--primary)]/10 blur-[90px] rounded-full group-hover:bg-[var(--primary)]/20 transition-all duration-700 pointer-events-none" />
@@ -490,7 +511,12 @@ export default function Home() {
             </LiquidCard>
 
             {/* Trending List / Detail View Switcher */}
-            <LiquidCard animate="reveal-right" className="col-span-1 p-6 sm:p-8 deep-relief overflow-hidden relative flex flex-col h-full">
+            <LiquidCard 
+              animate="reveal-right" 
+              className="col-span-1 p-6 sm:p-8 deep-relief overflow-hidden relative flex flex-col h-full"
+              onClick={handleNicheCardClick}
+              clickableOnMobile={true}
+            >
 
                 {selectedApp ? (
                   // --- DETAIL VIEW ---
@@ -659,7 +685,6 @@ export default function Home() {
       <footer className="py-12 px-6 border-t border-white/5 reveal-base">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-2 opacity-50">
-            <div className="w-8 h-8 rounded bg-gradient-to-br from-[var(--primary)] to-[var(--primary)]" />
             <span className="font-bold text-sm tracking-widest">NICHES HUNTER</span>
           </div>
           <div className="flex gap-8 text-sm text-[rgba(255,255,255,0.4)]">
@@ -668,7 +693,7 @@ export default function Home() {
             <a href="#" className="hover:text-white transition-colors">Twitter</a>
           </div>
           <div className="text-xs text-[rgba(255,255,255,0.2)]">
-            © 2024 Niches Hunter. All rights reserved.
+            © 2025 Niches Hunter. All rights reserved.
           </div>
         </div>
       </footer>

@@ -160,28 +160,14 @@ export default function NichesPage() {
   const [hasSubscription, setHasSubscription] = useState(false);
   const [subscriptionChecked, setSubscriptionChecked] = useState(false);
 
-  // Vérifier si l'utilisateur a un abonnement actif
-  useEffect(() => {
-    async function checkSubscription() {
-      try {
-        const response = await fetch('/api/stripe/check-subscription');
-        const data = await response.json();
-        setHasSubscription(data.hasActiveSubscription);
-      } catch (error) {
-        console.error('Error checking subscription:', error);
-      } finally {
-        setSubscriptionChecked(true);
-      }
-    }
-    checkSubscription();
-  }, []);
-
-  // Charger les niches depuis Supabase
+  // Charger les niches depuis l'API sécurisée (inclut la vérification d'abonnement)
   useEffect(() => {
     async function loadNiches() {
       setLoading(true);
-      const data = await fetchAllNiches();
+      const { niches: data, hasActiveSubscription } = await fetchAllNiches();
       setNiches(data);
+      setHasSubscription(hasActiveSubscription);
+      setSubscriptionChecked(true);
       setLoading(false);
     }
     loadNiches();
