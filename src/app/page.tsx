@@ -340,14 +340,14 @@ export default function Home() {
           <div className="text-center lg:text-left z-10">
             <a 
               href="/niches"
-              className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full border border-[var(--primary)]/30 bg-[var(--primary)]/10 mb-8 backdrop-blur-md animate-float hover:bg-[var(--primary)]/20 hover:border-[var(--primary)]/50 transition-all duration-300 shadow-[0_0_20px_rgba(0,204,61,0.15)] hover:shadow-[0_0_30px_rgba(0,204,61,0.3)] group"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--primary)]/30 bg-[var(--primary)]/10 mb-8 backdrop-blur-md animate-float hover:bg-[var(--primary)]/20 hover:border-[var(--primary)]/50 transition-all duration-300 shadow-[0_0_15px_rgba(0,204,61,0.15)] hover:shadow-[0_0_25px_rgba(0,204,61,0.25)] group"
             >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--primary)] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--primary)]"></span>
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-500"></span>
               </span>
-              <span className="text-xs font-medium text-[var(--primary)] tracking-wide uppercase group-hover:text-white transition-colors">Browse all niches ideas available</span>
-              <span className="text-[var(--primary)] group-hover:translate-x-1 transition-transform">→</span>
+              <span className="text-[10px] font-medium text-[var(--primary)] tracking-wide uppercase group-hover:text-white transition-colors">Browse all niches ideas available</span>
+              <span className="text-[var(--primary)] text-xs group-hover:translate-x-1 transition-transform">→</span>
             </a>
 
             <h1 className="text-5xl md:text-7xl font-bold leading-[1.1] mb-8 tracking-tighter animate-title-enter">
