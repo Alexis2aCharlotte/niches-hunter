@@ -105,7 +105,9 @@ export default function RevenueEstimatorPage() {
   useEffect(() => {
     async function checkAuth() {
       try {
-        const response = await fetch('/api/auth/me');
+        const response = await fetch('/api/auth/me', {
+          credentials: 'include',
+        });
         const data = await response.json();
         setIsLoggedIn(!!data.user);
       } catch {
@@ -452,7 +454,7 @@ export default function RevenueEstimatorPage() {
 
                 {/* Email (only if not logged in) + Calculate Button */}
                 <div className="flex flex-col sm:flex-row gap-3">
-                  {!isLoggedIn && (
+                  {isLoggedIn === false && (
                     <input
                       type="email"
                       value={email}
@@ -463,14 +465,14 @@ export default function RevenueEstimatorPage() {
                   )}
                   <button
                     onClick={handleCalculate}
-                    disabled={!isFormValid}
-                    className={`${isLoggedIn ? 'w-full' : ''} px-8 py-4 rounded-xl font-bold text-lg transition-all whitespace-nowrap ${
-                      isFormValid
+                    disabled={!isFormValid || isLoggedIn === null}
+                    className={`${isLoggedIn === true ? 'w-full' : ''} px-8 py-4 rounded-xl font-bold text-lg transition-all whitespace-nowrap ${
+                      isFormValid && isLoggedIn !== null
                         ? 'bg-[var(--primary)] text-black hover:bg-[#00E847] shadow-[0_0_30px_rgba(0,204,61,0.3)] hover:shadow-[0_0_50px_rgba(0,204,61,0.5)]'
                         : 'bg-white/10 text-white/30 cursor-not-allowed'
                     }`}
                   >
-                    {isLoggedIn ? 'Generate Estimate →' : 'Calculate →'}
+                    {isLoggedIn === null ? 'Loading...' : isLoggedIn ? 'Generate Estimate →' : 'Calculate →'}
                   </button>
                 </div>
 

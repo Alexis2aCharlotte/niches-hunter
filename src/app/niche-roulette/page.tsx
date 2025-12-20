@@ -73,7 +73,9 @@ export default function NicheRoulettePage() {
   useEffect(() => {
     async function checkAuth() {
       try {
-        const response = await fetch('/api/auth/me');
+        const response = await fetch('/api/auth/me', {
+          credentials: 'include',
+        });
         const data = await response.json();
         setIsLoggedIn(!!data.user);
       } catch {
@@ -319,7 +321,7 @@ export default function NicheRoulettePage() {
                     </div>
 
                     {/* HIDDEN CONTENT - Blurred teaser (only for non-logged users) */}
-                    {!isLoggedIn && (
+                    {isLoggedIn === false && (
                       <div className="relative mb-8 p-6 rounded-xl bg-black/40 border border-white/10 overflow-hidden">
                         {/* Blur overlay */}
                         <div className="absolute inset-0 backdrop-blur-md bg-black/40 z-10 flex flex-col items-center justify-center">
@@ -357,7 +359,7 @@ export default function NicheRoulettePage() {
                     </div>
 
                     {/* Email Capture - Only for non-logged users */}
-                    {!isLoggedIn && (
+                    {isLoggedIn === false && (
                       <div className="max-w-lg mx-auto p-8 rounded-2xl bg-[var(--primary)]/5 border border-[var(--primary)]/20">
                         <div className="text-center mb-6">
                           <span className="text-4xl mb-3 block">🔓</span>
