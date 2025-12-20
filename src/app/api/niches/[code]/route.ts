@@ -13,23 +13,39 @@ const supabaseAdmin = createClient(
 const FREE_NICHES = ["0030", "0024"]
 
 // Masquer les données sensibles d'une niche verrouillée
+// MAIS garder le titre visible pour donner envie
 function maskLockedNiche(niche: any) {
   return {
     id: niche.id,
     display_code: niche.display_code,
     category: niche.category,
     score: niche.score,
-    title: "🔒 Premium Niche",
-    tags: niche.tags?.slice(0, 2) || [],
+    title: niche.title, // Titre VISIBLE pour attirer
+    tags: niche.tags?.slice(0, 3) || [],
+    // Stats basiques visibles
+    stats: {
+      competition: niche.stats?.competition || "Medium",
+      revenue: "💎 Pro",
+      difficulty: niche.stats?.difficulty || "",
+      timeToMVP: "",
+      potential: "",
+      market: "",
+    },
+    // Reste masqué
     opportunity: "Upgrade to Pro to unlock this niche opportunity...",
     gap: "",
     move: "",
+    market_analysis: null,
+    key_learnings: [],
+    improvements: [],
+    marketing_strategies: [],
+    monetization: null,
+    tech_stack: [],
+    risks: [],
     trending: [],
-    revenue: "💎 Pro",
-    competition: niche.competition || "Medium",
-    best_market: "🔒",
     published_at: niche.published_at,
-    isLocked: true
+    locked: true,
+    has_premium: niche.has_premium,
   }
 }
 

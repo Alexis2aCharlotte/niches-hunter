@@ -27,11 +27,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+
     // Créer l'utilisateur avec Supabase Auth
     const { data: authData, error: authError } = await supabaseAdmin.auth.signUp({
       email,
       password,
       options: {
+        emailRedirectTo: `${appUrl}/login`,
         data: {
           stripe_customer_id: stripeCustomerId,
         },

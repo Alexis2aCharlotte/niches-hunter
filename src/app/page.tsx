@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Navbar from "@/components/Navbar";
 
 // --- Liquid Glass Card Component ---
@@ -72,7 +73,6 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showSubscribeModal, setShowSubscribeModal] = useState(false);
-
 
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
@@ -624,6 +624,44 @@ export default function Home() {
                 onClick={() => setActiveFocusIndex(i)}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${activeFocusIndex === i ? 'bg-[var(--primary)] scale-125 shadow-[0_0_10px_#00CC3D]' : 'bg-white/20 hover:bg-white/40'}`}
               />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Hunter Toolkit Section */}
+      <section id="toolkit" className="py-24 px-6 relative overflow-hidden">
+        <div className="max-w-6xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-16 reveal-base reveal-up">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--primary)]/30 bg-[var(--primary)]/10 mb-6 backdrop-blur-md">
+              <span className="text-sm font-medium text-[var(--primary)] tracking-wide uppercase">Free Tools</span>
+            </div>
+            <h2 className="text-4xl md:text-6xl font-bold mb-6">
+              Test Our <span className="text-flashy-green">Hunter Toolkit</span>
+            </h2>
+            <p className="text-xl text-[rgba(255,255,255,0.6)] max-w-2xl mx-auto">
+              Free tools to help you validate and find your next profitable niche idea.
+            </p>
+          </div>
+
+          {/* Tools Grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { icon: "💡", title: "Niche Ideas", desc: "Browse our curated database of validated niche ideas with revenue potential.", href: "/niches" },
+              { icon: "🎰", title: "Niche Roulette", desc: "Can't decide? Let fate pick your next startup idea from our database.", href: "/niche-roulette" },
+              { icon: "💰", title: "Revenue Estimator", desc: "Estimate your potential MRR based on your niche and business model.", href: "/revenue-estimator" },
+              { icon: "✅", title: "Niche Validator", desc: "Validate your niche idea with AI. Get a score and recommendations.", href: "/niche-validator" },
+            ].map((tool, i) => (
+              <Link key={i} href={tool.href} className="group">
+                <LiquidCard animate="reveal-up" className="p-8 group cursor-pointer" style={{ transitionDelay: `${i * 100}ms` }}>
+                  <div className="w-14 h-14 rounded-2xl bg-[var(--primary)]/10 text-[var(--primary)] flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform duration-500 border border-[var(--primary)]/20 shadow-[0_0_30px_rgba(0,204,61,0.1)]">
+                    {tool.icon}
+                  </div>
+                  <h3 className="text-xl font-bold mb-3 text-white">{tool.title}</h3>
+                  <p className="text-sm text-[rgba(255,255,255,0.5)] leading-relaxed group-hover:text-[rgba(255,255,255,0.8)] transition-colors">{tool.desc}</p>
+                </LiquidCard>
+              </Link>
             ))}
           </div>
         </div>

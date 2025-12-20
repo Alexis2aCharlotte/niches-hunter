@@ -68,9 +68,46 @@ export default function Navbar({ onSubscribeClick }: NavbarProps) {
               </Link>
             )}
 
-            <Link href="/niches" className="text-white font-bold hover:text-[var(--primary)] transition-colors">
-              Niche Ideas
-            </Link>
+            {/* Niches Toolkit Dropdown */}
+            <div className="relative group">
+              <button className="flex items-center gap-2 text-white font-bold hover:text-[var(--primary)] transition-colors">
+                Niches Toolkit
+                <svg className="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 group-hover:rotate-180 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+              </button>
+              {/* Dropdown Menu */}
+              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-64 py-2 rounded-2xl bg-[#111111] border border-white/[0.08] shadow-[0_20px_50px_rgba(0,0,0,0.8)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-3 group-hover:translate-y-0">
+                <div className="px-3 py-2">
+                  <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest px-2">Free Tools</span>
+                </div>
+                <Link href="/niches" className="flex items-center gap-3 mx-2 px-3 py-2.5 rounded-xl hover:bg-[var(--primary)]/10 text-white/80 hover:text-white transition-all group/item">
+                  <div>
+                    <div className="text-sm font-semibold">Niche Ideas</div>
+                    <div className="text-[10px] text-white/40">Browse validated niches</div>
+                  </div>
+                </Link>
+                <Link href="/niche-roulette" className="flex items-center gap-3 mx-2 px-3 py-2.5 rounded-xl hover:bg-[var(--primary)]/10 text-white/80 hover:text-white transition-all group/item">
+                  <div>
+                    <div className="text-sm font-semibold">Niche Roulette</div>
+                    <div className="text-[10px] text-white/40">Let fate pick your niche</div>
+                  </div>
+                </Link>
+                <Link href="/revenue-estimator" className="flex items-center gap-3 mx-2 px-3 py-2.5 rounded-xl hover:bg-[var(--primary)]/10 text-white/80 hover:text-white transition-all group/item">
+                  <div>
+                    <div className="text-sm font-semibold">Revenue Estimator</div>
+                    <div className="text-[10px] text-white/40">Estimate your MRR potential</div>
+                  </div>
+                </Link>
+                <Link href="/niche-validator" className="flex items-center gap-3 mx-2 px-3 py-2.5 rounded-xl hover:bg-[var(--primary)]/10 text-white/80 hover:text-white transition-all group/item">
+                  <div>
+                    <div className="text-sm font-semibold flex items-center gap-2">
+                      Niche Validator
+                      <span className="text-[8px] px-1.5 py-0.5 rounded bg-[var(--primary)]/20 text-[var(--primary)] font-bold">PRO</span>
+                    </div>
+                    <div className="text-[10px] text-white/40">Validate your idea with AI</div>
+                  </div>
+                </Link>
+              </div>
+            </div>
 
             {/* Resources Dropdown */}
             <div className="relative group">
@@ -151,9 +188,25 @@ export default function Navbar({ onSubscribeClick }: NavbarProps) {
                 Login
               </Link>
             )}
-            <Link href="/niches" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[var(--primary)] transition-colors">
-              Niche Ideas
-            </Link>
+            {/* Niches Toolkit Section */}
+            <div className="text-center">
+              <div className="text-xs text-white/30 uppercase tracking-widest mb-4">Niches Toolkit</div>
+              <div className="flex flex-col gap-4">
+                <Link href="/niches" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[var(--primary)] transition-colors">
+                  Niche Ideas
+                </Link>
+                <Link href="/niche-roulette" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[var(--primary)] transition-colors">
+                  Niche Roulette
+                </Link>
+                <Link href="/revenue-estimator" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[var(--primary)] transition-colors">
+                  Revenue Estimator
+                </Link>
+                <Link href="/niche-validator" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[var(--primary)] transition-colors flex items-center justify-center gap-2 text-lg">
+                  Niche Validator <span className="text-[10px] px-2 py-0.5 rounded bg-[var(--primary)]/20 text-[var(--primary)]">PRO</span>
+                </Link>
+              </div>
+            </div>
+            <div className="w-24 h-px bg-white/10 my-2"></div>
             <Link href="/blog" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[var(--primary)] transition-colors">
               Blog
             </Link>

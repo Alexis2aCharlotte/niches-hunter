@@ -158,6 +158,8 @@ body {
       rgba(255, 255, 255, 0.15),
       transparent 40%);
   opacity: 0;
+  pointer-events: none;
+  z-index: 1;
   transition: opacity 0.3s;
   pointer-events: none;
   z-index: 10;

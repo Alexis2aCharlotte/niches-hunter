@@ -139,6 +139,7 @@ export default function NicheDetailPage() {
   }
 
   // Si la niche est lockée (pas gratuite ET pas d'abonnement)
+  // Afficher le faux contenu flouté avec CTA Get Pro
   if (isNicheLocked) {
     return (
       <main className="min-h-screen relative overflow-hidden text-white font-sans selection:bg-[#00CC3D] selection:text-black">
@@ -147,57 +148,206 @@ export default function NicheDetailPage() {
         {/* Background */}
         <div className="fixed inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/3 w-[800px] h-[800px] bg-[var(--primary)]/3 blur-[200px] rounded-full" />
+          <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-500/5 blur-[150px] rounded-full" />
         </div>
 
         <div className="relative pt-32 pb-20 px-6">
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-5xl mx-auto">
             {/* Back Link */}
             <Link href="/niches" className="inline-flex items-center gap-2 text-white/50 hover:text-white mb-8 transition-colors">
               ← Back to Niches
             </Link>
 
-            <LiquidCard className="p-12 text-center">
-              <div className="text-6xl mb-6">🔒</div>
-              <h1 className="text-3xl font-bold text-white mb-4">{niche.title}</h1>
-              <p className="text-white/50 mb-8 max-w-md mx-auto">
-                This complete niche analysis is locked. Unlock to access the full market study.
-              </p>
-              
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 max-w-2xl mx-auto">
-                {[
-                  { icon: "📊", label: "Market Analysis" },
-                  { icon: "📈", label: "5+ Trending Apps" },
-                  { icon: "🎯", label: "Marketing Strategy" },
-                  { icon: "💰", label: "Revenue Models" },
-                ].map((item, i) => (
-                  <div key={i} className="p-4 rounded-xl bg-white/5 border border-white/10">
-                    <div className="text-2xl mb-2">{item.icon}</div>
-                    <div className="text-xs text-white/60">{item.label}</div>
-                  </div>
+            {/* Header - Visible */}
+            <LiquidCard className="p-8 mb-6">
+              <div className="flex justify-between items-start mb-4">
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="text-xs font-mono text-white/30">#{niche.displayCode}</span>
+                  <span className="px-3 py-1 rounded-full bg-white/10 text-xs text-white/70 font-medium">
+                    {niche.category}
+                  </span>
+                </div>
+                <div className="px-4 py-2 rounded-full bg-[var(--primary)] text-black text-sm font-bold shrink-0">
+                  {niche.score}/100
+                </div>
+              </div>
+              <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">{niche.title}</h1>
+              <div className="flex flex-wrap items-center gap-2">
+                {niche.tags.slice(0, 3).map(tag => (
+                  <span key={tag} className="px-2 py-0.5 rounded border border-[var(--primary)]/20 bg-[var(--primary)]/10 text-[10px] text-[var(--primary)]">
+                    {tag}
+                  </span>
                 ))}
               </div>
-
-              <button 
-                onClick={handleUnlock}
-                disabled={checkoutLoading}
-                className="px-8 py-4 rounded-xl bg-[var(--primary)] text-black font-bold text-lg hover:bg-[#00E847] transition-all shadow-[0_0_30px_rgba(0,204,61,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {checkoutLoading ? (
-                  <span className="flex items-center gap-2">
-                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                    </svg>
-                    Redirecting...
-                  </span>
-                ) : (
-                  'Get Pro Access — $9.99/mo'
-                )}
-              </button>
-              <p className="mt-4 text-xs text-white/30">Cancel anytime • Instant access to all niches</p>
             </LiquidCard>
+
+            {/* Faux contenu flouté */}
+            <div className="relative">
+              {/* Overlay avec CTA */}
+              <div className="absolute inset-0 z-20 flex items-center justify-center">
+                <div className="text-center p-8 rounded-3xl bg-black/80 backdrop-blur-sm border border-white/10 max-w-md mx-4">
+                  <div className="text-5xl mb-4">🔒</div>
+                  <h2 className="text-2xl font-bold text-white mb-3">Unlock Full Analysis</h2>
+                  <p className="text-white/60 mb-6">
+                    Get access to complete market research, competitor breakdown, marketing strategies, and revenue models.
+                  </p>
+                  
+                  <div className="grid grid-cols-2 gap-3 mb-6">
+                    {[
+                      { icon: "📊", label: "Market Analysis" },
+                      { icon: "📈", label: "5+ Trending Apps" },
+                      { icon: "🎯", label: "Marketing Strategy" },
+                      { icon: "💰", label: "Revenue Models" },
+                    ].map((item, i) => (
+                      <div key={i} className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
+                        <div className="text-xl mb-1">{item.icon}</div>
+                        <div className="text-[10px] text-white/50">{item.label}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <button 
+                    onClick={handleUnlock}
+                    disabled={checkoutLoading}
+                    className="w-full px-8 py-4 rounded-xl bg-[var(--primary)] text-black font-bold text-lg hover:bg-[#00E847] transition-all shadow-[0_0_30px_rgba(0,204,61,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {checkoutLoading ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                        Redirecting to checkout...
+                      </span>
+                    ) : (
+                      'Get Pro'
+                    )}
+                  </button>
+                  <p className="mt-3 text-xs text-white/30">Cancel anytime • Instant access to all niches</p>
+                </div>
+              </div>
+
+              {/* Faux contenu flouté en arrière-plan */}
+              <div className="blur-md select-none pointer-events-none opacity-60">
+                {/* Faux bloc Opportunity */}
+                <LiquidCard className="p-8 mb-6">
+                  <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
+                    <span className="w-8 h-8 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[var(--primary)]">🎯</span>
+                    Opportunity Analysis
+                  </h2>
+                  <div className="grid md:grid-cols-3 gap-6">
+                    <div>
+                      <h4 className="text-xs font-bold text-[var(--primary)] uppercase tracking-wider mb-2">The Opportunity</h4>
+                      <p className="text-white/70 leading-relaxed text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-yellow-400 uppercase tracking-wider mb-2">Market Gap</h4>
+                      <p className="text-white/70 leading-relaxed text-sm">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-blue-400 uppercase tracking-wider mb-2">Recommended Move</h4>
+                      <p className="text-white/70 leading-relaxed text-sm">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                    </div>
+                  </div>
+                </LiquidCard>
+
+                {/* Faux Stats Grid */}
+                <div className="grid grid-cols-2 md:grid-cols-6 gap-3 md:gap-4 mb-6">
+                  {[
+                    { label: "Competition", value: "Low" },
+                    { label: "Potential", value: "Very High" },
+                    { label: "Est. MRR", value: "$8K-15K" },
+                    { label: "Best Market", value: "🇺🇸 US" },
+                    { label: "Time to MVP", value: "4-6 weeks" },
+                    { label: "Difficulty", value: "Medium" },
+                  ].map((stat, i) => (
+                    <LiquidCard key={i} className="p-3 md:p-4">
+                      <div className="text-[11px] md:text-[10px] text-white/50 uppercase tracking-wide mb-1.5 md:mb-1">{stat.label}</div>
+                      <div className="text-sm md:text-base font-bold text-white">{stat.value}</div>
+                    </LiquidCard>
+                  ))}
+                </div>
+
+                {/* Faux Market Analysis */}
+                <LiquidCard className="p-8 mb-6">
+                  <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
+                    <span className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400">📊</span>
+                    Market Analysis
+                  </h2>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                        <div className="text-xs text-white/40 uppercase mb-1">Total Market Size</div>
+                        <div className="text-lg font-bold text-white">$2.5B globally</div>
+                      </div>
+                      <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                        <div className="text-xs text-white/40 uppercase mb-1">Growth Rate</div>
+                        <div className="text-lg font-bold text-[var(--primary)]">+24% YoY</div>
+                      </div>
+                    </div>
+                    <div className="space-y-4">
+                      <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                        <div className="text-xs text-white/40 uppercase mb-1">Target Audience</div>
+                        <div className="text-sm text-white/80">Professionals aged 25-45 looking for productivity solutions</div>
+                      </div>
+                      <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                        <div className="text-xs text-white/40 uppercase mb-1">Geographic Focus</div>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          <span className="px-2 py-1 rounded bg-white/10 text-xs text-white/70">🇺🇸 US</span>
+                          <span className="px-2 py-1 rounded bg-white/10 text-xs text-white/70">🇬🇧 UK</span>
+                          <span className="px-2 py-1 rounded bg-white/10 text-xs text-white/70">🇩🇪 DE</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </LiquidCard>
+
+                {/* Faux Trending Apps */}
+                <LiquidCard className="p-8">
+                  <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
+                    <span className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400">📈</span>
+                    Trending Apps in this Niche
+                  </h2>
+                  <div className="space-y-4">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="p-6 rounded-xl bg-white/5 border border-white/10">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-6">
+                            <span className="text-2xl font-mono text-white/20">0{i}</span>
+                            <div>
+                              <div className="flex items-center gap-3 mb-1">
+                                <h3 className="text-lg font-bold text-white">App Name {i}</h3>
+                                <span className="px-2 py-0.5 rounded bg-white/10 text-xs text-white/50">Category</span>
+                              </div>
+                              <p className="text-sm text-white/50">Lorem ipsum dolor sit amet consectetur adipiscing elit...</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-lg font-bold text-[var(--primary)]">+{20 + i * 5}%</div>
+                            <div className="text-xs text-white/40">$10K MRR</div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </LiquidCard>
+              </div>
+            </div>
           </div>
         </div>
+
+        {/* Footer */}
+        <footer className="relative px-6 py-10 border-t border-white/5">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+            <span className="font-bold text-sm tracking-widest text-white/40">NICHES HUNTER</span>
+            <div className="flex items-center gap-6 text-xs text-white/30">
+              <Link href="#" className="hover:text-white transition-colors">Privacy</Link>
+              <Link href="#" className="hover:text-white transition-colors">Terms</Link>
+              <Link href="#" className="hover:text-white transition-colors">Twitter</Link>
+            </div>
+            <span className="text-xs text-white/20">© 2024 Niches Hunter. All rights reserved.</span>
+          </div>
+        </footer>
       </main>
     );
   }
