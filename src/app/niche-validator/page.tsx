@@ -77,6 +77,7 @@ export default function NicheValidatorPage() {
   
   // Check subscription status on mount
   const [hasSubscription, setHasSubscription] = useState<boolean | null>(null);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
   
   useEffect(() => {
     async function checkSubscription() {
@@ -90,6 +91,26 @@ export default function NicheValidatorPage() {
     }
     checkSubscription();
   }, []);
+
+  // Handle Stripe checkout
+  const handleCheckout = async () => {
+    setCheckoutLoading(true);
+    try {
+      const response = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nicheId: 'niche-validator' }),
+      });
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
   
   const formRef = useRef<HTMLDivElement>(null);
 
@@ -219,12 +240,13 @@ export default function NicheValidatorPage() {
                 </p>
                 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Link
-                    href="/#pricing"
-                    className="px-8 py-4 rounded-xl bg-[var(--primary)] text-black font-bold hover:bg-[#00E847] transition-all shadow-[0_0_30px_rgba(0,204,61,0.3)]"
+                  <button
+                    onClick={handleCheckout}
+                    disabled={checkoutLoading}
+                    className="px-8 py-4 rounded-xl bg-[var(--primary)] text-black font-bold hover:bg-[#00E847] transition-all shadow-[0_0_30px_rgba(0,204,61,0.3)] disabled:opacity-50"
                   >
-                    Upgrade to Pro →
-                  </Link>
+                    {checkoutLoading ? 'Loading...' : 'Upgrade to Pro →'}
+                  </button>
                   <button
                     onClick={handleReset}
                     className="px-8 py-4 rounded-xl bg-white/10 border border-white/20 text-white font-bold hover:bg-white/20 transition-all"

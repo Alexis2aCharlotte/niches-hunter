@@ -99,6 +99,7 @@ export default function RevenueEstimatorPage() {
   
   // Auth state
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
   
   // Check if user is logged in
   useEffect(() => {
@@ -113,6 +114,26 @@ export default function RevenueEstimatorPage() {
     }
     checkAuth();
   }, []);
+
+  // Handle Stripe checkout
+  const handleCheckout = async () => {
+    setCheckoutLoading(true);
+    try {
+      const response = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nicheId: 'revenue-estimator' }),
+      });
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
   
   const formRef = useRef<HTMLDivElement>(null);
 
@@ -598,12 +619,13 @@ export default function RevenueEstimatorPage() {
                           Get access to all 50+ validated niches with complete market analysis, competitor breakdown, and monetization strategies.
                         </p>
                       </div>
-                      <a
-                        href="/#pricing"
-                        className="shrink-0 px-8 py-4 rounded-xl bg-[var(--primary)] text-black font-bold hover:bg-[#00E847] transition-all shadow-[0_0_20px_rgba(0,204,61,0.3)] whitespace-nowrap"
+                      <button
+                        onClick={handleCheckout}
+                        disabled={checkoutLoading}
+                        className="shrink-0 px-8 py-4 rounded-xl bg-[var(--primary)] text-black font-bold hover:bg-[#00E847] transition-all shadow-[0_0_20px_rgba(0,204,61,0.3)] whitespace-nowrap disabled:opacity-50"
                       >
-                        Get Pro
-                      </a>
+                        {checkoutLoading ? 'Loading...' : 'Get Pro'}
+                      </button>
                     </div>
                   </div>
 
