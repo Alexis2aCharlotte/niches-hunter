@@ -117,6 +117,27 @@ export default function Navbar({ onSubscribeClick }: NavbarProps) {
               </button>
               {/* Dropdown Menu */}
               <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-56 py-2 rounded-2xl bg-[#111111] border border-white/[0.08] shadow-[0_20px_50px_rgba(0,0,0,0.8)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-3 group-hover:translate-y-0">
+                {!isLoggedIn && (
+                  <>
+                    <div className="px-3 py-2">
+                      <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest px-2">Upgrade</span>
+                    </div>
+                    <button 
+                      onClick={handleGetPro}
+                      disabled={checkoutLoading}
+                      className="flex items-center gap-3 mx-2 px-3 py-2.5 rounded-xl hover:bg-[var(--primary)]/10 text-white/80 hover:text-white transition-all w-[calc(100%-16px)] text-left"
+                    >
+                      <div>
+                        <div className="text-sm font-semibold flex items-center gap-2">
+                          {checkoutLoading ? 'Loading...' : 'Get Pro'}
+                          <span className="text-[8px] px-1.5 py-0.5 rounded bg-[var(--primary)]/20 text-[var(--primary)] font-bold">PRO</span>
+                        </div>
+                        <div className="text-[10px] text-white/40">Unlock all features</div>
+                      </div>
+                    </button>
+                    <div className="my-2 mx-4 h-px bg-white/[0.06]" />
+                  </>
+                )}
                 <div className="px-3 py-2">
                   <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest px-2">Explore</span>
                 </div>
@@ -132,16 +153,6 @@ export default function Navbar({ onSubscribeClick }: NavbarProps) {
                 </Link>
               </div>
             </div>
-
-            {!isLoggedIn && (
-              <button 
-                onClick={handleGetPro}
-                disabled={checkoutLoading}
-                className="text-white hover:text-[var(--primary)] transition-colors disabled:opacity-50"
-              >
-                {checkoutLoading ? 'Loading...' : 'Get Pro'}
-              </button>
-            )}
           </div>
 
           {/* Right: CTA & Mobile Button */}
@@ -207,21 +218,27 @@ export default function Navbar({ onSubscribeClick }: NavbarProps) {
               </div>
             </div>
             <div className="w-24 h-px bg-white/10 my-2"></div>
-            <Link href="/blog" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[var(--primary)] transition-colors">
-              Blog
-            </Link>
-            <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[var(--primary)] transition-colors">
-              About
-            </Link>
-            {!isLoggedIn && (
-              <button 
-                onClick={() => { handleGetPro(); setIsMobileMenuOpen(false); }}
-                disabled={checkoutLoading}
-                className="text-white hover:text-[var(--primary)] transition-colors disabled:opacity-50"
-              >
-                {checkoutLoading ? 'Loading...' : 'Get Pro'}
-              </button>
-            )}
+            {/* Resources Section */}
+            <div className="text-center">
+              <div className="text-xs text-white/30 uppercase tracking-widest mb-4">Resources</div>
+              <div className="flex flex-col gap-4">
+                {!isLoggedIn && (
+                  <button 
+                    onClick={() => { handleGetPro(); setIsMobileMenuOpen(false); }}
+                    disabled={checkoutLoading}
+                    className="hover:text-[var(--primary)] transition-colors disabled:opacity-50 flex items-center justify-center gap-2 text-lg"
+                  >
+                    {checkoutLoading ? 'Loading...' : 'Get Pro'} <span className="text-[10px] px-2 py-0.5 rounded bg-[var(--primary)]/20 text-[var(--primary)]">PRO</span>
+                  </button>
+                )}
+                <Link href="/blog" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[var(--primary)] transition-colors">
+                  Blog
+                </Link>
+                <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[var(--primary)] transition-colors">
+                  About
+                </Link>
+              </div>
+            </div>
             <button
               onClick={() => { onSubscribeClick?.(); setIsMobileMenuOpen(false); }}
               className="btn-primary text-lg px-10 py-5 mt-4 shadow-[0_0_30px_rgba(0,255,148,0.3)]"
