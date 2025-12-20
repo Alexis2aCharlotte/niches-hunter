@@ -10,7 +10,6 @@ interface NavbarProps {
 export default function Navbar({ onSubscribeClick }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   useEffect(() => {
     // Vérifier si l'utilisateur est connecté
@@ -25,25 +24,6 @@ export default function Navbar({ onSubscribeClick }: NavbarProps) {
     }
     checkAuth();
   }, []);
-
-  // Rediriger vers Stripe Checkout
-  const handleGetPro = async () => {
-    setCheckoutLoading(true);
-    try {
-      const response = await fetch('/api/stripe/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nicheId: 'navbar' }),
-      });
-      const data = await response.json();
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    } catch (error) {
-      console.error('Checkout error:', error);
-      setCheckoutLoading(false);
-    }
-  };
 
   return (
     <>
@@ -122,19 +102,18 @@ export default function Navbar({ onSubscribeClick }: NavbarProps) {
                     <div className="px-3 py-2">
                       <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest px-2">Upgrade</span>
                     </div>
-                    <button 
-                      onClick={handleGetPro}
-                      disabled={checkoutLoading}
-                      className="flex items-center gap-3 mx-2 px-3 py-2.5 rounded-xl hover:bg-[var(--primary)]/10 text-white/80 hover:text-white transition-all w-[calc(100%-16px)] text-left"
+                    <Link 
+                      href="/pricing"
+                      className="flex items-center gap-3 mx-2 px-3 py-2.5 rounded-xl hover:bg-[var(--primary)]/10 text-white/80 hover:text-white transition-all"
                     >
                       <div>
                         <div className="text-sm font-semibold flex items-center gap-2">
-                          {checkoutLoading ? 'Loading...' : 'Get Pro'}
+                          Get Pro
                           <span className="text-[8px] px-1.5 py-0.5 rounded bg-[var(--primary)]/20 text-[var(--primary)] font-bold">PRO</span>
                         </div>
                         <div className="text-[10px] text-white/40">Unlock all features</div>
                       </div>
-                    </button>
+                    </Link>
                     <div className="my-2 mx-4 h-px bg-white/[0.06]" />
                   </>
                 )}
@@ -223,13 +202,13 @@ export default function Navbar({ onSubscribeClick }: NavbarProps) {
               <div className="text-xs text-white/30 uppercase tracking-widest mb-4">Resources</div>
               <div className="flex flex-col gap-4">
                 {!isLoggedIn && (
-                  <button 
-                    onClick={() => { handleGetPro(); setIsMobileMenuOpen(false); }}
-                    disabled={checkoutLoading}
-                    className="hover:text-[var(--primary)] transition-colors disabled:opacity-50 flex items-center justify-center gap-2 text-lg"
+                  <Link 
+                    href="/pricing"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="hover:text-[var(--primary)] transition-colors flex items-center justify-center gap-2 text-lg"
                   >
-                    {checkoutLoading ? 'Loading...' : 'Get Pro'} <span className="text-[10px] px-2 py-0.5 rounded bg-[var(--primary)]/20 text-[var(--primary)]">PRO</span>
-                  </button>
+                    Get Pro <span className="text-[10px] px-2 py-0.5 rounded bg-[var(--primary)]/20 text-[var(--primary)]">PRO</span>
+                  </Link>
                 )}
                 <Link href="/blog" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[var(--primary)] transition-colors">
                   Blog
