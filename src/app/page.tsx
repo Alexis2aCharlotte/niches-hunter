@@ -648,18 +648,19 @@ export default function Home() {
           {/* Tools Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: "💡", title: "Niche Ideas", desc: "Browse our curated database of validated niche ideas with revenue potential.", href: "/niches" },
-              { icon: "🎰", title: "Niche Roulette", desc: "Can't decide? Let fate pick your next startup idea from our database.", href: "/niche-roulette" },
-              { icon: "💰", title: "Revenue Estimator", desc: "Estimate your potential MRR based on your niche and business model.", href: "/revenue-estimator" },
-              { icon: "✅", title: "Niche Validator", desc: "Validate your niche idea with AI. Get a score and recommendations.", href: "/niche-validator" },
+              { icon: "💡", title: "Niche Ideas", desc: "Browse our curated database of validated niche ideas with revenue potential.", cta: "Browse niches →", href: "/niches" },
+              { icon: "🎰", title: "Niche Roulette", desc: "Can't decide? Let fate pick your next startup idea from our database.", cta: "Spin the wheel →", href: "/niche-roulette" },
+              { icon: "💰", title: "Revenue Estimator", desc: "Estimate your potential MRR based on your niche and business model.", cta: "Estimate MRR →", href: "/revenue-estimator" },
+              { icon: "✅", title: "Niche Validator", desc: "Validate your niche idea with AI. Get a score and recommendations.", cta: "Validate idea →", href: "/niche-validator" },
             ].map((tool, i) => (
               <Link key={i} href={tool.href} className="group">
-                <LiquidCard animate="reveal-up" className="p-8 group cursor-pointer" style={{ transitionDelay: `${i * 100}ms` }}>
+                <LiquidCard animate="reveal-up" className="p-8 group cursor-pointer h-full flex flex-col" style={{ transitionDelay: `${i * 100}ms` }}>
                   <div className="w-14 h-14 rounded-2xl bg-[var(--primary)]/10 text-[var(--primary)] flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform duration-500 border border-[var(--primary)]/20 shadow-[0_0_30px_rgba(0,204,61,0.1)]">
                     {tool.icon}
                   </div>
                   <h3 className="text-xl font-bold mb-3 text-white">{tool.title}</h3>
-                  <p className="text-sm text-[rgba(255,255,255,0.5)] leading-relaxed group-hover:text-[rgba(255,255,255,0.8)] transition-colors">{tool.desc}</p>
+                  <p className="text-sm text-[rgba(255,255,255,0.5)] leading-relaxed flex-grow">{tool.desc}</p>
+                  <p className="text-sm text-[var(--primary)] font-medium mt-4 group-hover:translate-x-1 transition-transform">{tool.cta}</p>
                 </LiquidCard>
               </Link>
             ))}
