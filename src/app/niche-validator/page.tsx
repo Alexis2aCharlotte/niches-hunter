@@ -124,13 +124,14 @@ export default function NicheValidatorPage() {
     setRequiresSubscription(false);
     setCurrentMessageIndex(0);
     
-    // Animate loading messages
-    const messageInterval = setInterval(() => {
-      setCurrentMessageIndex(prev => {
-        if (prev < loadingMessages.length - 1) return prev + 1;
-        return prev;
-      });
-    }, 800);
+    // Animate through ALL loading messages first (creates anticipation)
+    for (let i = 0; i < loadingMessages.length; i++) {
+      setCurrentMessageIndex(i);
+      await new Promise(resolve => setTimeout(resolve, 900));
+    }
+    
+    // Small pause on last message
+    await new Promise(resolve => setTimeout(resolve, 500));
     
     try {
       const response = await fetch('/api/niches/validate', {
@@ -158,7 +159,6 @@ export default function NicheValidatorPage() {
       console.error('Validation error:', err);
       setError('Network error. Please try again.');
     } finally {
-      clearInterval(messageInterval);
       setIsAnalyzing(false);
     }
   };
