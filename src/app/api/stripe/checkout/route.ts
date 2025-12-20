@@ -19,9 +19,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Créer la session Stripe Checkout
+    // Créer la session Stripe Checkout (Lifetime - paiement unique)
     const session = await stripe.checkout.sessions.create({
-      mode: 'subscription',
+      mode: 'payment',
       payment_method_types: ['card'],
       line_items: [
         {
@@ -29,6 +29,8 @@ export async function POST(request: NextRequest) {
           quantity: 1,
         },
       ],
+      // Coupon "Early Hunter" - $30 off jusqu'au 27 Dec
+      discounts: [{ coupon: '749Pgu8U' }],
       // Metadata pour tracker la niche qui a déclenché l'achat
       metadata: {
         nicheId: nicheId || 'homepage',
@@ -37,7 +39,6 @@ export async function POST(request: NextRequest) {
       success_url: `${appUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${appUrl}/niches${nicheId ? `/${nicheId}` : ''}`,
       // Options pour une meilleure UX
-      allow_promotion_codes: true,
       billing_address_collection: 'auto',
     })
 

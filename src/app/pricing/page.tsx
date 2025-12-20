@@ -8,7 +8,8 @@ import LiquidCard from '@/components/LiquidCard'
 export default function PricingPage() {
   const [checkoutLoading, setCheckoutLoading] = useState(false)
 
-  const monthlyPrice = 9.99
+  const originalPrice = 49.99
+  const discountedPrice = 19.99
 
   const handleCheckout = async () => {
     setCheckoutLoading(true)
@@ -161,27 +162,29 @@ export default function PricingPage() {
             {/* Glow effect */}
             <div className="absolute top-0 right-0 w-40 h-40 bg-[var(--primary)]/20 blur-[80px] rounded-full pointer-events-none" />
             
-            {/* Popular badge */}
+            {/* Early Hunter badge */}
             <div className="absolute top-4 right-4">
-              <span className="px-3 py-1 rounded-full bg-[var(--primary)] text-black text-xs font-bold">
-                POPULAR
+              <span className="px-3 py-1 rounded-full bg-[var(--primary)] text-black text-xs font-bold animate-pulse">
+                🎄 EARLY HUNTER -60%
               </span>
             </div>
 
             <div className="mb-8">
               <h3 className="text-2xl font-bold mb-2 flex items-center gap-2">
-                Pro
+                Pro Lifetime
                 <span className="text-lg">🚀</span>
               </h3>
-              <p className="text-white/50 text-sm">For serious hunters</p>
+              <p className="text-white/50 text-sm">One-time payment, forever access</p>
             </div>
 
             <div className="mb-8">
-              <div className="flex items-baseline gap-1">
-                <span className="text-5xl font-bold text-[var(--primary)]">
-                  ${monthlyPrice}
+              <div className="flex items-baseline gap-2">
+                <span className="text-2xl text-white/40 line-through">
+                  ${originalPrice}
                 </span>
-                <span className="text-white/40">/month</span>
+                <span className="text-5xl font-bold text-[var(--primary)]">
+                  ${discountedPrice}
+                </span>
               </div>
             </div>
 
@@ -199,7 +202,7 @@ export default function PricingPage() {
                   Processing...
                 </span>
               ) : (
-                'Upgrade to Pro →'
+                'Get Lifetime Access →'
               )}
             </button>
 
@@ -234,9 +237,9 @@ export default function PricingPage() {
           </div>
           <div className="flex items-center gap-2">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
-            Cancel anytime
+            Lifetime access
           </div>
         </div>
       </section>
@@ -325,11 +328,11 @@ export default function PricingPage() {
               disabled={checkoutLoading}
               className="inline-flex items-center gap-2 px-10 py-5 bg-[var(--primary)] text-black font-bold rounded-xl hover:bg-[#00E847] transition-all shadow-[0_0_30px_rgba(0,204,61,0.3)] hover:shadow-[0_0_50px_rgba(0,204,61,0.5)] disabled:opacity-50 relative z-10"
             >
-              {checkoutLoading ? 'Processing...' : 'Get Pro Now →'}
+              {checkoutLoading ? 'Processing...' : 'Get Lifetime Access for $19.99 →'}
             </button>
             
             <p className="mt-6 text-xs text-white/30 relative z-10">
-              7-day money-back guarantee • Cancel anytime
+              7-day money-back guarantee • One-time payment • Forever access
             </p>
           </LiquidCard>
         </div>
