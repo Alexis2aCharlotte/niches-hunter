@@ -65,6 +65,23 @@ export default function NicheRoulettePage() {
   // Real niches from DB
   const [niches, setNiches] = useState<Niche[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // Auth state
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+
+  // Check if user is logged in
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const response = await fetch('/api/auth/me');
+        const data = await response.json();
+        setIsLoggedIn(!!data.user);
+      } catch {
+        setIsLoggedIn(false);
+      }
+    }
+    checkAuth();
+  }, []);
 
   // Fetch niches for roulette on mount
   useEffect(() => {
@@ -301,67 +318,80 @@ export default function NicheRoulettePage() {
                       </div>
                     </div>
 
-                    {/* HIDDEN CONTENT - Blurred teaser */}
-                    <div className="relative mb-8 p-6 rounded-xl bg-black/40 border border-white/10 overflow-hidden">
-                      {/* Blur overlay */}
-                      <div className="absolute inset-0 backdrop-blur-md bg-black/40 z-10 flex flex-col items-center justify-center">
-                        <span className="text-3xl mb-2">🔒</span>
-                        <span className="text-white/70 font-medium">Full Analysis Hidden</span>
-                        <span className="text-white/40 text-sm">Enter your email to unlock</span>
+                    {/* HIDDEN CONTENT - Blurred teaser (only for non-logged users) */}
+                    {!isLoggedIn && (
+                      <div className="relative mb-8 p-6 rounded-xl bg-black/40 border border-white/10 overflow-hidden">
+                        {/* Blur overlay */}
+                        <div className="absolute inset-0 backdrop-blur-md bg-black/40 z-10 flex flex-col items-center justify-center">
+                          <span className="text-3xl mb-2">🔒</span>
+                          <span className="text-white/70 font-medium">Full Analysis Hidden</span>
+                          <span className="text-white/40 text-sm">Enter your email to unlock</span>
+                        </div>
+                        {/* Blurred content preview */}
+                        <div className="blur-sm select-none pointer-events-none">
+                          <h4 className="font-bold text-white mb-2">The Opportunity</h4>
+                          <p className="text-white/60 text-sm mb-4">{currentNiche.opportunity?.substring(0, 100)}...</p>
+                          <h4 className="font-bold text-white mb-2">Market Gap</h4>
+                          <p className="text-white/60 text-sm">{currentNiche.gap?.substring(0, 100)}...</p>
+                        </div>
                       </div>
-                      {/* Blurred content preview */}
-                      <div className="blur-sm select-none pointer-events-none">
-                        <h4 className="font-bold text-white mb-2">The Opportunity</h4>
-                        <p className="text-white/60 text-sm mb-4">{currentNiche.opportunity?.substring(0, 100)}...</p>
-                        <h4 className="font-bold text-white mb-2">Market Gap</h4>
-                        <p className="text-white/60 text-sm">{currentNiche.gap?.substring(0, 100)}...</p>
-                      </div>
-                    </div>
+                    )}
 
-                    {/* Spin Again Button */}
-                    <div className="flex justify-center mb-8">
+                    {/* Action Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-4 mb-8">
                       <button
                         onClick={handleSpin}
-                        className="px-8 py-4 rounded-xl bg-white/10 border border-white/20 text-white font-bold hover:bg-white/20 transition-all flex items-center justify-center gap-2"
+                        className="flex-1 px-8 py-4 rounded-xl bg-white/10 border border-white/20 text-white font-bold hover:bg-white/20 transition-all flex items-center justify-center gap-2"
                       >
                         🎲 Spin Again
                       </button>
-                    </div>
-
-                    {/* Email Capture - REQUIRED to view full analysis */}
-                    <div className="max-w-lg mx-auto p-8 rounded-2xl bg-[var(--primary)]/5 border border-[var(--primary)]/20">
-                      <div className="text-center mb-6">
-                        <span className="text-4xl mb-3 block">🔓</span>
-                        <h3 className="text-xl font-bold text-white mb-2">Unlock Full Analysis</h3>
-                        <p className="text-sm text-white/60">
-                          Enter your email to access the complete niche report with market research, competitor analysis, and marketing playbook.
-                        </p>
-                      </div>
-                      <form onSubmit={handleEmailSubmit} className="space-y-4">
-                        <input
-                          type="email"
-                          value={rouletteEmail}
-                          onChange={(e) => setRouletteEmail(e.target.value)}
-                          placeholder="your@email.com"
-                          required
-                          className="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 text-white text-center focus:border-[var(--primary)] focus:ring-0 outline-none transition-all placeholder:text-white/30"
-                        />
-                        <button
-                          type="submit"
-                          disabled={!isValidEmail(rouletteEmail)}
-                          className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${
-                            isValidEmail(rouletteEmail)
-                              ? 'bg-[var(--primary)] text-black hover:bg-[#00E847] shadow-[0_0_30px_rgba(0,204,61,0.3)]'
-                              : 'bg-white/10 text-white/30 cursor-not-allowed'
-                          }`}
+                      
+                      {isLoggedIn && (
+                        <Link
+                          href={`/niches/${currentNiche.displayCode}`}
+                          className="flex-1 px-8 py-4 rounded-xl bg-[var(--primary)] text-black font-bold hover:bg-[#00E847] transition-all shadow-[0_0_30px_rgba(0,204,61,0.3)] text-center"
                         >
                           View Full Analysis →
-                        </button>
-                      </form>
-                      <p className="text-center text-xs text-white/30 mt-4">
-                        Free • No spam • Unsubscribe anytime
-                      </p>
+                        </Link>
+                      )}
                     </div>
+
+                    {/* Email Capture - Only for non-logged users */}
+                    {!isLoggedIn && (
+                      <div className="max-w-lg mx-auto p-8 rounded-2xl bg-[var(--primary)]/5 border border-[var(--primary)]/20">
+                        <div className="text-center mb-6">
+                          <span className="text-4xl mb-3 block">🔓</span>
+                          <h3 className="text-xl font-bold text-white mb-2">Unlock Full Analysis</h3>
+                          <p className="text-sm text-white/60">
+                            Enter your email to access the complete niche report with market research, competitor analysis, and marketing playbook.
+                          </p>
+                        </div>
+                        <form onSubmit={handleEmailSubmit} className="space-y-4">
+                          <input
+                            type="email"
+                            value={rouletteEmail}
+                            onChange={(e) => setRouletteEmail(e.target.value)}
+                            placeholder="your@email.com"
+                            required
+                            className="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 text-white text-center focus:border-[var(--primary)] focus:ring-0 outline-none transition-all placeholder:text-white/30"
+                          />
+                          <button
+                            type="submit"
+                            disabled={!isValidEmail(rouletteEmail)}
+                            className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${
+                              isValidEmail(rouletteEmail)
+                                ? 'bg-[var(--primary)] text-black hover:bg-[#00E847] shadow-[0_0_30px_rgba(0,204,61,0.3)]'
+                                : 'bg-white/10 text-white/30 cursor-not-allowed'
+                            }`}
+                          >
+                            View Full Analysis →
+                          </button>
+                        </form>
+                        <p className="text-center text-xs text-white/30 mt-4">
+                          Free • No spam • Unsubscribe anytime
+                        </p>
+                      </div>
+                    )}
                   </>
                 )}
               </div>

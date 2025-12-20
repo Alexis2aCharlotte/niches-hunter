@@ -97,6 +97,23 @@ export default function RevenueEstimatorPage() {
   const [loadingMessage, setLoadingMessage] = useState(loadingMessages[0]);
   const [result, setResult] = useState<RevenueResult | null>(null);
   
+  // Auth state
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+  
+  // Check if user is logged in
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const response = await fetch('/api/auth/me');
+        const data = await response.json();
+        setIsLoggedIn(!!data.user);
+      } catch {
+        setIsLoggedIn(false);
+      }
+    }
+    checkAuth();
+  }, []);
+  
   const formRef = useRef<HTMLDivElement>(null);
 
   // Toggle market selection
@@ -237,20 +254,24 @@ export default function RevenueEstimatorPage() {
 
   // Handle form submission
   const handleCalculate = async () => {
-    if (!appIdea || !businessModel || selectedMarkets.length === 0 || !isValidEmail(email)) return;
+    // If not logged in, require email
+    if (!appIdea || !businessModel || selectedMarkets.length === 0) return;
+    if (!isLoggedIn && !isValidEmail(email)) return;
     
     setIsCalculating(true);
     setLoadingProgress(0);
     
-    // Subscribe email in background
-    try {
-      await fetch('/api/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-    } catch (e) {
-      // Continue even if subscribe fails
+    // Subscribe email in background (only if not logged in)
+    if (!isLoggedIn && email) {
+      try {
+        await fetch('/api/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+      } catch (e) {
+        // Continue even if subscribe fails
+      }
     }
     
     // Simulate loading with progress
@@ -299,7 +320,7 @@ export default function RevenueEstimatorPage() {
     return emailRegex.test(email);
   };
 
-  const isFormValid = appIdea.length > 0 && businessModel !== null && selectedMarkets.length > 0 && isValidEmail(email);
+  const isFormValid = appIdea.length > 0 && businessModel !== null && selectedMarkets.length > 0 && (isLoggedIn || isValidEmail(email));
 
   return (
     <main className="min-h-screen relative overflow-hidden text-white font-sans selection:bg-[var(--primary)] selection:text-black">
@@ -408,25 +429,27 @@ export default function RevenueEstimatorPage() {
                   </div>
                 </div>
 
-                {/* Email + Calculate Button */}
+                {/* Email (only if not logged in) + Calculate Button */}
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="your@email.com"
-                    className="flex-1 bg-black/40 border border-white/10 rounded-xl px-5 py-4 text-white focus:border-[var(--primary)] focus:ring-0 outline-none transition-all placeholder:text-white/30"
-                  />
+                  {!isLoggedIn && (
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="your@email.com"
+                      className="flex-1 bg-black/40 border border-white/10 rounded-xl px-5 py-4 text-white focus:border-[var(--primary)] focus:ring-0 outline-none transition-all placeholder:text-white/30"
+                    />
+                  )}
                   <button
                     onClick={handleCalculate}
                     disabled={!isFormValid}
-                    className={`px-8 py-4 rounded-xl font-bold text-lg transition-all whitespace-nowrap ${
+                    className={`${isLoggedIn ? 'w-full' : ''} px-8 py-4 rounded-xl font-bold text-lg transition-all whitespace-nowrap ${
                       isFormValid
                         ? 'bg-[var(--primary)] text-black hover:bg-[#00E847] shadow-[0_0_30px_rgba(0,204,61,0.3)] hover:shadow-[0_0_50px_rgba(0,204,61,0.5)]'
                         : 'bg-white/10 text-white/30 cursor-not-allowed'
                     }`}
                   >
-                    Calculate →
+                    {isLoggedIn ? 'Generate Estimate →' : 'Calculate →'}
                   </button>
                 </div>
 
