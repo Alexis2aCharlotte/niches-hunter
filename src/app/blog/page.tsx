@@ -181,7 +181,7 @@ export default async function BlogPage() {
             <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
             <Link href="/about" className="hover:text-white transition-colors">About</Link>
           </div>
-          <span className="text-xs text-white/20">© 2024 Niches Hunter. All rights reserved.</span>
+          <span className="text-xs text-white/20">© 2025 Niches Hunter. All rights reserved.</span>
         </div>
       </footer>
     </main>
