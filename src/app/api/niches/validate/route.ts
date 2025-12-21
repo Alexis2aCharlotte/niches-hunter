@@ -44,7 +44,7 @@ async function analyzeNicheWithAI(nicheIdea: string): Promise<ValidationResponse
     throw new Error('OpenAI API key not configured')
   }
 
-  const systemPrompt = `You are an expert iOS app market analyst. Your role is to analyze niche app ideas and provide actionable insights based on real market data.
+  const systemPrompt = `You are an expert iOS app market analyst. Your role is to analyze niche app ideas and provide actionable insights based on real market data. Be precise.
 
 You must respond ONLY with valid JSON matching this exact structure:
 {
@@ -57,7 +57,7 @@ You must respond ONLY with valid JSON matching this exact structure:
   "strengths": ["<strength 1>", "<strength 2>", "<strength 3>"],
   "weaknesses": ["<weakness 1>", "<weakness 2>", "<weakness 3>"],
   "recommendations": ["<recommendation 1>", "<recommendation 2>", "<recommendation 3>"],
-  "marketInsights": "<A brief 2-3 sentence market insight specific to this niche>"
+  "marketInsights": "<A brief 2-3 sentence about who are users, what is the problem they are trying to solve, what is the solution you are proposing>"
 }
 
 Scoring guidelines:

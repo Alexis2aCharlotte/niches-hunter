@@ -56,15 +56,6 @@ function NicheCard({ niche, index, isUnlocked }: { niche: Niche; index: number; 
         className={`liquid-card p-6 group transition-all duration-300 hover:scale-[1.02] relative h-full flex flex-col ${checkoutLoading ? 'opacity-50 pointer-events-none' : ''}`}
         style={{ animationDelay: `${index * 100}ms` }}
       >
-        {/* Badge Promo - seulement sur les niches verrouillées */}
-        {!isUnlocked && (
-          <div className="absolute bottom-3 right-3 md:bottom-4 md:right-4 z-20">
-            <div className="bg-gradient-to-r from-yellow-500 to-orange-500 text-black text-[9px] md:text-[10px] font-bold px-2 py-1 md:px-3 md:py-1.5 rounded-full shadow-lg">
-              🎁 <span className="font-black">-90%</span> code : <span className="font-mono">EARLYHUNT</span>
-            </div>
-          </div>
-        )}
-
         {/* Header - Toujours visible */}
         <div className="flex justify-between items-start mb-4">
           <div className="flex-1 min-w-0 pr-3">
