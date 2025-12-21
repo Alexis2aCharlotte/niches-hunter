@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
+import Stripe from 'stripe'
 
 // Coupon IDs - Expire Jan 10, 2026
 const COUPONS = {
@@ -33,43 +34,47 @@ export async function POST(request: NextRequest) {
     const isLifetime = mode === 'lifetime'
     const couponId = isLifetime ? COUPONS.lifetime : COUPONS.monthly
 
-    // Créer la session Stripe Checkout
-    const sessionConfig: Parameters<typeof stripe.checkout.sessions.create>[0] = {
-      mode: isLifetime ? 'payment' : 'subscription',
-      payment_method_types: ['card'],
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
-      // Metadata pour tracker
-      metadata: {
-        nicheId: nicheId || 'homepage',
-        mode: mode,
-      },
-      // Redirection après paiement
-      success_url: `${appUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${appUrl}/pricing`,
-      // Options pour une meilleure UX
-      billing_address_collection: 'auto',
-    }
-
-    // Ajouter le coupon si valide (ne pas planter si coupon expiré)
+    // Vérifier si le coupon est valide
+    let validCoupon: string | null = null
     if (couponId) {
       try {
-        // Vérifier que le coupon existe et est valide
         const coupon = await stripe.coupons.retrieve(couponId)
         if (coupon.valid) {
-          sessionConfig.discounts = [{ coupon: couponId }]
+          validCoupon = couponId
         }
-      } catch (couponError) {
-        console.warn('Coupon invalid or expired, proceeding without discount:', couponError)
-        // Continue sans coupon
+      } catch {
+        console.warn('Coupon invalid or expired, proceeding without discount')
       }
     }
 
-    const session = await stripe.checkout.sessions.create(sessionConfig)
+    // Créer la session Stripe Checkout
+    let session: Stripe.Checkout.Session
+
+    if (isLifetime) {
+      // Lifetime - paiement unique
+      session = await stripe.checkout.sessions.create({
+        mode: 'payment',
+        payment_method_types: ['card'],
+        line_items: [{ price: priceId, quantity: 1 }],
+        metadata: { nicheId: nicheId || 'homepage', mode: 'lifetime' },
+        success_url: `${appUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${appUrl}/pricing`,
+        billing_address_collection: 'auto',
+        ...(validCoupon && { discounts: [{ coupon: validCoupon }] }),
+      })
+    } else {
+      // Monthly - subscription
+      session = await stripe.checkout.sessions.create({
+        mode: 'subscription',
+        payment_method_types: ['card'],
+        line_items: [{ price: priceId, quantity: 1 }],
+        metadata: { nicheId: nicheId || 'homepage', mode: 'monthly' },
+        success_url: `${appUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${appUrl}/pricing`,
+        billing_address_collection: 'auto',
+        ...(validCoupon && { discounts: [{ coupon: validCoupon }] }),
+      })
+    }
 
     console.log('Checkout session created:', session.id, session.url)
 
