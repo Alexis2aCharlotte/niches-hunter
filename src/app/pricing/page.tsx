@@ -6,10 +6,22 @@ import Navbar from '@/components/Navbar'
 import LiquidCard from '@/components/LiquidCard'
 
 export default function PricingPage() {
+  const [isLifetime, setIsLifetime] = useState(true)
   const [checkoutLoading, setCheckoutLoading] = useState(false)
 
-  const originalPrice = 49.99
-  const discountedPrice = 19.99
+  // Pricing
+  const monthly = {
+    original: 9.99,
+    discounted: 1.99,
+    savings: 80,
+  }
+  const lifetime = {
+    original: 49.99,
+    discounted: 19.99,
+    savings: 60,
+  }
+
+  const currentPlan = isLifetime ? lifetime : monthly
 
   const handleCheckout = async () => {
     setCheckoutLoading(true)
@@ -17,7 +29,10 @@ export default function PricingPage() {
       const response = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nicheId: 'pricing-page' }),
+        body: JSON.stringify({ 
+          nicheId: 'pricing-page',
+          mode: isLifetime ? 'lifetime' : 'monthly'
+        }),
       })
       const data = await response.json()
       if (data.url) {
@@ -59,7 +74,7 @@ export default function PricingPage() {
   const faqs = [
     {
       q: "Can I cancel anytime?",
-      a: "Yes! You can cancel your subscription at any time from your account page. You'll keep access until the end of your billing period."
+      a: "Yes! For monthly subscriptions, you can cancel at any time from your account page. You'll keep access until the end of your billing period. Lifetime access is forever - no cancellation needed!"
     },
     {
       q: "What payment methods do you accept?",
@@ -70,8 +85,8 @@ export default function PricingPage() {
       a: "We offer a free tier with limited features. You can upgrade to Pro anytime to unlock everything."
     },
     {
-      q: "What's included in the AI Niche Validator?",
-      a: "The AI Validator analyzes your niche idea and gives you a score based on market demand, competition, and revenue potential. Pro users get unlimited validations."
+      q: "What's the difference between Monthly and Lifetime?",
+      a: "Monthly is a recurring subscription at $1.99/month. Lifetime is a one-time payment of $19.99 for permanent access - no recurring fees ever!"
     },
     {
       q: "Do you offer refunds?",
@@ -90,21 +105,40 @@ export default function PricingPage() {
       </div>
 
       {/* Hero */}
-      <section className="relative pt-32 pb-12 px-6">
+      <section className="relative pt-32 pb-8 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--primary)]/10 border border-[var(--primary)]/20 mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-[var(--primary)] animate-pulse" />
-            <span className="text-xs font-mono text-[var(--primary)] uppercase tracking-wider">Simple Pricing</span>
+            <span className="text-xs font-mono text-[var(--primary)] uppercase tracking-wider">Launch Offer</span>
           </div>
           
           <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">
             Unlock the Full <span className="text-flashy-green">Hunting Power</span>
           </h1>
           
-          <p className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-10">
             Get unlimited access to niche insights, AI validation, and competitor analysis. 
             Find your next profitable app idea faster.
           </p>
+
+          {/* Toggle Monthly / Lifetime */}
+          <div className="flex items-center justify-center gap-4">
+            <span className={`text-sm font-medium transition-colors ${!isLifetime ? 'text-white' : 'text-white/40'}`}>
+              Monthly
+            </span>
+            <button
+              onClick={() => setIsLifetime(!isLifetime)}
+              className={`relative w-16 h-8 rounded-full transition-colors ${isLifetime ? 'bg-[var(--primary)]' : 'bg-white/20'}`}
+            >
+              <div className={`absolute top-1 w-6 h-6 rounded-full bg-white shadow-lg transition-all ${isLifetime ? 'left-9' : 'left-1'}`} />
+            </button>
+            <span className={`text-sm font-medium transition-colors flex items-center gap-2 ${isLifetime ? 'text-white' : 'text-white/40'}`}>
+              Lifetime
+              <span className="px-2 py-0.5 rounded-full bg-[var(--primary)]/20 text-[var(--primary)] text-xs font-bold">
+                BEST VALUE
+              </span>
+            </span>
+          </div>
         </div>
       </section>
 
@@ -122,7 +156,7 @@ export default function PricingPage() {
             <div className="mb-8">
               <div className="flex items-baseline gap-1">
                 <span className="text-5xl font-bold">$0</span>
-                <span className="text-white/40">/month</span>
+                <span className="text-white/40">/forever</span>
               </div>
             </div>
 
@@ -162,30 +196,36 @@ export default function PricingPage() {
             {/* Glow effect */}
             <div className="absolute top-0 right-0 w-40 h-40 bg-[var(--primary)]/20 blur-[80px] rounded-full pointer-events-none" />
             
-            {/* Early Hunter badge */}
+            {/* Badge */}
             <div className="absolute top-4 right-4">
               <span className="px-3 py-1 rounded-full bg-[var(--primary)] text-black text-xs font-bold animate-pulse">
-                🎄 EARLY HUNTER -60%
+                🚀 -{currentPlan.savings}% LAUNCH
               </span>
             </div>
 
             <div className="mb-8">
               <h3 className="text-2xl font-bold mb-2 flex items-center gap-2">
-                Pro Lifetime
-                <span className="text-lg">🚀</span>
+                Pro {isLifetime ? 'Lifetime' : 'Monthly'}
+                <span className="text-lg">{isLifetime ? '♾️' : '📅'}</span>
               </h3>
-              <p className="text-white/50 text-sm">One-time payment, forever access</p>
+              <p className="text-white/50 text-sm">
+                {isLifetime ? 'One-time payment, forever access' : 'Flexible monthly subscription'}
+              </p>
             </div>
 
             <div className="mb-8">
               <div className="flex items-baseline gap-2">
                 <span className="text-2xl text-white/40 line-through">
-                  ${originalPrice}
+                  ${currentPlan.original}
                 </span>
                 <span className="text-5xl font-bold text-[var(--primary)]">
-                  ${discountedPrice}
+                  ${currentPlan.discounted}
                 </span>
+                {!isLifetime && <span className="text-white/40">/month</span>}
               </div>
+              {isLifetime && (
+                <p className="text-sm text-white/40 mt-2">One-time payment</p>
+              )}
             </div>
 
             <button
@@ -202,7 +242,7 @@ export default function PricingPage() {
                   Processing...
                 </span>
               ) : (
-                'Get Lifetime Access →'
+                isLifetime ? 'Get Lifetime Access →' : 'Start Monthly →'
               )}
             </button>
 
@@ -239,7 +279,7 @@ export default function PricingPage() {
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
-            Lifetime access
+            {isLifetime ? 'Forever access' : 'Cancel anytime'}
           </div>
         </div>
       </section>
@@ -328,11 +368,11 @@ export default function PricingPage() {
               disabled={checkoutLoading}
               className="inline-flex items-center gap-2 px-10 py-5 bg-[var(--primary)] text-black font-bold rounded-xl hover:bg-[#00E847] transition-all shadow-[0_0_30px_rgba(0,204,61,0.3)] hover:shadow-[0_0_50px_rgba(0,204,61,0.5)] disabled:opacity-50 relative z-10"
             >
-              {checkoutLoading ? 'Processing...' : 'Get Lifetime Access for $19.99 →'}
+              {checkoutLoading ? 'Processing...' : (isLifetime ? 'Get Lifetime for $19.99 →' : 'Start Monthly for $1.99 →')}
             </button>
             
             <p className="mt-6 text-xs text-white/30 relative z-10">
-              7-day money-back guarantee • One-time payment • Forever access
+              7-day money-back guarantee • {isLifetime ? 'One-time payment • Forever access' : 'Cancel anytime'}
             </p>
           </LiquidCard>
         </div>
@@ -353,4 +393,3 @@ export default function PricingPage() {
     </main>
   )
 }
-
