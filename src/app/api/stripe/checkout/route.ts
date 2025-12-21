@@ -39,13 +39,16 @@ export async function POST(request: NextRequest) {
     if (couponId) {
       try {
         const coupon = await stripe.coupons.retrieve(couponId)
+        console.log('Coupon check:', { couponId, valid: coupon.valid, name: coupon.name })
         if (coupon.valid) {
           validCoupon = couponId
         }
-      } catch {
-        console.warn('Coupon invalid or expired, proceeding without discount')
+      } catch (err) {
+        console.warn('Coupon error:', err)
       }
     }
+    
+    console.log('Using coupon:', validCoupon)
 
     // Créer la session Stripe Checkout
     let session: Stripe.Checkout.Session
