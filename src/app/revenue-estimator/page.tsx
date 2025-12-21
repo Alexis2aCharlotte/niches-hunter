@@ -124,7 +124,7 @@ export default function RevenueEstimatorPage() {
       const response = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nicheId: 'revenue-estimator' }),
+        body: JSON.stringify({ nicheId: 'revenue-estimator', mode: 'monthly' }),
       });
       const data = await response.json();
       if (data.url) {
