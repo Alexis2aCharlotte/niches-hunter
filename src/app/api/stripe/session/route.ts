@@ -63,32 +63,15 @@ export async function GET(request: NextRequest) {
 
     console.log('Upserting customer:', customerData)
 
-    const { data: upsertedCustomer, error: upsertError } = await supabaseAdmin
+    // Le trigger PostgreSQL synchronise automatiquement vers paid_newsletter_subscribers
+    const { error: upsertError } = await supabaseAdmin
       .from('customers')
       .upsert(customerData, { onConflict: 'email' })
-      .select('id')
-      .single()
 
     if (upsertError) {
       console.error('Error upserting customer:', upsertError)
     } else {
-      console.log('Customer upserted successfully')
-      
-      // Ajouter automatiquement à la newsletter payante
-      const { error: newsletterError } = await supabaseAdmin
-        .from('paid_newsletter_subscribers')
-        .upsert({
-          email: customerEmail,
-          customer_id: upsertedCustomer?.id,
-          plan_type: isLifetime ? 'lifetime' : 'monthly',
-          is_active: true,
-        }, { onConflict: 'email' })
-      
-      if (newsletterError) {
-        console.error('Error adding to paid newsletter:', newsletterError)
-      } else {
-        console.log('Added to paid newsletter successfully')
-      }
+      console.log('Customer upserted successfully (trigger syncs to paid_newsletter)')
     }
 
     // Créer la réponse avec le cookie pour tracker l'abonnement

@@ -96,32 +96,15 @@ export async function POST(request: NextRequest) {
         console.log('Upserting customer data:', customerData)
 
         // Upsert par email (clé unique)
-        const { data: upsertedCustomer, error: customerError } = await supabaseAdmin
+        // Le trigger PostgreSQL synchronise automatiquement vers paid_newsletter_subscribers
+        const { error: customerError } = await supabaseAdmin
           .from('customers')
           .upsert(customerData, { onConflict: 'email' })
-          .select('id')
-          .single()
 
         if (customerError) {
           console.error('Error saving customer:', customerError)
         } else {
-          console.log('Customer saved successfully')
-          
-          // Ajouter automatiquement à la newsletter payante
-          const { error: newsletterError } = await supabaseAdmin
-            .from('paid_newsletter_subscribers')
-            .upsert({
-              email: customerEmail,
-              customer_id: upsertedCustomer?.id,
-              plan_type: isLifetime ? 'lifetime' : 'monthly',
-              is_active: true,
-            }, { onConflict: 'email' })
-          
-          if (newsletterError) {
-            console.error('Error adding to paid newsletter:', newsletterError)
-          } else {
-            console.log('Added to paid newsletter successfully')
-          }
+          console.log('Customer saved successfully (trigger syncs to paid_newsletter)')
         }
         break
       }
