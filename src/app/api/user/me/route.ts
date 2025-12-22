@@ -16,38 +16,30 @@ export async function GET() {
       return NextResponse.json({ user: null, subscription: null })
     }
 
-    // Récupérer la subscription
-    const { data: subscription } = await supabaseAdmin
-      .from('subscriptions')
+    // Récupérer le customer depuis la nouvelle table
+    const { data: customer } = await supabaseAdmin
+      .from('customers')
       .select('*')
       .eq('stripe_customer_id', customerId)
       .single()
 
-    if (!subscription) {
+    if (!customer) {
       return NextResponse.json({ user: null, subscription: null })
-    }
-
-    // Récupérer les infos user depuis auth.users
-    let userEmail = null
-    if (subscription.user_id) {
-      const { data: userData } = await supabaseAdmin.auth.admin.getUserById(
-        subscription.user_id
-      )
-      userEmail = userData?.user?.email
     }
 
     return NextResponse.json({
       user: {
-        id: subscription.user_id,
-        email: userEmail,
-        stripeCustomerId: subscription.stripe_customer_id,
+        id: customer.user_id,
+        email: customer.email,
+        stripeCustomerId: customer.stripe_customer_id,
       },
       subscription: {
-        id: subscription.id,
-        status: subscription.status,
-        currentPeriodStart: subscription.current_period_start,
-        currentPeriodEnd: subscription.current_period_end,
-        cancelAtPeriodEnd: subscription.cancel_at_period_end,
+        id: customer.id,
+        status: customer.status,
+        planType: customer.plan_type,
+        currentPeriodStart: customer.current_period_start,
+        currentPeriodEnd: customer.current_period_end,
+        cancelAtPeriodEnd: customer.cancel_at_period_end,
       },
     })
   } catch (error) {
