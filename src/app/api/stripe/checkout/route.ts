@@ -63,6 +63,10 @@ export async function POST(request: NextRequest) {
         success_url: `${appUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${appUrl}/pricing`,
         billing_address_collection: 'auto',
+        customer_creation: 'always', // Crée un vrai client Stripe (pas Guest)
+        payment_intent_data: {
+          description: 'Niches Hunter - Lifetime Access',
+        },
         ...(validCoupon && { discounts: [{ coupon: validCoupon }] }),
       })
     } else {
@@ -75,6 +79,9 @@ export async function POST(request: NextRequest) {
         success_url: `${appUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${appUrl}/pricing`,
         billing_address_collection: 'auto',
+        subscription_data: {
+          description: 'Niches Hunter - Monthly Subscription',
+        },
         ...(validCoupon && { discounts: [{ coupon: validCoupon }] }),
       })
     }
