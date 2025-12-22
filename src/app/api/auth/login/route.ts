@@ -67,7 +67,9 @@ export async function POST(request: NextRequest) {
           const customerId = customers.data[0].id
           console.log('Found Stripe customer:', customerId)
 
-          // Vérifier s'il a une subscription active
+          let hasAccess = false
+
+          // 1. Vérifier s'il a une subscription active (monthly)
           const subscriptions = await stripe.subscriptions.list({
             customer: customerId,
             status: 'active',
@@ -75,7 +77,23 @@ export async function POST(request: NextRequest) {
           })
 
           if (subscriptions.data.length > 0) {
-            console.log('Found active subscription, updating DB...')
+            console.log('Found active subscription')
+            hasAccess = true
+          } else {
+            // 2. Vérifier les paiements one-time (lifetime)
+            const payments = await stripe.paymentIntents.list({
+              customer: customerId,
+              limit: 10,
+            })
+            
+            if (payments.data.some(p => p.status === 'succeeded')) {
+              console.log('Found successful lifetime payment')
+              hasAccess = true
+            }
+          }
+
+          if (hasAccess) {
+            console.log('User has access, updating DB...')
             
             // Mettre à jour ou créer l'entrée dans la DB
             const { data: existingSub } = await supabaseAdmin
@@ -97,7 +115,7 @@ export async function POST(request: NextRequest) {
                 .insert({
                   user_id: authData.user.id,
                   stripe_customer_id: customerId,
-                  stripe_subscription_id: subscriptions.data[0].id,
+                  stripe_subscription_id: subscriptions.data[0]?.id || null,
                   status: 'active',
                 })
             }
