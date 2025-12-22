@@ -58,14 +58,43 @@ export async function GET() {
 
     if (customerId) {
       try {
+        // 1. Vérifier les subscriptions Stripe (pour abonnements mensuels)
         const subscriptions = await stripe.subscriptions.list({
           customer: customerId,
           status: 'active',
           limit: 1,
         })
-        hasActiveSubscription = subscriptions.data.length > 0
+        
+        if (subscriptions.data.length > 0) {
+          hasActiveSubscription = true
+        } else {
+          // 2. Vérifier les paiements one-time (pour achats lifetime)
+          const payments = await stripe.paymentIntents.list({
+            customer: customerId,
+            limit: 10,
+          })
+          
+          // Si au moins un paiement réussi, c'est un lifetime
+          hasActiveSubscription = payments.data.some(
+            payment => payment.status === 'succeeded'
+          )
+        }
+        
+        // 3. Fallback: vérifier dans notre DB
+        if (!hasActiveSubscription) {
+          const { data: dbSubscription } = await supabaseAdmin
+            .from('subscriptions')
+            .select('status')
+            .eq('stripe_customer_id', customerId)
+            .eq('status', 'active')
+            .single()
+          
+          if (dbSubscription) {
+            hasActiveSubscription = true
+          }
+        }
       } catch (error) {
-        console.error('Error checking Stripe subscription:', error)
+        console.error('Error checking subscription:', error)
       }
     }
 
