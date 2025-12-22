@@ -1,6 +1,12 @@
 import { NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import { cookies } from 'next/headers'
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
 export async function GET() {
   try {
@@ -15,14 +21,43 @@ export async function GET() {
       return NextResponse.json({ hasActiveSubscription: false })
     }
 
-    // Vérifier les abonnements actifs pour ce customer
+    let hasActiveSubscription = false
+
+    // 1. Vérifier les subscriptions Stripe (pour abonnements mensuels)
     const subscriptions = await stripe.subscriptions.list({
       customer: customerId,
       status: 'active',
       limit: 1,
     })
 
-    const hasActiveSubscription = subscriptions.data.length > 0
+    if (subscriptions.data.length > 0) {
+      hasActiveSubscription = true
+    } else {
+      // 2. Vérifier les paiements one-time (pour achats lifetime)
+      const payments = await stripe.paymentIntents.list({
+        customer: customerId,
+        limit: 10,
+      })
+      
+      hasActiveSubscription = payments.data.some(
+        payment => payment.status === 'succeeded'
+      )
+    }
+
+    // 3. Fallback: vérifier dans notre DB
+    if (!hasActiveSubscription) {
+      const { data: dbSubscription } = await supabaseAdmin
+        .from('subscriptions')
+        .select('status')
+        .eq('stripe_customer_id', customerId)
+        .eq('status', 'active')
+        .single()
+      
+      if (dbSubscription) {
+        hasActiveSubscription = true
+      }
+    }
+
     console.log('Has active subscription:', hasActiveSubscription)
 
     return NextResponse.json({ hasActiveSubscription })
