@@ -20,34 +20,42 @@ export async function POST() {
       )
     }
 
-    // Récupérer la subscription depuis la DB
-    const { data: subscription } = await supabaseAdmin
-      .from('subscriptions')
-      .select('stripe_subscription_id')
+    // Récupérer le customer depuis la DB
+    const { data: customer } = await supabaseAdmin
+      .from('customers')
+      .select('stripe_subscription_id, plan_type')
       .eq('stripe_customer_id', customerId)
       .single()
 
-    if (!subscription?.stripe_subscription_id) {
+    if (!customer?.stripe_subscription_id) {
       return NextResponse.json(
         { error: 'No active subscription found' },
         { status: 404 }
       )
     }
 
+    // Les lifetime ne peuvent pas être annulés
+    if (customer.plan_type === 'lifetime') {
+      return NextResponse.json(
+        { error: 'Lifetime subscriptions cannot be canceled' },
+        { status: 400 }
+      )
+    }
+
     // Annuler sur Stripe (à la fin de la période)
     const canceledSubscription = await stripe.subscriptions.update(
-      subscription.stripe_subscription_id,
+      customer.stripe_subscription_id,
       { cancel_at_period_end: true }
     ) as unknown as { current_period_end: number }
 
     // Mettre à jour la DB
     await supabaseAdmin
-      .from('subscriptions')
+      .from('customers')
       .update({
         cancel_at_period_end: true,
         status: 'active', // Reste active jusqu'à la fin de la période
       })
-      .eq('stripe_subscription_id', subscription.stripe_subscription_id)
+      .eq('stripe_subscription_id', customer.stripe_subscription_id)
 
     return NextResponse.json({
       success: true,

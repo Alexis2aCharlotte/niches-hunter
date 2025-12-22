@@ -23,33 +23,38 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     }
 
-    // Récupérer la subscription
-    const { data: subscription } = await supabaseAdmin
-      .from('subscriptions')
+    // Récupérer le customer
+    const { data: customer } = await supabaseAdmin
+      .from('customers')
       .select('*')
       .eq('user_id', user.id)
       .eq('status', 'active')
       .single()
 
-    if (!subscription || !subscription.stripe_subscription_id) {
+    if (!customer || !customer.stripe_subscription_id) {
       return NextResponse.json({ error: 'No active subscription found' }, { status: 404 })
     }
 
+    // Les lifetime ne peuvent pas être annulés
+    if (customer.plan_type === 'lifetime') {
+      return NextResponse.json({ error: 'Lifetime subscriptions cannot be canceled' }, { status: 400 })
+    }
+
     // Annuler sur Stripe (à la fin de la période)
-    await stripe.subscriptions.update(subscription.stripe_subscription_id, {
+    await stripe.subscriptions.update(customer.stripe_subscription_id, {
       cancel_at_period_end: true,
     })
 
     // Mettre à jour dans la DB
     await supabaseAdmin
-      .from('subscriptions')
+      .from('customers')
       .update({ cancel_at_period_end: true })
-      .eq('id', subscription.id)
+      .eq('id', customer.id)
 
     return NextResponse.json({
       success: true,
       message: 'Subscription will be canceled at the end of the billing period',
-      cancelAt: subscription.current_period_end,
+      cancelAt: customer.current_period_end,
     })
   } catch (error) {
     console.error('Cancel subscription error:', error)

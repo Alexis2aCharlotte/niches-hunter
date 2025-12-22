@@ -23,12 +23,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ user: null, subscription: null })
     }
 
-    // Récupérer la subscription
-    const { data: subscription } = await supabaseAdmin
-      .from('subscriptions')
+    // Récupérer le customer
+    const { data: customer } = await supabaseAdmin
+      .from('customers')
       .select('*')
       .eq('user_id', user.id)
-      .eq('status', 'active')
       .single()
 
     // Récupérer les niches sauvegardées
@@ -43,7 +42,13 @@ export async function GET(request: NextRequest) {
         email: user.email,
         created_at: user.created_at,
       },
-      subscription: subscription || null,
+      subscription: customer ? {
+        status: customer.status,
+        planType: customer.plan_type,
+        currentPeriodStart: customer.current_period_start,
+        currentPeriodEnd: customer.current_period_end,
+        cancelAtPeriodEnd: customer.cancel_at_period_end,
+      } : null,
       savedNiches: savedNiches?.map(s => s.niche_id) || [],
     })
   } catch (error) {
