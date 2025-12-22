@@ -6,7 +6,7 @@ import Navbar from '@/components/Navbar'
 import LiquidCard from '@/components/LiquidCard'
 
 export default function PricingPage() {
-  const [isLifetime, setIsLifetime] = useState(true)
+  const [isLifetime, setIsLifetime] = useState(false)
   const [checkoutLoading, setCheckoutLoading] = useState(false)
 
   // Pricing
