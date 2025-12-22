@@ -64,6 +64,7 @@ export async function POST(request: NextRequest) {
         cancel_url: `${appUrl}/pricing`,
         billing_address_collection: 'auto',
         customer_creation: 'always', // Crée un vrai client Stripe (pas Guest)
+        tax_id_collection: { enabled: true }, // Permet aux entreprises de saisir leur numéro de TVA
         payment_intent_data: {
           description: 'Niches Hunter - Lifetime Access',
         },
@@ -79,6 +80,7 @@ export async function POST(request: NextRequest) {
         success_url: `${appUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${appUrl}/pricing`,
         billing_address_collection: 'auto',
+        tax_id_collection: { enabled: true }, // Permet aux entreprises de saisir leur numéro de TVA
         subscription_data: {
           description: 'Niches Hunter - Monthly Subscription',
         },
