@@ -61,9 +61,9 @@ export async function POST(request: NextRequest) {
           isLifetime 
         })
 
-        // Vérifier qu'on a au moins un customer ID ou payment intent
-        if (!customerId && !paymentIntentId) {
-          console.error('No customer ID or payment intent found in session')
+        // Vérifier qu'on a un email et un customer ID
+        if (!customerEmail || !customerId) {
+          console.error('No email or customer ID found in session')
           break
         }
 
@@ -82,65 +82,28 @@ export async function POST(request: NextRequest) {
           console.log('Subscription periods:', { periodStartTs, periodEndTs, periodStart, periodEnd })
         }
 
-        // Pour les paiements lifetime, utiliser payment_intent comme référence si pas de customer
-        const effectiveCustomerId = customerId || `pi_${paymentIntentId}`
-
-        // Sauvegarder dans la table subscriptions
-        const subscriptionData = {
-          stripe_customer_id: effectiveCustomerId,
+        // Créer/mettre à jour dans la table customers
+        const customerData = {
+          email: customerEmail,
+          stripe_customer_id: customerId,
           stripe_subscription_id: subscriptionId || (isLifetime ? `lifetime_${paymentIntentId}` : null),
-          status: 'active' as const,
+          plan_type: isLifetime ? 'lifetime' : 'monthly',
+          status: 'active',
           current_period_start: periodStart,
-          current_period_end: isLifetime ? null : periodEnd, // Lifetime = pas de fin
+          current_period_end: isLifetime ? null : periodEnd,
         }
 
-        console.log('Inserting subscription data:', subscriptionData)
+        console.log('Upserting customer data:', customerData)
 
-        const { error: subError } = await supabaseAdmin
-          .from('subscriptions')
-          .insert(subscriptionData)
+        // Upsert par email (clé unique)
+        const { error: customerError } = await supabaseAdmin
+          .from('customers')
+          .upsert(customerData, { onConflict: 'email' })
 
-        if (subError) {
-          console.error('Error saving subscription:', subError)
-          // Si erreur de doublon, essayer un upsert
-          if (subError.code === '23505') {
-            const { error: upsertError } = await supabaseAdmin
-              .from('subscriptions')
-              .upsert(subscriptionData, { onConflict: 'stripe_customer_id' })
-            
-            if (upsertError) {
-              console.error('Error upserting subscription:', upsertError)
-            } else {
-              console.log('Subscription upserted successfully')
-            }
-          }
+        if (customerError) {
+          console.error('Error saving customer:', customerError)
         } else {
-          console.log('Subscription saved successfully')
-        }
-
-        // Ajouter dans subscribers si l'email existe
-        if (customerEmail) {
-          const { data: existingSubscriber } = await supabaseAdmin
-            .from('subscribers')
-            .select('id')
-            .eq('email', customerEmail)
-            .single()
-
-          if (!existingSubscriber) {
-            const { error: subscriberError } = await supabaseAdmin
-              .from('subscribers')
-              .insert({
-                email: customerEmail,
-                source: isLifetime ? 'stripe_lifetime' : 'stripe_subscription',
-                is_active: true,
-              })
-            
-            if (subscriberError) {
-              console.error('Error saving subscriber:', subscriberError)
-            } else {
-              console.log('Subscriber saved successfully')
-            }
-          }
+          console.log('Customer saved successfully')
         }
         break
       }
@@ -158,97 +121,50 @@ export async function POST(request: NextRequest) {
         
         console.log('Subscription event:', event.type, subscription.id, subscription.status, subscription.customer)
 
-        const subscriptionUpdateData = {
-          stripe_customer_id: subscription.customer,
-          stripe_subscription_id: subscription.id,
-          status: subscription.status as 'active' | 'canceled' | 'past_due' | 'trialing',
-          current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-          current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-          cancel_at_period_end: subscription.cancel_at_period_end,
-        }
+        // Mettre à jour le customer par stripe_customer_id
+        const { error } = await supabaseAdmin
+          .from('customers')
+          .update({
+            stripe_subscription_id: subscription.id,
+            status: subscription.status as 'active' | 'canceled' | 'past_due' | 'trialing',
+            current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
+            current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+            cancel_at_period_end: subscription.cancel_at_period_end,
+          })
+          .eq('stripe_customer_id', subscription.customer)
 
-        // D'abord essayer de mettre à jour par stripe_subscription_id
-        const { data: existingBySub } = await supabaseAdmin
-          .from('subscriptions')
-          .select('id')
-          .eq('stripe_subscription_id', subscription.id)
-          .single()
-
-        if (existingBySub) {
-          // Mettre à jour l'entrée existante
-          const { error } = await supabaseAdmin
-            .from('subscriptions')
-            .update(subscriptionUpdateData)
-            .eq('stripe_subscription_id', subscription.id)
-          
-          if (error) {
-            console.error('Error updating subscription by sub_id:', error)
-          } else {
-            console.log('Subscription updated by sub_id')
-          }
+        if (error) {
+          console.error('Error updating customer subscription:', error)
         } else {
-          // Chercher par customer_id
-          const { data: existingByCustomer } = await supabaseAdmin
-            .from('subscriptions')
-            .select('id')
-            .eq('stripe_customer_id', subscription.customer)
-            .single()
-
-          if (existingByCustomer) {
-            // Mettre à jour l'entrée existante par customer
-            const { error } = await supabaseAdmin
-              .from('subscriptions')
-              .update(subscriptionUpdateData)
-              .eq('stripe_customer_id', subscription.customer)
-            
-            if (error) {
-              console.error('Error updating subscription by customer_id:', error)
-            } else {
-              console.log('Subscription updated by customer_id')
-            }
-          } else {
-            // Créer une nouvelle entrée
-            const { error } = await supabaseAdmin
-              .from('subscriptions')
-              .insert(subscriptionUpdateData)
-            
-            if (error) {
-              console.error('Error inserting new subscription:', error)
-            } else {
-              console.log('New subscription created')
-            }
-          }
+          console.log('Customer subscription updated')
         }
         break
       }
 
       case 'customer.subscription.deleted': {
-        const subscription = event.data.object as unknown as { id: string }
+        const subscription = event.data.object as unknown as { id: string; customer: string }
         
         console.log('Subscription deleted:', subscription.id)
 
         await supabaseAdmin
-          .from('subscriptions')
+          .from('customers')
           .update({
             status: 'canceled',
             canceled_at: new Date().toISOString(),
           })
-          .eq('stripe_subscription_id', subscription.id)
+          .eq('stripe_customer_id', subscription.customer)
         break
       }
 
       case 'invoice.payment_failed': {
-        const invoice = event.data.object as unknown as { subscription: string | null }
-        const subscriptionId = invoice.subscription
+        const invoice = event.data.object as unknown as { customer: string; subscription: string | null }
 
-        console.log('Payment failed for subscription:', subscriptionId)
+        console.log('Payment failed for customer:', invoice.customer)
 
-        if (subscriptionId) {
-          await supabaseAdmin
-            .from('subscriptions')
-            .update({ status: 'past_due' })
-            .eq('stripe_subscription_id', subscriptionId)
-        }
+        await supabaseAdmin
+          .from('customers')
+          .update({ status: 'past_due' })
+          .eq('stripe_customer_id', invoice.customer)
         break
       }
     }

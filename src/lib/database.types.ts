@@ -39,6 +39,11 @@ export interface Database {
         Insert: SavedNicheInsert;
         Update: Partial<SavedNicheInsert>;
       };
+      customers: {
+        Row: CustomerRow;
+        Insert: CustomerInsert;
+        Update: Partial<CustomerInsert>;
+      };
     };
   };
 }
@@ -302,5 +307,37 @@ export interface SavedNicheRow {
 export interface SavedNicheInsert {
   user_id: string;
   niche_id: string;
+}
+
+// ─────────────────────────────────────────────────────────────────
+// CUSTOMERS (table unifiée des clients payants)
+// ─────────────────────────────────────────────────────────────────
+
+export interface CustomerRow {
+  id: string;
+  email: string;
+  user_id: string | null;
+  stripe_customer_id: string;
+  stripe_subscription_id: string | null;
+  plan_type: 'monthly' | 'lifetime';
+  status: 'active' | 'canceled' | 'past_due' | 'trialing';
+  current_period_start: string | null;
+  current_period_end: string | null;
+  cancel_at_period_end: boolean;
+  canceled_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CustomerInsert {
+  email: string;
+  user_id?: string | null;
+  stripe_customer_id: string;
+  stripe_subscription_id?: string | null;
+  plan_type: 'monthly' | 'lifetime';
+  status?: 'active' | 'canceled' | 'past_due' | 'trialing';
+  current_period_start?: string | null;
+  current_period_end?: string | null;
+  cancel_at_period_end?: boolean;
 }
 

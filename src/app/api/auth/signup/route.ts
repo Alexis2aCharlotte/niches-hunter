@@ -49,48 +49,23 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Ajouter l'email dans subscribers s'il n'existe pas déjà
-    const { data: existingSubscriber } = await supabaseAdmin
-      .from('subscribers')
-      .select('id')
-      .eq('email', email)
-      .single()
-
-    if (!existingSubscriber) {
-      const { error: subscriberError } = await supabaseAdmin
-        .from('subscribers')
-        .insert({
-          email: email,
-          source: 'stripe_pro',
-          is_active: true,
-        })
-      
-      if (subscriberError) {
-        console.error('Error adding subscriber:', subscriberError)
-      }
-    }
-
-    // Mettre à jour la subscription existante avec le user_id
+    // Mettre à jour le customer avec le user_id
     if (authData.user && stripeCustomerId) {
-      // Mettre à jour l'entrée existante (créée par l'API session)
       const { error: updateError } = await supabaseAdmin
-        .from('subscriptions')
+        .from('customers')
         .update({ user_id: authData.user.id })
         .eq('stripe_customer_id', stripeCustomerId)
 
       if (updateError) {
-        console.error('Error updating subscription with user_id:', updateError)
+        console.error('Error updating customer with user_id:', updateError)
         
-        // Si pas d'entrée existante, en créer une nouvelle
+        // Essayer par email si pas trouvé par stripe_customer_id
         await supabaseAdmin
-          .from('subscriptions')
-          .insert({
-            user_id: authData.user.id,
-            stripe_customer_id: stripeCustomerId,
-            status: 'active',
-          })
+          .from('customers')
+          .update({ user_id: authData.user.id })
+          .eq('email', email)
       } else {
-        console.log('Subscription updated with user_id:', authData.user.id)
+        console.log('Customer updated with user_id:', authData.user.id)
       }
     }
 
@@ -108,7 +83,7 @@ export async function POST(request: NextRequest) {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 7, // 7 jours
+        maxAge: 60 * 60 * 24 * 30, // 30 jours (augmenté)
         path: '/',
       })
     }

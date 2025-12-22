@@ -22,93 +22,73 @@ export async function GET(request: NextRequest) {
     console.log('Retrieving Stripe session:', sessionId)
     const session = await stripe.checkout.sessions.retrieve(sessionId)
     const customerId = session.customer as string
-    const subscriptionId = session.subscription as string
+    const customerEmail = session.customer_details?.email
+    const subscriptionId = session.subscription as string | null
+    const paymentIntentId = session.payment_intent as string | null
+    const isLifetime = session.mode === 'payment'
 
-    console.log('Session retrieved:', { customerId, subscriptionId })
+    console.log('Session retrieved:', { customerId, customerEmail, subscriptionId, isLifetime })
+
+    if (!customerEmail || !customerId) {
+      console.error('No email or customer ID in session')
+      return NextResponse.json(
+        { error: 'No email or customer ID in session' },
+        { status: 400 }
+      )
+    }
 
     // Récupérer les détails de la subscription si elle existe
+    let periodStart = new Date().toISOString()
+    let periodEnd: string | null = null
+
     if (subscriptionId) {
       const subResponse = await stripe.subscriptions.retrieve(subscriptionId)
-      console.log('Raw subscription response:', JSON.stringify(subResponse, null, 2))
-      
-      // Accéder aux propriétés de manière sûre
       const periodStartTs = (subResponse as unknown as Record<string, unknown>).current_period_start as number | undefined
       const periodEndTs = (subResponse as unknown as Record<string, unknown>).current_period_end as number | undefined
       
-      const periodStart = periodStartTs ? new Date(periodStartTs * 1000).toISOString() : new Date().toISOString()
-      const periodEnd = periodEndTs ? new Date(periodEndTs * 1000).toISOString() : null
-      
-      console.log('Subscription details:', { periodStartTs, periodEndTs, periodStart, periodEnd })
-      
-      // Sauvegarder/mettre à jour dans la DB
-      const { data: existingSub, error: selectError } = await supabaseAdmin
-        .from('subscriptions')
-        .select('id')
-        .eq('stripe_customer_id', customerId)
-        .single()
+      if (periodStartTs) periodStart = new Date(periodStartTs * 1000).toISOString()
+      if (periodEndTs) periodEnd = new Date(periodEndTs * 1000).toISOString()
+    }
 
-      console.log('Existing sub check:', { existingSub, selectError })
+    // Upsert dans la table customers
+    const customerData = {
+      email: customerEmail,
+      stripe_customer_id: customerId,
+      stripe_subscription_id: subscriptionId || (isLifetime ? `lifetime_${paymentIntentId}` : null),
+      plan_type: isLifetime ? 'lifetime' : 'monthly',
+      status: 'active',
+      current_period_start: periodStart,
+      current_period_end: isLifetime ? null : periodEnd,
+    }
 
-      if (existingSub) {
-        // Mettre à jour l'entrée existante
-        const { error: updateError } = await supabaseAdmin
-          .from('subscriptions')
-          .update({
-            stripe_subscription_id: subscriptionId,
-            current_period_start: periodStart,
-            current_period_end: periodEnd,
-            status: 'active',
-          })
-          .eq('stripe_customer_id', customerId)
-        
-        console.log('Update result:', { updateError })
-      } else {
-        // Créer une nouvelle entrée
-        const { error: insertError } = await supabaseAdmin
-          .from('subscriptions')
-          .insert({
-            stripe_customer_id: customerId,
-            stripe_subscription_id: subscriptionId,
-            status: 'active',
-            current_period_start: periodStart,
-            current_period_end: periodEnd,
-          })
-        
-        console.log('Insert result:', { insertError })
-      }
+    console.log('Upserting customer:', customerData)
+
+    const { error: upsertError } = await supabaseAdmin
+      .from('customers')
+      .upsert(customerData, { onConflict: 'email' })
+
+    if (upsertError) {
+      console.error('Error upserting customer:', upsertError)
     } else {
-      console.log('No subscriptionId found, creating basic entry...')
-      // Même sans subscription détaillée, créer une entrée
-      const { error: insertError } = await supabaseAdmin
-        .from('subscriptions')
-        .upsert({
-          stripe_customer_id: customerId,
-          status: 'active',
-        }, {
-          onConflict: 'stripe_customer_id'
-        })
-      
-      console.log('Upsert result:', { insertError })
+      console.log('Customer upserted successfully')
     }
 
     // Créer la réponse avec le cookie pour tracker l'abonnement
     const response = NextResponse.json({
-      email: session.customer_details?.email || null,
+      email: customerEmail,
       customerName: session.customer_details?.name || null,
       customerId: customerId,
       subscriptionId: subscriptionId,
     })
 
     // Stocker le customer ID dans un cookie (expire dans 1 an)
-    if (customerId) {
-      response.cookies.set('stripe_customer_id', customerId, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 365, // 1 an
-        path: '/',
-      })
-    }
+    response.cookies.set('stripe_customer_id', customerId, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 365, // 1 an
+      path: '/',
+    })
 
     return response
   } catch (error) {

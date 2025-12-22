@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
-import { stripe } from '@/lib/stripe'
 
 // Client Supabase côté serveur
 const supabaseAdmin = createClient(
@@ -75,51 +74,20 @@ export async function GET(
       return NextResponse.json({ niche, isLocked: false })
     }
 
-    // Vérifier l'abonnement
+    // Vérifier l'abonnement dans la table customers
     const cookieStore = await cookies()
     const customerId = cookieStore.get('stripe_customer_id')?.value
     
     let hasActiveSubscription = false
 
     if (customerId) {
-      try {
-        // 1. Vérifier les subscriptions Stripe (pour abonnements mensuels)
-        const subscriptions = await stripe.subscriptions.list({
-          customer: customerId,
-          status: 'active',
-          limit: 1,
-        })
-        
-        if (subscriptions.data.length > 0) {
-          hasActiveSubscription = true
-        } else {
-          // 2. Vérifier les paiements one-time (pour achats lifetime)
-          const payments = await stripe.paymentIntents.list({
-            customer: customerId,
-            limit: 10,
-          })
-          
-          hasActiveSubscription = payments.data.some(
-            payment => payment.status === 'succeeded'
-          )
-        }
-        
-        // 3. Fallback: vérifier dans notre DB
-        if (!hasActiveSubscription) {
-          const { data: dbSubscription } = await supabaseAdmin
-            .from('subscriptions')
-            .select('status')
-            .eq('stripe_customer_id', customerId)
-            .eq('status', 'active')
-            .single()
-          
-          if (dbSubscription) {
-            hasActiveSubscription = true
-          }
-        }
-      } catch (e) {
-        console.error('Error checking subscription:', e)
-      }
+      const { data: customer } = await supabaseAdmin
+        .from('customers')
+        .select('status')
+        .eq('stripe_customer_id', customerId)
+        .single()
+
+      hasActiveSubscription = customer?.status === 'active'
     }
 
     // Si pas d'abonnement, masquer les données

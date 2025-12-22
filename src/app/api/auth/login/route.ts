@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { stripe } from '@/lib/stripe'
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -43,89 +42,25 @@ export async function POST(request: NextRequest) {
 
     console.log('User authenticated:', authData.user.id)
 
-    // Récupérer la subscription - d'abord par user_id
-    const { data: subscriptionData } = await supabaseAdmin
-      .from('subscriptions')
-      .select('stripe_customer_id')
-      .eq('user_id', authData.user.id)
+    // Récupérer le customer par email (simple et direct)
+    const { data: customer } = await supabaseAdmin
+      .from('customers')
+      .select('stripe_customer_id, status, plan_type')
+      .eq('email', email)
       .single()
 
-    let stripeCustomerId = subscriptionData?.stripe_customer_id || null
+    let stripeCustomerId = customer?.stripe_customer_id || null
 
-    // Si pas trouvé par user_id, chercher directement dans Stripe par email
-    if (!stripeCustomerId) {
-      console.log('No subscription found by user_id, searching Stripe by email...')
+    // Si trouvé, mettre à jour le user_id si pas déjà fait
+    if (customer && stripeCustomerId) {
+      console.log('Found customer:', stripeCustomerId, 'status:', customer.status)
       
-      try {
-        // Chercher le customer Stripe par email
-        const customers = await stripe.customers.list({
-          email: email,
-          limit: 1,
-        })
-
-        if (customers.data.length > 0) {
-          const customerId = customers.data[0].id
-          console.log('Found Stripe customer:', customerId)
-
-          let hasAccess = false
-
-          // 1. Vérifier s'il a une subscription active (monthly)
-          const subscriptions = await stripe.subscriptions.list({
-            customer: customerId,
-            status: 'active',
-            limit: 1,
-          })
-
-          if (subscriptions.data.length > 0) {
-            console.log('Found active subscription')
-            hasAccess = true
-          } else {
-            // 2. Vérifier les paiements one-time (lifetime)
-            const payments = await stripe.paymentIntents.list({
-              customer: customerId,
-              limit: 10,
-            })
-            
-            if (payments.data.some(p => p.status === 'succeeded')) {
-              console.log('Found successful lifetime payment')
-              hasAccess = true
-            }
-          }
-
-          if (hasAccess) {
-            console.log('User has access, updating DB...')
-            
-            // Mettre à jour ou créer l'entrée dans la DB
-            const { data: existingSub } = await supabaseAdmin
-              .from('subscriptions')
-              .select('id')
-              .eq('stripe_customer_id', customerId)
-              .single()
-
-            if (existingSub) {
-              // Mettre à jour avec le user_id
-              await supabaseAdmin
-                .from('subscriptions')
-                .update({ user_id: authData.user.id })
-                .eq('stripe_customer_id', customerId)
-            } else {
-              // Créer une nouvelle entrée
-              await supabaseAdmin
-                .from('subscriptions')
-                .insert({
-                  user_id: authData.user.id,
-                  stripe_customer_id: customerId,
-                  stripe_subscription_id: subscriptions.data[0]?.id || null,
-                  status: 'active',
-                })
-            }
-
-            stripeCustomerId = customerId
-          }
-        }
-      } catch (stripeError) {
-        console.error('Error searching Stripe:', stripeError)
-      }
+      await supabaseAdmin
+        .from('customers')
+        .update({ user_id: authData.user.id })
+        .eq('email', email)
+    } else {
+      console.log('No customer found for email:', email)
     }
 
     // Créer la réponse avec les cookies
@@ -135,6 +70,8 @@ export async function POST(request: NextRequest) {
         id: authData.user.id,
         email: authData.user.email,
       },
+      hasSubscription: customer?.status === 'active',
+      planType: customer?.plan_type || null,
     })
 
     // Stocker le access_token pour authentifier les requêtes
@@ -144,7 +81,7 @@ export async function POST(request: NextRequest) {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 7, // 7 jours
+        maxAge: 60 * 60 * 24 * 30, // 30 jours (augmenté)
         path: '/',
       })
     }
@@ -159,8 +96,6 @@ export async function POST(request: NextRequest) {
         maxAge: 60 * 60 * 24 * 365, // 1 an
         path: '/',
       })
-    } else {
-      console.log('No subscription found for user')
     }
 
     return response
