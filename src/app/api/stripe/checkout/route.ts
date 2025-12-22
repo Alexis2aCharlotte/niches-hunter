@@ -65,6 +65,7 @@ export async function POST(request: NextRequest) {
         billing_address_collection: 'auto',
         customer_creation: 'always', // Crée un vrai client Stripe (pas Guest)
         tax_id_collection: { enabled: true }, // Permet aux entreprises de saisir leur numéro de TVA
+        invoice_creation: { enabled: true }, // Génère une facture PDF pour les paiements uniques
         payment_intent_data: {
           description: 'Niches Hunter - Lifetime Access',
         },
