@@ -46,12 +46,28 @@ export async function POST(request: NextRequest) {
         
         // Récupérer les infos du client
         const customerEmail = session.customer_details?.email
-        const customerId = session.customer as string
-        const subscriptionId = session.subscription as string
+        const customerId = session.customer as string | null
+        const subscriptionId = session.subscription as string | null
+        const paymentIntentId = session.payment_intent as string | null
+        const mode = session.mode // 'payment' pour lifetime, 'subscription' pour monthly
+        const isLifetime = mode === 'payment'
 
-        console.log('Checkout completed:', { customerEmail, customerId, subscriptionId })
+        console.log('Checkout completed:', { 
+          customerEmail, 
+          customerId, 
+          subscriptionId, 
+          paymentIntentId,
+          mode,
+          isLifetime 
+        })
 
-        // Récupérer les détails de la subscription depuis Stripe
+        // Vérifier qu'on a au moins un customer ID ou payment intent
+        if (!customerId && !paymentIntentId) {
+          console.error('No customer ID or payment intent found in session')
+          break
+        }
+
+        // Récupérer les détails de la subscription depuis Stripe (si subscription)
         let periodStart = new Date().toISOString()
         let periodEnd: string | null = null
         
@@ -66,19 +82,38 @@ export async function POST(request: NextRequest) {
           console.log('Subscription periods:', { periodStartTs, periodEndTs, periodStart, periodEnd })
         }
 
+        // Pour les paiements lifetime, utiliser payment_intent comme référence si pas de customer
+        const effectiveCustomerId = customerId || `pi_${paymentIntentId}`
+
         // Sauvegarder dans la table subscriptions
+        const subscriptionData = {
+          stripe_customer_id: effectiveCustomerId,
+          stripe_subscription_id: subscriptionId || (isLifetime ? `lifetime_${paymentIntentId}` : null),
+          status: 'active' as const,
+          current_period_start: periodStart,
+          current_period_end: isLifetime ? null : periodEnd, // Lifetime = pas de fin
+        }
+
+        console.log('Inserting subscription data:', subscriptionData)
+
         const { error: subError } = await supabaseAdmin
           .from('subscriptions')
-          .insert({
-            stripe_customer_id: customerId,
-            stripe_subscription_id: subscriptionId,
-            status: 'active',
-            current_period_start: periodStart,
-            current_period_end: periodEnd,
-          })
+          .insert(subscriptionData)
 
         if (subError) {
           console.error('Error saving subscription:', subError)
+          // Si erreur de doublon, essayer un upsert
+          if (subError.code === '23505') {
+            const { error: upsertError } = await supabaseAdmin
+              .from('subscriptions')
+              .upsert(subscriptionData, { onConflict: 'stripe_customer_id' })
+            
+            if (upsertError) {
+              console.error('Error upserting subscription:', upsertError)
+            } else {
+              console.log('Subscription upserted successfully')
+            }
+          }
         } else {
           console.log('Subscription saved successfully')
         }
@@ -96,7 +131,7 @@ export async function POST(request: NextRequest) {
               .from('subscribers')
               .insert({
                 email: customerEmail,
-                source: 'stripe_checkout',
+                source: isLifetime ? 'stripe_lifetime' : 'stripe_subscription',
                 is_active: true,
               })
             
