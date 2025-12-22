@@ -149,26 +149,75 @@ export async function POST(request: NextRequest) {
       case 'customer.subscription.updated': {
         const subscription = event.data.object as unknown as {
           id: string
+          customer: string
           status: string
           current_period_start: number
           current_period_end: number
           cancel_at_period_end: boolean
         }
         
-        console.log('Subscription updated:', subscription.id, subscription.status)
+        console.log('Subscription event:', event.type, subscription.id, subscription.status, subscription.customer)
 
-        const { error } = await supabaseAdmin
+        const subscriptionUpdateData = {
+          stripe_customer_id: subscription.customer,
+          stripe_subscription_id: subscription.id,
+          status: subscription.status as 'active' | 'canceled' | 'past_due' | 'trialing',
+          current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
+          current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+          cancel_at_period_end: subscription.cancel_at_period_end,
+        }
+
+        // D'abord essayer de mettre à jour par stripe_subscription_id
+        const { data: existingBySub } = await supabaseAdmin
           .from('subscriptions')
-          .update({
-            status: subscription.status as 'active' | 'canceled' | 'past_due' | 'trialing',
-            current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-            current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-            cancel_at_period_end: subscription.cancel_at_period_end,
-          })
+          .select('id')
           .eq('stripe_subscription_id', subscription.id)
+          .single()
 
-        if (error) {
-          console.error('Error updating subscription:', error)
+        if (existingBySub) {
+          // Mettre à jour l'entrée existante
+          const { error } = await supabaseAdmin
+            .from('subscriptions')
+            .update(subscriptionUpdateData)
+            .eq('stripe_subscription_id', subscription.id)
+          
+          if (error) {
+            console.error('Error updating subscription by sub_id:', error)
+          } else {
+            console.log('Subscription updated by sub_id')
+          }
+        } else {
+          // Chercher par customer_id
+          const { data: existingByCustomer } = await supabaseAdmin
+            .from('subscriptions')
+            .select('id')
+            .eq('stripe_customer_id', subscription.customer)
+            .single()
+
+          if (existingByCustomer) {
+            // Mettre à jour l'entrée existante par customer
+            const { error } = await supabaseAdmin
+              .from('subscriptions')
+              .update(subscriptionUpdateData)
+              .eq('stripe_customer_id', subscription.customer)
+            
+            if (error) {
+              console.error('Error updating subscription by customer_id:', error)
+            } else {
+              console.log('Subscription updated by customer_id')
+            }
+          } else {
+            // Créer une nouvelle entrée
+            const { error } = await supabaseAdmin
+              .from('subscriptions')
+              .insert(subscriptionUpdateData)
+            
+            if (error) {
+              console.error('Error inserting new subscription:', error)
+            } else {
+              console.log('New subscription created')
+            }
+          }
         }
         break
       }
