@@ -54,6 +54,48 @@ body {
   background-attachment: fixed;
 }
 
+/* ============================================
+   SAFARI PERFORMANCE FIXES
+   Safari has major performance issues with:
+   - background-attachment: fixed
+   - backdrop-filter with high blur values
+   - mix-blend-mode combined with filters
+   ============================================ */
+
+@supports (-webkit-touch-callout: none) {
+  /* Fix #1: Disable background-attachment: fixed (main freeze cause) */
+  body {
+    background-attachment: scroll !important;
+  }
+  
+  /* Fix #2: Cap all backdrop-filter blur values */
+  .liquid-card {
+    -webkit-backdrop-filter: blur(6px) !important;
+    backdrop-filter: blur(6px) !important;
+  }
+  
+  .nav-blur {
+    -webkit-backdrop-filter: blur(4px) !important;
+    backdrop-filter: blur(4px) !important;
+  }
+}
+
+/* Fix #2: Reduce motion for users who prefer it (helps Safari too) */
+@media (prefers-reduced-motion: reduce) {
+  .radar-sweep,
+  .animate-ping,
+  .animate-pulse,
+  .animate-float,
+  .animate-spin-slow {
+    animation: none !important;
+  }
+  
+  .liquid-card,
+  .liquid-card::after {
+    transition: none !important;
+  }
+}
+
 ::selection {
   background: var(--primary);
   color: black;
@@ -168,6 +210,13 @@ body {
 
 .liquid-card:hover::after {
   opacity: 1;
+}
+
+/* Safari fix: disable problematic mix-blend-mode */
+@supports (-webkit-touch-callout: none) {
+  .liquid-card::after {
+    mix-blend-mode: normal;
+  }
 }
 
 .liquid-card:hover {
