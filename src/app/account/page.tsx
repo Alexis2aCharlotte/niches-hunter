@@ -55,7 +55,9 @@ export default function AccountPage() {
         setSubscription(userData.subscription)
 
         // Récupérer les niches sauvegardées
-        const nichesRes = await fetch('/api/user/saved-niches')
+        const nichesRes = await fetch('/api/user/saved-niches', {
+          credentials: 'include', // Important pour mobile Safari
+        })
         const nichesData = await nichesRes.json()
         setSavedNiches(nichesData.savedNiches || [])
       } catch (error) {
@@ -120,6 +122,7 @@ export default function AccountPage() {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nicheId }),
+        credentials: 'include', // Important pour mobile Safari
       })
       setSavedNiches(prev => prev.filter(n => n.niche_id !== nicheId))
     } catch (error) {

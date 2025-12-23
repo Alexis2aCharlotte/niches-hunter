@@ -43,7 +43,9 @@ export default function NicheDetailPage() {
     async function checkSavedStatus() {
       if (!nicheCode) return;
       try {
-        const response = await fetch('/api/user/saved-niches');
+        const response = await fetch('/api/user/saved-niches', {
+          credentials: 'include', // Important pour mobile Safari
+        });
         const data = await response.json();
         const savedIds = data.savedNiches?.map((n: { niche_id: string }) => n.niche_id) || [];
         setIsSaved(savedIds.includes(nicheCode));
@@ -63,12 +65,18 @@ export default function NicheDetailPage() {
     setSaveLoading(true);
     try {
       const method = isSaved ? 'DELETE' : 'POST';
-      await fetch('/api/user/saved-niches', {
+      const response = await fetch('/api/user/saved-niches', {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nicheId: nicheCode }),
+        credentials: 'include', // Important pour mobile Safari
       });
-      setIsSaved(!isSaved);
+      
+      if (response.ok) {
+        setIsSaved(!isSaved);
+      } else {
+        console.error('Save failed:', await response.text());
+      }
     } catch (error) {
       console.error('Error toggling save:', error);
     } finally {
