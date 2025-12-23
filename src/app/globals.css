@@ -58,7 +58,8 @@ body {
    SAFARI PERFORMANCE FIXES
    Safari has major performance issues with:
    - background-attachment: fixed
-   - backdrop-filter with high blur values
+   - backdrop-filter with high blur values  
+   - Infinite CSS animations (GPU memory leak)
    - mix-blend-mode combined with filters
    ============================================ */
 
@@ -68,15 +69,48 @@ body {
     background-attachment: scroll !important;
   }
   
-  /* Fix #2: Cap all backdrop-filter blur values */
-  .liquid-card {
-    -webkit-backdrop-filter: blur(6px) !important;
-    backdrop-filter: blur(6px) !important;
+  /* Fix #2: Disable ALL backdrop-filter on Safari */
+  .liquid-card,
+  .nav-blur,
+  * {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
   }
   
-  .nav-blur {
-    -webkit-backdrop-filter: blur(4px) !important;
-    backdrop-filter: blur(4px) !important;
+  /* Fix #3: Disable infinite animations (GPU memory leak on Safari) */
+  .radar-sweep,
+  .radar-blip-animated::after,
+  .animate-ping,
+  .animate-pulse,
+  .animate-float,
+  .animate-spin-slow,
+  [class*="animate-"] {
+    animation: none !important;
+  }
+  
+  /* Fix #4: Disable the liquid card hover glow effect */
+  .liquid-card::after {
+    display: none !important;
+  }
+  
+  /* Fix #5: Simplify liquid card styling */
+  .liquid-card {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+  
+  /* Fix #6: Disable heavy box-shadows */
+  .deep-relief {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
+  }
+  
+  /* Fix #7: Disable text-shadow glow effects */
+  .text-flashy-green {
+    text-shadow: none !important;
+  }
+  
+  .btn-primary {
+    box-shadow: none !important;
   }
 }
 

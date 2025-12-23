@@ -14,9 +14,12 @@ function LiquidCard({
   style?: React.CSSProperties,
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
+  const isSafari = typeof navigator !== 'undefined' && /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
+    // Disable mouse tracking on Safari to prevent memory issues
+    if (isSafari || !cardRef.current) return;
+    
     const rect = cardRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;

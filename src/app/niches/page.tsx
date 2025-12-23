@@ -11,6 +11,7 @@ const FREE_NICHES = ["0030", "0024"];
 // Composant carte avec effet de halo qui suit la souris
 function NicheCard({ niche, index, isUnlocked }: { niche: Niche; index: number; isUnlocked: boolean }) {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const isSafari = typeof navigator !== 'undefined' && /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
   // Fonction pour rediriger vers Stripe Checkout si verrouillé
   const handleLockedClick = async (e: React.MouseEvent) => {
@@ -36,7 +37,9 @@ function NicheCard({ niche, index, isUnlocked }: { niche: Niche; index: number; 
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
+    // Disable mouse tracking on Safari to prevent memory issues
+    if (isSafari || !cardRef.current) return;
+    
     const rect = cardRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
