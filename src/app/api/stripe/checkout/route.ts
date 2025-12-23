@@ -68,6 +68,7 @@ export async function POST(request: NextRequest) {
         invoice_creation: { enabled: true }, // Génère une facture PDF pour les paiements uniques
         payment_intent_data: {
           description: 'Niches Hunter - Lifetime Access',
+          setup_future_usage: 'off_session', // Sauvegarde la méthode de paiement sur le client
         },
         ...(validCoupon && { discounts: [{ coupon: validCoupon }] }),
       })
