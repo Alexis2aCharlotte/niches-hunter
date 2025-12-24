@@ -76,8 +76,32 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showSubscribeModal, setShowSubscribeModal] = useState(false);
+  const [isLifetime, setIsLifetime] = useState(true);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+
+  // Handle Stripe Checkout
+  const handleCheckout = async () => {
+    setCheckoutLoading(true);
+    try {
+      const response = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          nicheId: 'home-pricing',
+          mode: isLifetime ? 'lifetime' : 'monthly'
+        }),
+      });
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      setCheckoutLoading(false);
+    }
+  };
 
   const [visibleBlips, setVisibleBlips] = useState<number[]>([]);
 
@@ -439,6 +463,33 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Features Grid - Value Proposition */}
+      <section id="features" className="py-16 md:py-24 px-6 relative">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center max-w-2xl mx-auto mb-12 md:mb-20 reveal-base reveal-up">
+            <h2 className="text-4xl md:text-6xl font-bold mb-6">Hunt <span className="text-flashy-green">Smarter</span> <br /><span className="text-flashy-green">Ship</span> Faster</h2>
+            <p className="text-lg md:text-xl text-[rgba(255,255,255,0.6)]">50+ validated niches ready to build. We spot winners early so you can ship before competition hits.</p>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+            {[
+              { icon: "🔍", title: "Spot Winners Early", desc: "We track 40K apps daily. Find rising niches 3-6 months before they blow up." },
+              { icon: "🎯", title: "Solo Dev Opportunities", desc: "1,500+ big corps filtered out. You only see what YOU can build." },
+              { icon: "🌍", title: "Global Trend Detection", desc: "US trending ≠ EU trending. Find untapped markets before competition hits." },
+              { icon: "💰", title: "Real MRR From Similar Apps", desc: "No guessing. Revenue estimates based on actual competitors in your niche." },
+            ].map((f, i) => (
+              <LiquidCard key={i} animate="reveal-up" className="p-6 md:p-8 group" style={{ transitionDelay: `${i * 100}ms` }}>
+                <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-[var(--primary)]/10 text-[var(--primary)] flex items-center justify-center text-xl md:text-2xl mb-4 md:mb-6 group-hover:scale-110 transition-transform duration-500 border border-[var(--primary)]/20 shadow-[0_0_30px_rgba(0,204,61,0.1)]">
+                  {f.icon}
+                </div>
+                <h3 className="text-base md:text-xl font-bold mb-2 md:mb-3 text-white">{f.title}</h3>
+                <p className="text-xs md:text-sm text-[rgba(255,255,255,0.5)] leading-relaxed group-hover:text-[rgba(255,255,255,0.8)] transition-colors">{f.desc}</p>
+              </LiquidCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Live Data Dashboard */}
       <section className="py-24 px-4 sm:px-6 relative z-10">
         <div className="max-w-7xl mx-auto">
@@ -671,53 +722,219 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Grid */}
-      <section id="features" className="py-24 px-6 relative">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center max-w-2xl mx-auto mb-20 reveal-base reveal-up">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Hunt <span className="text-flashy-green">Smarter</span> <br /><span className="text-flashy-green">Ship</span> Faster</h2>
-            <p className="text-[rgba(255,255,255,0.6)] text-lg">We track 40,000+ apps daily so you don't have to. Get the intel, skip the research.</p>
+      {/* Pricing Section */}
+      <section id="pricing" className="py-16 md:py-24 px-4 sm:px-6 relative">
+        <div className="max-w-5xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-10 md:mb-16 reveal-base reveal-up">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--primary)]/10 border border-[var(--primary)]/20 mb-6">
+              <span className="w-2 h-2 rounded-full bg-[var(--primary)] animate-pulse" />
+              <span className="text-xs md:text-sm font-mono text-[var(--primary)] uppercase tracking-wider">Launch Offer</span>
+            </div>
+            <h2 className="text-4xl md:text-6xl font-bold mb-6">
+              Simple <span className="text-flashy-green">Pricing</span>
+            </h2>
+            <p className="text-lg md:text-xl text-[rgba(255,255,255,0.6)] max-w-md mx-auto">
+              Start free, upgrade when you need more power.
+            </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { icon: "📡", title: "Morning Radar", desc: "5 rising apps in your inbox everyday. Spot opportunities before they blow up." },
-              { icon: "📍", title: "Market Scanner", desc: "US, EU, Asia - see where apps perform best and find untapped markets." },
-              { icon: "💎", title: "Niche Ideas", desc: "2-3 validated opportunities with low competition scores." },
-              { icon: "💰", title: "MRR Estimates", desc: "Know the money before you code. Real MRR ranges from similar apps." },
-            ].map((f, i) => (
-              <LiquidCard key={i} animate="reveal-up" className="p-8 group" style={{ transitionDelay: `${i * 100}ms` }}>
-                <div className="w-14 h-14 rounded-2xl bg-[var(--primary)]/10 text-[var(--primary)] flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform duration-500 border border-[var(--primary)]/20 shadow-[0_0_30px_rgba(0,204,61,0.1)]">
-                  {f.icon}
+          {/* Toggle */}
+          <div className="flex items-center justify-center gap-4 mb-8 md:mb-12">
+            <span className={`text-sm md:text-base font-medium transition-colors ${!isLifetime ? 'text-white' : 'text-white/40'}`}>
+              Monthly
+            </span>
+            <button
+              onClick={() => setIsLifetime(!isLifetime)}
+              className={`relative w-12 sm:w-14 h-6 sm:h-7 rounded-full transition-colors ${isLifetime ? 'bg-[var(--primary)]' : 'bg-white/20'}`}
+            >
+              <div className={`absolute top-0.5 sm:top-1 w-5 sm:w-5 h-5 sm:h-5 rounded-full bg-white shadow-lg transition-all ${isLifetime ? 'left-6 sm:left-8' : 'left-0.5 sm:left-1'}`} />
+            </button>
+            <span className={`text-sm md:text-base font-medium transition-colors flex items-center gap-2 ${isLifetime ? 'text-white' : 'text-white/40'}`}>
+              Lifetime
+              <span className="px-2 py-1 rounded-full bg-[var(--primary)]/20 text-[var(--primary)] text-[10px] md:text-xs font-bold">
+                BEST
+              </span>
+            </span>
+          </div>
+
+          {/* Pricing Cards - Mobile Stack, Desktop Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            
+            {/* Free Plan */}
+            <LiquidCard animate="reveal-up" className="p-5 sm:p-6 md:p-8 relative overflow-hidden">
+              <div className="flex flex-col h-full">
+                <div className="mb-4 md:mb-6">
+                  <h3 className="text-lg sm:text-xl font-bold mb-1">Free</h3>
+                  <p className="text-white/50 text-xs sm:text-sm">Perfect to get started</p>
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-white">{f.title}</h3>
-                <p className="text-sm text-[rgba(255,255,255,0.5)] leading-relaxed group-hover:text-[rgba(255,255,255,0.8)] transition-colors">{f.desc}</p>
+
+                <div className="mb-4 md:mb-6">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-3xl sm:text-4xl font-bold">$0</span>
+                    <span className="text-white/40 text-sm">/forever</span>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setShowSubscribeModal(true)}
+                  className="w-full py-3 sm:py-3.5 text-center rounded-xl bg-white/10 text-white text-sm font-bold hover:bg-white/15 transition-all mb-4 md:mb-6"
+                >
+                  Get Started
+                </button>
+
+                {/* Features - Compact */}
+                <div className="space-y-2 sm:space-y-2.5">
+                  {[
+                    { name: 'Daily newsletter', included: true },
+                    { name: '5 trending apps/day', included: true },
+                    { name: 'Basic niche ideas', included: true },
+                    { name: 'Full niche analysis', included: false },
+                    { name: 'AI Niche Validator', included: false },
+                  ].map((feature, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      {feature.included ? (
+                        <div className="w-4 h-4 rounded-full bg-[var(--primary)]/20 flex items-center justify-center shrink-0">
+                          <svg className="w-2.5 h-2.5 text-[var(--primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                          </svg>
+                </div>
+                      ) : (
+                        <div className="w-4 h-4 rounded-full bg-white/5 flex items-center justify-center shrink-0">
+                          <svg className="w-2.5 h-2.5 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </div>
+                      )}
+                      <span className={`text-xs sm:text-sm ${feature.included ? 'text-white/80' : 'text-white/30'}`}>
+                        {feature.name}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
               </LiquidCard>
-            ))}
+
+            {/* Pro Plan */}
+            <LiquidCard animate="reveal-up" className="p-5 sm:p-6 md:p-8 relative overflow-hidden border-2 border-[var(--primary)]/30" style={{ transitionDelay: '100ms' }}>
+              {/* Glow effect */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--primary)]/20 blur-[60px] rounded-full pointer-events-none" />
+              
+              {/* Badge */}
+              <div className="absolute top-3 right-3 sm:top-4 sm:right-4">
+                <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-[var(--primary)] text-black text-[9px] sm:text-[10px] font-bold">
+                  🚀 -{isLifetime ? '60' : '80'}% OFF
+                </span>
+              </div>
+
+              <div className="flex flex-col h-full">
+                <div className="mb-4 md:mb-6">
+                  <h3 className="text-lg sm:text-xl font-bold mb-1 flex items-center gap-2">
+                    Pro {isLifetime ? 'Lifetime' : ''} 
+                    <span className="text-base">{isLifetime ? '♾️' : ''}</span>
+                  </h3>
+                  <p className="text-white/50 text-xs sm:text-sm">
+                    {isLifetime ? 'Pay once, access forever' : 'Full access, cancel anytime'}
+                  </p>
+                </div>
+
+                <div className="mb-4 md:mb-6">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-lg sm:text-xl text-white/40 line-through">
+                      ${isLifetime ? '49.99' : '9.99'}
+                    </span>
+                    <span className="text-3xl sm:text-4xl font-bold text-[var(--primary)]">
+                      ${isLifetime ? '19.99' : '1.99'}
+                    </span>
+                    {!isLifetime && <span className="text-white/40 text-sm">/mo</span>}
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleCheckout}
+                  disabled={checkoutLoading}
+                  className="block w-full py-3 sm:py-3.5 text-center rounded-xl bg-[var(--primary)] text-black text-sm font-bold hover:bg-[#00E847] transition-all mb-4 md:mb-6 shadow-[0_0_20px_rgba(0,204,61,0.3)] hover:shadow-[0_0_30px_rgba(0,204,61,0.5)] disabled:opacity-50"
+                >
+                  {checkoutLoading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                      </svg>
+                      Processing...
+                    </span>
+                  ) : (
+                    isLifetime ? 'Get Lifetime Access →' : 'Start Monthly →'
+                  )}
+                </button>
+
+                {/* Features - Compact */}
+                <div className="space-y-2 sm:space-y-2.5">
+                  {[
+                    { name: 'Everything in Free', included: true },
+                    { name: '50+ past niches archive', included: true },
+                    { name: 'Full niche analysis', included: true },
+                    { name: 'AI Niche Validator (unlimited)', included: true },
+                    { name: 'Competitor deep-dive', included: true },
+                  ].map((feature, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-[var(--primary)]/20 flex items-center justify-center shrink-0">
+                        <svg className="w-2.5 h-2.5 text-[var(--primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <span className="text-xs sm:text-sm text-white/80">{feature.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </LiquidCard>
+          </div>
+
+          {/* Trust badges - Mobile optimized */}
+          <div className="mt-6 md:mt-10 flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-[10px] sm:text-xs text-white/40">
+            <div className="flex items-center gap-1.5">
+              <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              Secure via Stripe
+            </div>
+            <div className="flex items-center gap-1.5">
+              <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              7-day guarantee
+            </div>
+            <div className="flex items-center gap-1.5">
+              <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              Cancel anytime
+            </div>
           </div>
         </div>
       </section>
 
-      {/* CTA / Pricing Preview */}
-      <section id="pricing" className="py-24 px-6 text-center">
-        <div className="max-w-5xl mx-auto relative">
+      {/* CTA Section */}
+      <section className="py-16 md:py-24 px-4 sm:px-6 text-center">
+        <div className="max-w-4xl mx-auto relative">
           {/* Glow behind container */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-r from-[var(--primary)]/10 to-[#6366F1]/10 blur-[100px] rounded-full pointer-events-none" />
 
-          <LiquidCard animate="reveal-up" className="p-12 md:p-20 rounded-[40px] border-white/10 overflow-hidden">
+          <LiquidCard animate="reveal-up" className="p-8 sm:p-12 md:p-16 rounded-[30px] md:rounded-[40px] border-white/10 overflow-hidden">
             <div className="relative z-10">
-              <h2 className="text-4xl md:text-6xl font-bold mb-8">Start The Hunt Now</h2>
-              <p className="text-xl text-[rgba(255,255,255,0.7)] mb-12 max-w-lg mx-auto">
-                One email with 3 rising apps and 2 validated ideas.<br />Every day.
+              <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-4 md:mb-6">Start The Hunt Now</h2>
+              <p className="text-sm sm:text-base md:text-lg text-[rgba(255,255,255,0.7)] mb-6 md:mb-10 max-w-md mx-auto">
+                One email with 3 rising apps and 2 validated ideas. Every day.
               </p>
 
               <button
                 onClick={() => setShowSubscribeModal(true)}
-                className="btn-primary text-xl px-12 py-5 shadow-[0_0_50px_rgba(0,204,61,0.3)] hover:shadow-[0_0_80px_rgba(0,204,61,0.5)]"
+                className="btn-primary text-sm sm:text-base md:text-lg px-6 sm:px-10 md:px-12 py-3 sm:py-4 md:py-5 shadow-[0_0_30px_rgba(0,204,61,0.3)] hover:shadow-[0_0_60px_rgba(0,204,61,0.5)]"
               >
                 Send Me Niches →
               </button>
-              <p className="mt-6 text-sm text-[rgba(255,255,255,0.3)]">Takes 10 seconds</p>
+              <p className="mt-4 md:mt-6 text-xs sm:text-sm text-[rgba(255,255,255,0.3)]">Takes 10 seconds</p>
             </div>
           </LiquidCard>
         </div>
