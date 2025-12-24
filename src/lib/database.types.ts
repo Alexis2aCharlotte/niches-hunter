@@ -113,6 +113,7 @@ export interface NicheRow {
   locked: boolean;
   has_premium: boolean;
   source_app_ids: string[];
+  source_type: 'automated' | 'demand_based' | null;
   created_at: string;
   published_at: string | null;
 }
@@ -138,6 +139,7 @@ export interface NicheInsert {
   locked?: boolean;
   has_premium?: boolean;
   source_app_ids?: string[];
+  source_type?: 'automated' | 'demand_based' | null;
   published_at?: string | null;
 }
 

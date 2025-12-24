@@ -74,6 +74,7 @@ export interface Niche {
   trending: TrendingApp[];
   locked?: boolean;
   hasPremium?: boolean;
+  sourceType?: 'automated' | 'demand_based' | null;
   createdAt?: string;
   publishedAt?: string;
 }
@@ -120,6 +121,7 @@ function transformSupabaseToNiche(row: NicheRow): Niche {
     trending: row.trending || [],
     locked: row.locked || false,
     hasPremium: row.has_premium || false,
+    sourceType: row.source_type || null,
     createdAt: row.created_at,
     publishedAt: row.published_at || undefined,
   };

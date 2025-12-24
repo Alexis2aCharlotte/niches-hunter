@@ -262,6 +262,30 @@ body {
   border-color: rgba(255, 255, 255, 0.3);
 }
 
+/* Exclusive card - subtle amber glow */
+.liquid-card.exclusive-card {
+  border-color: rgba(251, 191, 36, 0.3);
+  box-shadow: 
+    0 8px 32px 0 rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(251, 191, 36, 0.1),
+    inset 0 0 40px rgba(251, 191, 36, 0.02);
+}
+
+.liquid-card.exclusive-card::before {
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(251, 191, 36, 0.5),
+      transparent);
+}
+
+.liquid-card.exclusive-card:hover {
+  border-color: rgba(251, 191, 36, 0.5);
+  box-shadow:
+    0 20px 40px -5px rgba(0, 0, 0, 0.6),
+    0 0 25px rgba(251, 191, 36, 0.2),
+    inset 0 0 50px rgba(251, 191, 36, 0.03);
+}
+
 /* ============================================
    PRO FLAT RADAR (WITH RELIEF)
    ============================================ */

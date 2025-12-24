@@ -476,7 +476,7 @@ export default function Home() {
               { icon: "🔍", title: "Spot Winners Early", desc: "We track 40K apps daily. Find rising niches 3-6 months before they blow up." },
               { icon: "🎯", title: "Solo Dev Opportunities", desc: "1,500+ big corps filtered out. You only see what YOU can build." },
               { icon: "🌍", title: "Global Trend Detection", desc: "US trending ≠ EU trending. Find untapped markets before competition hits." },
-              { icon: "💰", title: "Real MRR From Similar Apps", desc: "No guessing. Revenue estimates based on actual competitors in your niche." },
+              { icon: "🔥", title: "TikTok Viral Demand", desc: "Apps going viral on TikTok before hitting the charts. Spot demand-based opportunities early." },
             ].map((f, i) => (
               <LiquidCard key={i} animate="reveal-up" className="p-6 md:p-8 group" style={{ transitionDelay: `${i * 100}ms` }}>
                 <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-[var(--primary)]/10 text-[var(--primary)] flex items-center justify-center text-xl md:text-2xl mb-4 md:mb-6 group-hover:scale-110 transition-transform duration-500 border border-[var(--primary)]/20 shadow-[0_0_30px_rgba(0,204,61,0.1)]">
@@ -790,6 +790,7 @@ export default function Home() {
                     { name: '5 trending apps/day', included: true },
                     { name: 'Basic niche ideas', included: true },
                     { name: 'Full niche analysis', included: false },
+                    { name: 'TikTok Spot - Viral trends', included: false },
                     { name: 'AI Niche Validator', included: false },
                   ].map((feature, i) => (
                     <div key={i} className="flex items-center gap-2">
@@ -874,6 +875,7 @@ export default function Home() {
                     { name: 'Everything in Free', included: true },
                     { name: '50+ past niches archive', included: true },
                     { name: 'Full niche analysis', included: true },
+                    { name: 'TikTok Spot - Viral trends', included: true },
                     { name: 'AI Niche Validator (unlimited)', included: true },
                     { name: 'Competitor deep-dive', included: true },
                   ].map((feature, i) => (

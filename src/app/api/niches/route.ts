@@ -42,6 +42,7 @@ function maskLockedNiche(niche: any) {
     trending: [],
     locked: true,
     has_premium: niche.has_premium,
+    source_type: niche.source_type, // Garder pour afficher le filtre TikTok Spot
     created_at: niche.created_at,
     published_at: niche.published_at,
   }

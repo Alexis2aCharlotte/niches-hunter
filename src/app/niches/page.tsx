@@ -12,6 +12,7 @@ const FREE_NICHES = ["0030", "0024"];
 function NicheCard({ niche, index, isUnlocked }: { niche: Niche; index: number; isUnlocked: boolean }) {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const isSafari = typeof navigator !== 'undefined' && /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  const isDemandBased = niche.sourceType === 'demand_based';
 
   // Fonction pour rediriger vers Stripe Checkout si verrouillé
   const handleLockedClick = async (e: React.MouseEvent) => {
@@ -56,7 +57,7 @@ function NicheCard({ niche, index, isUnlocked }: { niche: Niche; index: number; 
       <div
         ref={cardRef}
         onMouseMove={handleMouseMove}
-        className={`liquid-card p-6 group transition-all duration-300 hover:scale-[1.02] relative h-full flex flex-col ${checkoutLoading ? 'opacity-50 pointer-events-none' : ''}`}
+        className={`liquid-card p-6 group transition-all duration-300 hover:scale-[1.02] relative h-full flex flex-col ${checkoutLoading ? 'opacity-50 pointer-events-none' : ''} ${isDemandBased ? 'exclusive-card' : ''}`}
         style={{ animationDelay: `${index * 100}ms` }}
       >
         {/* Header - Toujours visible */}
@@ -153,6 +154,7 @@ export default function NichesPage() {
   const [selectedCategory, setSelectedCategory] = useState<AppleCategory>("All");
   const [hasSubscription, setHasSubscription] = useState(false);
   const [subscriptionChecked, setSubscriptionChecked] = useState(false);
+  const [showExclusiveOnly, setShowExclusiveOnly] = useState(false);
 
   // Charger les niches depuis l'API sécurisée (inclut la vérification d'abonnement)
   useEffect(() => {
@@ -176,24 +178,29 @@ export default function NichesPage() {
     return FREE_NICHES.includes(displayCode) || hasSubscription;
   };
 
-  // Filtrer et trier les niches (déverrouillées en premier)
+  // Filtrer et trier les niches (Exclusive en premier, puis déverrouillées)
   const filteredNiches = useMemo(() => {
     let filtered = selectedCategory === "All" 
       ? niches 
       : niches.filter(niche => niche.category === selectedCategory);
     
-    // Si abonné, toutes les niches sont accessibles, pas besoin de trier
-    if (hasSubscription) return filtered;
+    // Filtre Exclusive Only
+    if (showExclusiveOnly) {
+      filtered = filtered.filter(niche => niche.sourceType === 'demand_based');
+    }
     
-    // Trier: niches gratuites en premier
-    return filtered.sort((a, b) => {
-      const aFree = FREE_NICHES.includes(a.displayCode);
-      const bFree = FREE_NICHES.includes(b.displayCode);
-      if (aFree && !bFree) return -1;
-      if (!aFree && bFree) return 1;
-      return 0;
-    });
-  }, [selectedCategory, niches, hasSubscription]);
+    // Trier: gratuites en premier si non abonné (pas de tri pour les Exclusive)
+    if (!hasSubscription) {
+      return [...filtered].sort((a, b) => {
+        const aFree = FREE_NICHES.includes(a.displayCode);
+        const bFree = FREE_NICHES.includes(b.displayCode);
+        if (aFree && !bFree) return -1;
+        if (!aFree && bFree) return 1;
+        return 0;
+      });
+    }
+    return filtered;
+  }, [selectedCategory, niches, hasSubscription, showExclusiveOnly]);
 
   // Compter les niches par catégorie
   const categoryCounts = useMemo(() => {
@@ -202,6 +209,11 @@ export default function NichesPage() {
       counts[niche.category] = (counts[niche.category] || 0) + 1;
     });
     return counts;
+  }, [niches]);
+
+  // Compter les niches Exclusive (demand_based)
+  const exclusiveCount = useMemo(() => {
+    return niches.filter(niche => niche.sourceType === 'demand_based').length;
   }, [niches]);
 
   return (
@@ -275,6 +287,28 @@ export default function NichesPage() {
               );
             })}
           </div>
+
+          {/* Filtre Exclusive */}
+          {exclusiveCount > 0 && (
+            <div className="mt-4 flex items-center gap-3">
+              <button
+                onClick={() => setShowExclusiveOnly(!showExclusiveOnly)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  showExclusiveOnly
+                    ? "bg-gradient-to-r from-amber-500 to-yellow-400 text-black shadow-lg shadow-amber-500/20"
+                    : "bg-white/5 text-white/60 hover:bg-amber-500/10 hover:text-amber-400 border border-white/10 hover:border-amber-500/30"
+                }`}
+              >
+                <span>🔥</span>
+                <span>TikTok Spot</span>
+                <span className={`text-xs ${showExclusiveOnly ? "text-black/60" : "text-white/40"}`}>
+                  {exclusiveCount}
+                </span>
+                {showExclusiveOnly && <span className="ml-1">×</span>}
+              </button>
+              
+            </div>
+          )}
         </div>
       </section>
 
