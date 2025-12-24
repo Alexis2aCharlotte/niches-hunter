@@ -12,7 +12,7 @@ export default function PricingPage() {
   // Pricing
   const monthly = {
     original: 9.99,
-    discounted: 1.99,
+    discounted: 4.99,
     savings: 80,
   }
   const lifetime = {
@@ -88,7 +88,7 @@ export default function PricingPage() {
     },
     {
       q: "What's the difference between Monthly and Lifetime?",
-      a: "Monthly is a recurring subscription at $1.99/month. Lifetime is a one-time payment of $19.99 for permanent access - no recurring fees ever!"
+      a: "Monthly is a recurring subscription at $4.99/month. Lifetime is a one-time payment of $19.99 for permanent access - no recurring fees ever!"
     },
     {
       q: "Do you offer refunds?",
@@ -371,7 +371,7 @@ export default function PricingPage() {
               disabled={checkoutLoading}
               className="inline-flex items-center gap-2 px-10 py-5 bg-[var(--primary)] text-black font-bold rounded-xl hover:bg-[#00E847] transition-all shadow-[0_0_30px_rgba(0,204,61,0.3)] hover:shadow-[0_0_50px_rgba(0,204,61,0.5)] disabled:opacity-50 relative z-10"
             >
-              {checkoutLoading ? 'Processing...' : (isLifetime ? 'Get Lifetime for $19.99 →' : 'Start Monthly for $1.99 →')}
+              {checkoutLoading ? 'Processing...' : (isLifetime ? 'Get Lifetime for $19.99 →' : 'Start Monthly for $4.99 →')}
             </button>
             
             <p className="mt-6 text-xs text-white/30 relative z-10">

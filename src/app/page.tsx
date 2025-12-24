@@ -845,7 +845,7 @@ export default function Home() {
                       ${isLifetime ? '49.99' : '9.99'}
                     </span>
                     <span className="text-3xl sm:text-4xl font-bold text-[var(--primary)]">
-                      ${isLifetime ? '19.99' : '1.99'}
+                      ${isLifetime ? '19.99' : '4.99'}
                     </span>
                     {!isLifetime && <span className="text-white/40 text-sm">/mo</span>}
                   </div>
