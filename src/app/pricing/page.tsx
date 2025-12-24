@@ -13,7 +13,7 @@ export default function PricingPage() {
   const monthly = {
     original: 9.99,
     discounted: 4.99,
-    savings: 80,
+    savings: 50,
   }
   const lifetime = {
     original: 49.99,

@@ -824,7 +824,7 @@ export default function Home() {
               {/* Badge */}
               <div className="absolute top-3 right-3 sm:top-4 sm:right-4">
                 <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-[var(--primary)] text-black text-[9px] sm:text-[10px] font-bold">
-                  🚀 -{isLifetime ? '60' : '80'}% OFF
+                  🚀 -{isLifetime ? '60' : '50'}% OFF
                 </span>
               </div>
 
