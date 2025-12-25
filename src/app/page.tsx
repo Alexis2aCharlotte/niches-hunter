@@ -1063,7 +1063,13 @@ export default function Home() {
           <LiquidCard enableReveal={false} className="p-10 rounded-3xl text-center max-w-sm shadow-[0_0_50px_rgba(0,204,61,0.2)]">
             <div className="text-6xl mb-6">🎉</div>
             <h3 className="text-2xl font-bold text-white mb-3">You're In!</h3>
-            <p className="text-[rgba(255,255,255,0.6)] mb-8 text-lg">{message?.text}</p>
+            <p className="text-[rgba(255,255,255,0.6)] mb-4 text-lg">{message?.text}</p>
+            <div className="bg-[rgba(255,255,255,0.05)] border border-white/10 rounded-xl p-4 mb-6">
+              <p className="text-sm text-white/80 flex items-center justify-center gap-2">
+                <span>📬</span>
+                <span>Don't forget to check your <strong className="text-[var(--primary)]">spam folder</strong>!</span>
+              </p>
+            </div>
             <button onClick={() => setShowModal(false)} className="btn-primary w-full py-3">Awesome</button>
           </LiquidCard>
         </div>
