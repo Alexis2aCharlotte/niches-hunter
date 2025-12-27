@@ -94,7 +94,7 @@ export default function NicheDetailPage() {
       const response = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nicheId: nicheCode, mode: 'monthly' }),
+        body: JSON.stringify({ nicheId: nicheCode, mode: 'lifetime' }),
       });
       const data = await response.json();
       if (data.url) {
