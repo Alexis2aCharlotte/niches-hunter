@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-import { stripe } from '@/lib/stripe'
+import { createClient } from '@supabase/supabase-js'
+
+// Client Supabase Admin pour vérifier les abonnements
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
 // Types pour la réponse de validation
 interface ValidationResponse {
@@ -16,7 +22,7 @@ interface ValidationResponse {
   marketInsights: string
 }
 
-// Vérifier l'abonnement Stripe
+// Vérifier l'abonnement (fonctionne pour Lifetime ET Monthly)
 async function checkSubscription(): Promise<boolean> {
   try {
     const cookieStore = await cookies()
@@ -24,13 +30,15 @@ async function checkSubscription(): Promise<boolean> {
 
     if (!customerId) return false
 
-    const subscriptions = await stripe.subscriptions.list({
-      customer: customerId,
-      status: 'active',
-      limit: 1,
-    })
+    // Vérifier dans la table customers (pas via Stripe API)
+    // Cela fonctionne pour les paiements lifetime ET les subscriptions monthly
+    const { data: customer } = await supabaseAdmin
+      .from('customers')
+      .select('status')
+      .eq('stripe_customer_id', customerId)
+      .single()
 
-    return subscriptions.data.length > 0
+    return customer?.status === 'active'
   } catch {
     return false
   }

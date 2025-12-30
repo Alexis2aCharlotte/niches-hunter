@@ -233,13 +233,6 @@ function SuccessContent() {
             </button>
           </div>
 
-          {/* Skip for now */}
-          <Link 
-            href="/niches"
-            className="inline-block mt-6 text-sm text-[rgba(255,255,255,0.4)] hover:text-white transition-colors"
-          >
-            Skip for now, explore niches →
-          </Link>
         </div>
 
         {/* Support */}
