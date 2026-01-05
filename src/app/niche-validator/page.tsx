@@ -102,7 +102,7 @@ export default function NicheValidatorPage() {
       const response = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nicheId: 'niche-validator', mode: 'monthly' }),
+        body: JSON.stringify({ nicheId: 'niche-validator', mode: 'lifetime' }),
       });
       const data = await response.json();
       if (data.url) {
