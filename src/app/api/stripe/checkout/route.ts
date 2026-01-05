@@ -5,7 +5,7 @@ import Stripe from 'stripe'
 // Coupon IDs - Expire Jan 10, 2026
 const COUPONS = {
   lifetime: 'fX7iNTxL', // Early Hunter Lifetime - $30 off
-  monthly: 'g9N0lrOp', // Early Hunter Monthly
+  monthly: '', // Désactivé
 }
 
 export async function POST(request: NextRequest) {
