@@ -1,0 +1,583 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Core Colors */
+  --bg-deep: #030303;
+  --bg-surface: #080808;
+
+  /* Accents - Neon Green */
+  --primary: #00CC3D;
+  --primary-glow: rgba(0, 204, 61, 0.6);
+  --secondary: #6366F1;
+  --accent: #FFFFFF;
+
+  /* Glass Vars */
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-surface: rgba(255, 255, 255, 0.02);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  height: 100%;
+}
+
+body {
+  background-color: var(--bg-deep);
+  color: white;
+  font-family: 'Space Grotesk', sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+
+  /* Subtle Green Grid + Ambient Glows */
+  background-image:
+    linear-gradient(rgba(0, 204, 61, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 204, 61, 0.04) 1px, transparent 1px),
+    radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 85% 30%, rgba(0, 204, 61, 0.05) 0%, transparent 50%);
+
+  background-size:
+    50px 50px,
+    50px 50px,
+    100% 100%,
+    100% 100%;
+
+  background-attachment: fixed;
+}
+
+/* ============================================
+   SAFARI PERFORMANCE FIXES
+   Safari has major performance issues with:
+   - background-attachment: fixed
+   - backdrop-filter with high blur values  
+   - Infinite CSS animations (GPU memory leak)
+   - mix-blend-mode combined with filters
+   ============================================ */
+
+@supports (-webkit-touch-callout: none) {
+  /* Fix #1: Disable background-attachment: fixed (main freeze cause) */
+  body {
+    background-attachment: scroll !important;
+  }
+  
+  /* Fix #2: Disable ALL backdrop-filter on Safari */
+  .liquid-card,
+  .nav-blur,
+  * {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  
+  /* Fix #3: Disable infinite animations (GPU memory leak on Safari) */
+  .radar-sweep,
+  .radar-blip-animated::after,
+  .animate-ping,
+  .animate-pulse,
+  .animate-float,
+  .animate-spin-slow,
+  [class*="animate-"] {
+    animation: none !important;
+  }
+  
+  /* Fix #4: Disable the liquid card hover glow effect */
+  .liquid-card::after {
+    display: none !important;
+  }
+  
+  /* Fix #5: Simplify liquid card styling */
+  .liquid-card {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+  
+  /* Fix #6: Disable heavy box-shadows */
+  .deep-relief {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
+  }
+  
+  /* Fix #7: Disable text-shadow glow effects */
+  .text-flashy-green {
+    text-shadow: none !important;
+  }
+  
+  .btn-primary {
+    box-shadow: none !important;
+  }
+}
+
+/* Fix #2: Reduce motion for users who prefer it (helps Safari too) */
+@media (prefers-reduced-motion: reduce) {
+  .radar-sweep,
+  .animate-ping,
+  .animate-pulse,
+  .animate-float,
+  .animate-spin-slow {
+    animation: none !important;
+  }
+  
+  .liquid-card,
+  .liquid-card::after {
+    transition: none !important;
+  }
+}
+
+::selection {
+  background: var(--primary);
+  color: black;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-deep);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+/* Typography Utils */
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* KEY: Flashy Green (Neon) */
+.text-flashy-green {
+  color: #00FF4C;
+  text-shadow: 
+    0 0 10px rgba(0, 204, 61, 0.8),
+    0 0 20px rgba(0, 204, 61, 0.6),
+    0 0 40px rgba(0, 204, 61, 0.4),
+    0 0 80px rgba(0, 204, 61, 0.2);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* Title Entrance Animation */
+@keyframes title-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+    filter: blur(10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.animate-title-enter {
+  animation: title-enter 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #FFFFFF 0%, rgba(255, 255, 255, 0.7) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ============================================
+   INTERACTIVE LIQUID GLASS (HIGH SHINE)
+   ============================================ */
+
+.liquid-card {
+  position: relative;
+  background: linear-gradient(145deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.01) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.liquid-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.6),
+      transparent);
+  opacity: 0.7;
+}
+
+.liquid-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(500px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(255, 255, 255, 0.15),
+      transparent 40%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  z-index: 10;
+  mix-blend-mode: overlay;
+}
+
+.liquid-card:hover::after {
+  opacity: 1;
+}
+
+/* Safari fix: disable problematic mix-blend-mode */
+@supports (-webkit-touch-callout: none) {
+  .liquid-card::after {
+    mix-blend-mode: normal;
+  }
+}
+
+.liquid-card:hover {
+  transform: translateY(-2px) scale(1.005);
+  box-shadow:
+    0 20px 40px -5px rgba(0, 0, 0, 0.6),
+    0 0 15px rgba(0, 204, 61, 0.1);
+  /* Green ambient glow */
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Exclusive card - subtle amber glow */
+.liquid-card.exclusive-card {
+  border-color: rgba(251, 191, 36, 0.3);
+  box-shadow: 
+    0 8px 32px 0 rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(251, 191, 36, 0.1),
+    inset 0 0 40px rgba(251, 191, 36, 0.02);
+}
+
+.liquid-card.exclusive-card::before {
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(251, 191, 36, 0.5),
+      transparent);
+}
+
+.liquid-card.exclusive-card:hover {
+  border-color: rgba(251, 191, 36, 0.5);
+  box-shadow:
+    0 20px 40px -5px rgba(0, 0, 0, 0.6),
+    0 0 25px rgba(251, 191, 36, 0.2),
+    inset 0 0 50px rgba(251, 191, 36, 0.03);
+}
+
+/* ============================================
+   PRO FLAT RADAR (WITH RELIEF)
+   ============================================ */
+
+.radar-stage {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1000px;
+}
+
+.radar-plate {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(16, 18, 16, 0.5), #000);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    inset 0 0 60px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 20px 60px rgba(0, 0, 0, 0.7);
+}
+
+.radar-sweep {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg,
+      transparent 0deg,
+      transparent 280deg,
+      rgba(0, 204, 61, 0.02) 300deg,
+      rgba(0, 204, 61, 0.3) 360deg);
+  animation: radar-spin 4s infinite linear;
+  z-index: 10;
+}
+
+.radar-sweep::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 2px;
+  height: 50%;
+  background: linear-gradient(to top, transparent, #00CC3D);
+  transform-origin: bottom center;
+  box-shadow: 0 0 10px #00CC3D;
+}
+
+@keyframes radar-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Rings */
+.radar-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  box-shadow: 0 0 10px rgba(0, 204, 61, 0.02);
+}
+
+.radar-ring:nth-child(1) {
+  width: 96%;
+  height: 96%;
+  border-color: rgba(0, 204, 61, 0.1);
+}
+
+.radar-ring:nth-child(2) {
+  width: 72%;
+  height: 72%;
+}
+
+.radar-ring:nth-child(3) {
+  width: 48%;
+  height: 48%;
+  border-style: dashed;
+  opacity: 0.7;
+}
+
+.radar-ring:nth-child(4) {
+  width: 24%;
+  height: 24%;
+  background: rgba(0, 204, 61, 0.05);
+  box-shadow: 0 0 15px rgba(0, 204, 61, 0.1);
+}
+
+/* Blips */
+.radar-blip-animated {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #fff, 0 0 20px var(--primary);
+  z-index: 20;
+}
+
+.radar-blip-animated::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--primary);
+  border-radius: 50%;
+  animation: blip-ripple 2s infinite ease-out;
+}
+
+@keyframes blip-ripple {
+  0% {
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+    border-width: 2px;
+  }
+
+  100% {
+    width: 400%;
+    height: 400%;
+    opacity: 0;
+    border-width: 0px;
+  }
+}
+
+/* ============================================
+   CAROUSEL ANIMATIONS & RELIEF
+   ============================================ */
+
+/* "Flip In" - 3D Card Flip (Replaces Smooth Glide) */
+@keyframes flip-in {
+  0% {
+    opacity: 0;
+    transform: perspective(1000px) rotateY(-90deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: perspective(1000px) rotateY(0deg);
+  }
+}
+
+.animate-flip-in {
+  animation: flip-in 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+/* "Airport Flap" - Mechanical Roll Down */
+@keyframes flap-drop {
+  0% {
+    opacity: 0;
+    transform: perspective(600px) rotateX(-60deg);
+    filter: brightness(0.5);
+  }
+
+  100% {
+    opacity: 1;
+    transform: perspective(600px) rotateX(0deg);
+    filter: brightness(1);
+  }
+}
+
+.animate-flap-drop {
+  transform-origin: top center;
+  animation: flap-drop 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  backface-visibility: hidden;
+}
+
+.deep-relief {
+  box-shadow:
+    0 20px 50px -10px rgba(0, 0, 0, 0.8),
+    /* Deep drop shadow */
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  /* Border definition */
+  border-bottom: 2px solid rgba(0, 204, 61, 0.1);
+}
+
+/* ============================================
+   SCROLL ANIMATIONS
+   ============================================ */
+
+.reveal-base {
+  opacity: 0;
+  transition: all 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.reveal-left {
+  transform: translateX(-100px);
+}
+
+.reveal-right {
+  transform: translateX(100px);
+}
+
+.reveal-up {
+  transform: translateY(50px);
+}
+
+.is-visible {
+  opacity: 1;
+  transform: translate(0);
+}
+
+/* ============================================
+   COMPONENTS
+   ============================================ */
+
+.btn-primary {
+  background: var(--primary);
+  color: #000;
+  font-weight: 700;
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-family: 'Space Grotesk', sans-serif;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 0 15px rgba(0, 204, 61, 0.5),
+    0 0 30px rgba(0, 204, 61, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-primary:hover {
+  background: #00E847;
+  transform: translateY(-2px);
+  box-shadow: 
+    0 0 20px rgba(0, 204, 61, 0.7),
+    0 0 40px rgba(0, 204, 61, 0.5),
+    0 0 60px rgba(0, 204, 61, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.input-field {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 16px 24px;
+  border-radius: 12px;
+  font-family: 'Space Grotesk', sans-serif;
+  transition: all 0.3s ease;
+  outline: none;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.input-field:focus {
+  border-color: var(--primary);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow:
+    0 0 0 1px var(--primary),
+    0 0 20px rgba(0, 204, 61, 0.1);
+}
+
+.nav-blur {
+  background: rgba(3, 3, 3, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
