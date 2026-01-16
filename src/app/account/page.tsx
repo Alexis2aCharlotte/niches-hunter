@@ -21,29 +21,25 @@ interface Subscription {
   cancelAtPeriodEnd: boolean
 }
 
-interface SavedNiche {
-  niche_id: string
-  saved_at: string
-  title?: string
-  category?: string
-  score?: number
-}
 
 export default function AccountPage() {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
   const [subscription, setSubscription] = useState<Subscription | null>(null)
-  const [savedNiches, setSavedNiches] = useState<SavedNiche[]>([])
   const [loading, setLoading] = useState(true)
   const [cancelLoading, setCancelLoading] = useState(false)
   const [portalLoading, setPortalLoading] = useState(false)
   const [showCancelConfirm, setShowCancelConfirm] = useState(false)
   const [showCancelSuccess, setShowCancelSuccess] = useState(false)
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false)
+  const [feedbackType, setFeedbackType] = useState<'bug' | 'feature' | 'general'>('general')
+  const [feedbackMessage, setFeedbackMessage] = useState('')
+  const [feedbackLoading, setFeedbackLoading] = useState(false)
+  const [feedbackSuccess, setFeedbackSuccess] = useState(false)
 
   useEffect(() => {
     async function fetchUserData() {
       try {
-        // Récupérer les infos utilisateur
         const userRes = await fetch('/api/user/me')
         const userData = await userRes.json()
 
@@ -54,13 +50,6 @@ export default function AccountPage() {
 
         setUser(userData.user)
         setSubscription(userData.subscription)
-
-        // Récupérer les niches sauvegardées
-        const nichesRes = await fetch('/api/user/saved-niches', {
-          credentials: 'include', // Important pour mobile Safari
-        })
-        const nichesData = await nichesRes.json()
-        setSavedNiches(nichesData.savedNiches || [])
       } catch (error) {
         console.error('Error fetching user data:', error)
       } finally {
@@ -117,17 +106,34 @@ export default function AccountPage() {
     router.push('/')
   }
 
-  const handleRemoveSavedNiche = async (nicheId: string) => {
+  const handleSendFeedback = async () => {
+    if (!feedbackMessage.trim()) return
+    
+    setFeedbackLoading(true)
     try {
-      await fetch('/api/user/saved-niches', {
-        method: 'DELETE',
+      const res = await fetch('/api/feedback', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nicheId }),
-        credentials: 'include', // Important pour mobile Safari
+        body: JSON.stringify({
+          type: feedbackType,
+          message: feedbackMessage,
+          userEmail: user?.email,
+        }),
       })
-      setSavedNiches(prev => prev.filter(n => n.niche_id !== nicheId))
+      
+      if (res.ok) {
+        setFeedbackSuccess(true)
+        setFeedbackMessage('')
+        setFeedbackType('general')
+        setTimeout(() => {
+          setShowFeedbackModal(false)
+          setFeedbackSuccess(false)
+        }, 2000)
+      }
     } catch (error) {
-      console.error('Error removing niche:', error)
+      console.error('Error sending feedback:', error)
+    } finally {
+      setFeedbackLoading(false)
     }
   }
 
@@ -261,7 +267,7 @@ export default function AccountPage() {
                 <div className="pt-5 border-t border-white/10 space-y-3">
                   {subscription?.planType === 'lifetime' ? (
                     <div className="text-center py-2">
-                      <p className="text-xs text-[var(--primary)] font-semibold mb-1">✨ Lifetime Access</p>
+                      <p className="text-xs text-[var(--primary)] font-semibold mb-1">Lifetime Access</p>
                       <p className="text-xs text-white/40">You have permanent access to all premium features</p>
                     </div>
                   ) : (
@@ -320,11 +326,16 @@ export default function AccountPage() {
                   href="/niches"
                   className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 transition-all group"
                 >
-                  <span className="flex items-center gap-3">
-                    <span className="text-xl">🎯</span>
-                    <span className="font-medium">Browse Niches</span>
-                  </span>
+                  <span className="font-medium">Browse Niches</span>
                   <span className="text-white/30 group-hover:text-[var(--primary)] group-hover:translate-x-1 transition-all">→</span>
+                </Link>
+
+                <Link
+                  href="/niche-validator"
+                  className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 transition-all group"
+                >
+                  <span className="font-medium">Niche Validator</span>
+                  <span className="text-white/30 group-hover:text-purple-400 group-hover:translate-x-1 transition-all">→</span>
                 </Link>
 
                 <button
@@ -332,7 +343,13 @@ export default function AccountPage() {
                   className="w-full flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-red-500/10 hover:border-red-500/20 transition-all text-left group"
                 >
                   <span className="flex items-center gap-3">
-                    <span className="text-xl">🚪</span>
+                    <span className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+                      <svg className="w-4 h-4 text-white/60 group-hover:text-red-400 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                      </svg>
+                    </span>
                     <span className="font-medium group-hover:text-red-400 transition-colors">Log out</span>
                   </span>
                   <span className="text-white/30 group-hover:text-red-400 group-hover:translate-x-1 transition-all">→</span>
@@ -341,71 +358,87 @@ export default function AccountPage() {
             </LiquidCard>
           </div>
 
-          {/* Saved Niches */}
-          <LiquidCard className="mt-6 p-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold flex items-center gap-3">
-                <span className="w-10 h-10 rounded-xl bg-[var(--primary)]/20 flex items-center justify-center">
-                  <svg className="w-5 h-5 text-[var(--primary)]" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
-                  </svg>
-                </span>
-                Saved Niches
-              </h2>
-              <span className="px-3 py-1 rounded-full bg-white/10 text-xs font-mono text-white/50">
-                {savedNiches.length} saved
-              </span>
-            </div>
-
-            {savedNiches.length === 0 ? (
-              <div className="text-center py-16">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-white/5 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-white/20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+          {/* Workspace CTA */}
+          <Link href="/workspace" className="block mt-6">
+            <LiquidCard className="p-8 hover:bg-white/[0.03] transition-all group cursor-pointer">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-5">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--primary)]/20 to-purple-500/20 flex items-center justify-center border border-[var(--primary)]/20">
+                    <svg className="w-7 h-7 text-[var(--primary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold mb-1 group-hover:text-[var(--primary)] transition-colors">
+                      Workspace
+                    </h2>
+                    <p className="text-white/40 text-sm">
+                      Explore your ideas, validations, and projects
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="px-3 py-1.5 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] text-xs font-medium border border-[var(--primary)]/20">
+                    Open
+                  </span>
+                  <svg className="w-5 h-5 text-white/30 group-hover:text-[var(--primary)] group-hover:translate-x-1 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M9 18l6-6-6-6"/>
                   </svg>
                 </div>
-                <p className="text-white/40 mb-6 text-sm">No saved niches yet</p>
-                <Link
-                  href="/niches"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--primary)] text-black text-sm font-bold rounded-xl hover:bg-[#00E847] transition-all shadow-[0_0_20px_rgba(0,204,61,0.3)]"
-                >
-                  Explore Niches →
-                </Link>
               </div>
-            ) : (
-              <div className="grid gap-3">
-                {savedNiches.map((niche) => (
-                  <div
-                    key={niche.niche_id}
-                    className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/8 transition-all group"
-                  >
-                    <Link
-                      href={`/niches/${niche.niche_id}`}
-                      className="flex-1 hover:text-[var(--primary)] transition-colors"
-                    >
-                      <span className="font-mono text-[var(--primary)] text-sm">#{niche.niche_id}</span>
-                      {niche.title && (
-                        <span className="text-white/60 ml-3">{niche.title}</span>
-                      )}
-                    </Link>
-                    <div className="flex items-center gap-4">
-                      <span className="text-xs text-white/30 font-mono">
-                        {new Date(niche.saved_at).toLocaleDateString()}
-                      </span>
-                      <button
-                        onClick={() => handleRemoveSavedNiche(niche.niche_id)}
-                        className="w-8 h-8 rounded-lg flex items-center justify-center text-white/30 hover:text-red-400 hover:bg-red-500/10 transition-all"
-                      >
-                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M18 6L6 18M6 6l12 12"/>
-                        </svg>
-                      </button>
-                    </div>
+            </LiquidCard>
+          </Link>
+
+          {/* Feedback & Affiliate */}
+          <div className="grid md:grid-cols-2 gap-6 mt-6">
+            {/* Feedback */}
+            <LiquidCard 
+              className="p-6 hover:bg-white/[0.03] transition-all group cursor-pointer"
+              onClick={() => setShowFeedbackModal(true)}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center border border-blue-500/20">
+                    <span className="text-2xl">💬</span>
                   </div>
-                ))}
+                  <div>
+                    <h2 className="text-lg font-bold mb-0.5 group-hover:text-blue-400 transition-colors">
+                      Feedback
+                    </h2>
+                    <p className="text-white/40 text-sm">
+                      Share your thoughts with us
+                    </p>
+                  </div>
+                </div>
+                <svg className="w-5 h-5 text-white/30 group-hover:text-blue-400 group-hover:translate-x-1 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M9 18l6-6-6-6"/>
+                </svg>
               </div>
-            )}
-          </LiquidCard>
+            </LiquidCard>
+
+            {/* Affiliate - Coming Soon */}
+            <LiquidCard className="p-6 opacity-50 cursor-not-allowed relative overflow-hidden">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center border border-amber-500/20">
+                    <span className="text-2xl">💰</span>
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-bold mb-0.5 text-white/50">
+                      Affiliate
+                    </h2>
+                    <p className="text-white/30 text-sm">
+                      Earn by sharing Niches Hunter
+                    </p>
+                  </div>
+                </div>
+                <span className="px-2.5 py-1 rounded-full bg-white/5 text-white/40 text-xs font-medium border border-white/10">
+                  Coming soon
+                </span>
+              </div>
+            </LiquidCard>
+          </div>
+
         </div>
       </section>
 
@@ -449,6 +482,121 @@ export default function AccountPage() {
                   {cancelLoading ? 'Processing...' : 'Cancel'}
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Feedback Modal */}
+      {showFeedbackModal && (
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+          <div className="liquid-card p-1 rounded-3xl max-w-md w-full">
+            <div className="bg-[#0a0a0a] rounded-[22px] p-8 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-[60px] rounded-full pointer-events-none" />
+              
+              {/* Close button */}
+              <button
+                onClick={() => setShowFeedbackModal(false)}
+                className="absolute top-4 right-4 w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors z-20"
+              >
+                <svg className="w-4 h-4 text-white/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+
+              {feedbackSuccess ? (
+                <div className="text-center py-8">
+                  <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold text-green-400 mb-2">Thank you!</h3>
+                  <p className="text-white/50 text-sm">Your feedback has been sent successfully.</p>
+                </div>
+              ) : (
+                <>
+                  <h3 className="text-2xl font-bold mb-2 relative z-10">Send Feedback</h3>
+                  <p className="text-white/50 mb-6 text-sm leading-relaxed relative z-10">
+                    Help us improve Niches Hunter by sharing your thoughts.
+                  </p>
+
+                  {/* Feedback Type */}
+                  <div className="mb-5">
+                    <label className="block text-sm font-medium text-white/70 mb-2">Type</label>
+                    <div className="flex gap-2">
+                      {[
+                        { value: 'bug', label: 'Bug', icon: '🐛' },
+                        { value: 'feature', label: 'Feature', icon: '✨' },
+                        { value: 'general', label: 'General', icon: '💬' },
+                      ].map((type) => (
+                        <button
+                          key={type.value}
+                          onClick={() => setFeedbackType(type.value as 'bug' | 'feature' | 'general')}
+                          className={`flex-1 py-2.5 px-3 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+                            feedbackType === type.value
+                              ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                              : 'bg-white/5 text-white/50 border border-white/10 hover:bg-white/10'
+                          }`}
+                        >
+                          <span>{type.icon}</span>
+                          <span>{type.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Message */}
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-white/70 mb-2">Message</label>
+                    <textarea
+                      value={feedbackMessage}
+                      onChange={(e) => setFeedbackMessage(e.target.value)}
+                      placeholder={
+                        feedbackType === 'bug' 
+                          ? "Describe the bug you encountered..."
+                          : feedbackType === 'feature'
+                          ? "What feature would you like to see?"
+                          : "Share your thoughts with us..."
+                      }
+                      rows={4}
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 resize-none text-sm"
+                    />
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex gap-3 relative z-10">
+                    <button
+                      onClick={() => setShowFeedbackModal(false)}
+                      className="flex-1 py-3.5 rounded-xl font-semibold bg-white/10 hover:bg-white/15 transition-all text-sm"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleSendFeedback}
+                      disabled={feedbackLoading || !feedbackMessage.trim()}
+                      className="flex-1 py-3.5 rounded-xl font-semibold bg-blue-500 text-white hover:bg-blue-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm flex items-center justify-center gap-2"
+                    >
+                      {feedbackLoading ? (
+                        <>
+                          <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                          </svg>
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Send
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
