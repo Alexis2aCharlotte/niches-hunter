@@ -347,7 +347,7 @@ export default function WorkspacePage() {
           <div className="grid md:grid-cols-2 gap-6">
             
             {/* Projects Card */}
-            <LiquidCard className="p-8" noHover>
+            <LiquidCard className="p-8">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold flex items-center gap-3">
                   <span className="text-2xl">📁</span>
@@ -419,7 +419,7 @@ export default function WorkspacePage() {
             </LiquidCard>
 
             {/* Revenue Card */}
-            <LiquidCard className="p-8" noHover>
+            <LiquidCard className="p-8">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold flex items-center gap-3">
                   <span className="text-2xl">💰</span>
@@ -504,7 +504,7 @@ export default function WorkspacePage() {
           </div>
 
           {/* Validations Card - Full Width */}
-          <LiquidCard className="mt-6 p-8" noHover>
+          <LiquidCard className="mt-6 p-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold flex items-center gap-3">
                 <span className="text-2xl">✅</span>
@@ -603,7 +603,7 @@ export default function WorkspacePage() {
           </LiquidCard>
 
           {/* Saved Niches Card - Full Width */}
-          <LiquidCard className="mt-6 p-8" noHover>
+          <LiquidCard className="mt-6 p-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold flex items-center gap-3">
                 <span className="w-10 h-10 rounded-xl bg-[var(--primary)]/20 flex items-center justify-center">
@@ -648,7 +648,7 @@ export default function WorkspacePage() {
                   return (
                     <div
                       key={niche.niche_id}
-                      className="workspace-item-card p-4 group cursor-pointer relative"
+                      className="workspace-item-card niche-card p-4 group cursor-pointer relative"
                     >
                       {/* Lien cliquable sur toute la carte */}
                       <Link href={`/workspace/niche/${niche.niche_id}`} className="absolute inset-0 z-0" />

@@ -581,3 +581,55 @@ body {
     transform: translateY(0px);
   }
 }
+
+/* ============================================
+   WORKSPACE STYLES
+   ============================================ */
+
+/* Disable hover glow effect on liquid cards in workspace */
+.workspace-page .liquid-card::after {
+  display: none !important;
+}
+
+.workspace-page .liquid-card:hover {
+  transform: none;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+}
+
+/* Workspace Item Cards */
+.workspace-item-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.workspace-item-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* Project Status Colors */
+.workspace-item-card.status-researching:hover {
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.workspace-item-card.status-building:hover {
+  background: rgba(249, 115, 22, 0.05);
+}
+
+.workspace-item-card.status-launched:hover {
+  background: rgba(0, 204, 61, 0.05);
+}
+
+/* Validation Cards */
+.workspace-item-card.validation-card:hover {
+  background: rgba(168, 85, 247, 0.05);
+}
+
+/* Niche Cards */
+.workspace-item-card.niche-card:hover {
+  background: rgba(0, 204, 61, 0.05);
+}
