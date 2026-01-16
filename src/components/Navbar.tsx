@@ -10,16 +10,19 @@ interface NavbarProps {
 export default function Navbar({ onSubscribeClick }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isPro, setIsPro] = useState(false);
 
   useEffect(() => {
-    // Vérifier si l'utilisateur est connecté
+    // Vérifier si l'utilisateur est connecté et s'il est Pro
     async function checkAuth() {
       try {
-        const res = await fetch('/api/user/me');
+        const res = await fetch('/api/auth/me', { credentials: 'include' });
         const data = await res.json();
         setIsLoggedIn(!!data.user);
+        setIsPro(data.subscription?.status === 'active');
       } catch {
         setIsLoggedIn(false);
+        setIsPro(false);
       }
     }
     checkAuth();
@@ -81,7 +84,7 @@ export default function Navbar({ onSubscribeClick }: NavbarProps) {
                   <div>
                     <div className="text-sm font-semibold flex items-center gap-2">
                       Niche Validator
-                      <span className="text-[8px] px-1.5 py-0.5 rounded bg-[var(--primary)]/20 text-[var(--primary)] font-bold">PRO</span>
+                      {!isPro && <span className="text-[8px] px-1.5 py-0.5 rounded bg-[var(--primary)]/20 text-[var(--primary)] font-bold">PRO</span>}
                     </div>
                     <div className="text-[10px] text-white/40">Validate your idea with AI</div>
                   </div>
@@ -109,7 +112,7 @@ export default function Navbar({ onSubscribeClick }: NavbarProps) {
                       <div>
                         <div className="text-sm font-semibold flex items-center gap-2">
                           Get Pro
-                          <span className="text-[8px] px-1.5 py-0.5 rounded bg-[var(--primary)]/20 text-[var(--primary)] font-bold">PRO</span>
+                          {!isPro && <span className="text-[8px] px-1.5 py-0.5 rounded bg-[var(--primary)]/20 text-[var(--primary)] font-bold">PRO</span>}
                         </div>
                         <div className="text-[10px] text-white/40">Unlock all features</div>
                       </div>
@@ -192,7 +195,7 @@ export default function Navbar({ onSubscribeClick }: NavbarProps) {
                   Revenue Estimator
                 </Link>
                 <Link href="/niche-validator" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[var(--primary)] transition-colors flex items-center justify-center gap-2 text-lg">
-                  Niche Validator <span className="text-[10px] px-2 py-0.5 rounded bg-[var(--primary)]/20 text-[var(--primary)]">PRO</span>
+                  Niche Validator {!isPro && <span className="text-[10px] px-2 py-0.5 rounded bg-[var(--primary)]/20 text-[var(--primary)]">PRO</span>}
                 </Link>
               </div>
             </div>
@@ -207,7 +210,7 @@ export default function Navbar({ onSubscribeClick }: NavbarProps) {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="hover:text-[var(--primary)] transition-colors flex items-center justify-center gap-2 text-lg"
                   >
-                    Get Pro <span className="text-[10px] px-2 py-0.5 rounded bg-[var(--primary)]/20 text-[var(--primary)]">PRO</span>
+                    Get Pro {!isPro && <span className="text-[10px] px-2 py-0.5 rounded bg-[var(--primary)]/20 text-[var(--primary)]">PRO</span>}
                   </Link>
                 )}
                 <Link href="/blog" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[var(--primary)] transition-colors">
