@@ -103,7 +103,8 @@ export default function AccountPage() {
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' })
-    router.push('/')
+    // Force full page reload to clear all cached states (navbar, etc.)
+    window.location.href = '/'
   }
 
   const handleSendFeedback = async () => {
