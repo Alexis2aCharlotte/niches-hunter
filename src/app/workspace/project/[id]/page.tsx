@@ -574,6 +574,30 @@ export default function ProjectDetailPage() {
     }
   }
 
+  // Add task directly without form
+  const handleAddTaskDirect = async (content: string): Promise<boolean> => {
+    if (!content.trim()) return false
+
+    try {
+      const res = await fetch(`/api/projects/${projectId}/tasks`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ content: content.trim() }),
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        setTasks(prev => [...prev, data.task])
+        return true
+      }
+      return false
+    } catch (error) {
+      console.error('Error adding task:', error)
+      return false
+    }
+  }
+
   const handleToggleTask = async (taskId: string, isCompleted: boolean) => {
     try {
       const res = await fetch(`/api/projects/${projectId}/tasks`, {
@@ -874,6 +898,7 @@ export default function ProjectDetailPage() {
           newTaskContent={newTaskContent}
           setNewTaskContent={setNewTaskContent}
           onAddTask={handleAddTask}
+          onAddTaskDirect={handleAddTaskDirect}
           onToggleTask={handleToggleTask}
           onDeleteTask={handleDeleteTask}
           sourceData={sourceData}
@@ -1301,6 +1326,7 @@ function TasksTab({
   newTaskContent,
   setNewTaskContent,
   onAddTask,
+  onAddTaskDirect,
   onToggleTask,
   onDeleteTask,
   sourceData,
@@ -1310,12 +1336,14 @@ function TasksTab({
   newTaskContent: string
   setNewTaskContent: (v: string) => void
   onAddTask: (e: React.FormEvent) => void
+  onAddTaskDirect: (content: string) => Promise<boolean>
   onToggleTask: (taskId: string, isCompleted: boolean) => void
   onDeleteTask: (taskId: string) => void
   sourceData: SourceData
 }) {
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [importingCategory, setImportingCategory] = useState<string | null>(null)
+  const [recentlyImported, setRecentlyImported] = useState<Set<string>>(new Set())
 
   const completedTasks = tasks.filter(t => t.is_completed)
   const pendingTasks = tasks.filter(t => !t.is_completed)
@@ -1326,21 +1354,50 @@ function TasksTab({
     return tasks.some(t => t.content.toLowerCase() === taskContent.toLowerCase())
   }
 
-  // Import tasks from a category
+  // Import tasks from a category with cascade animation
   const handleImportCategory = async (category: { category: string; tasks: string[] }) => {
     setImportingCategory(category.category)
+    
     for (const taskContent of category.tasks) {
       if (!taskExists(taskContent)) {
-        // Create a fake event to use the existing handler
-        const fakeEvent = {
-          preventDefault: () => {},
-        } as React.FormEvent
-        setNewTaskContent(taskContent)
+        // Add to recently imported for animation
+        setRecentlyImported(prev => new Set(prev).add(taskContent))
+        
+        // Wait a bit for animation
+        await new Promise(resolve => setTimeout(resolve, 150))
+        
+        // Add directly to DB
+        await onAddTaskDirect(taskContent)
+        
         await new Promise(resolve => setTimeout(resolve, 100))
-        onAddTask(fakeEvent)
       }
     }
+    
     setImportingCategory(null)
+    
+    // Clear recently imported after animation
+    setTimeout(() => {
+      setRecentlyImported(new Set())
+    }, 1000)
+  }
+  
+  // Import single task with animation
+  const handleImportSingleTask = async (taskContent: string) => {
+    if (taskExists(taskContent)) return
+    
+    setRecentlyImported(prev => new Set(prev).add(taskContent))
+    
+    // Add directly to DB
+    await onAddTaskDirect(taskContent)
+    
+    // Clear animation after a delay
+    setTimeout(() => {
+      setRecentlyImported(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(taskContent)
+        return newSet
+      })
+    }, 500)
   }
 
   if (loading) {
@@ -1409,38 +1466,55 @@ function TasksTab({
                     <h4 className="font-bold text-white text-base">{category.category}</h4>
                     <button
                       onClick={(e) => { e.stopPropagation(); handleImportCategory(category) }}
-                      disabled={importingCategory === category.category}
-                      className="text-sm px-3 py-1.5 rounded-lg bg-[var(--primary)]/20 text-[var(--primary)] hover:bg-[var(--primary)] hover:text-black font-medium transition-colors disabled:opacity-50"
+                      disabled={importingCategory !== null}
+                      className={`text-sm px-3 py-1.5 rounded-lg font-medium transition-all duration-300 ${
+                        importingCategory === category.category 
+                          ? 'bg-[var(--primary)] text-black scale-95' 
+                          : 'bg-[var(--primary)]/20 text-[var(--primary)] hover:bg-[var(--primary)] hover:text-black'
+                      } disabled:opacity-50`}
                     >
-                      {importingCategory === category.category ? '...' : 'Import All'}
+                      {importingCategory === category.category ? (
+                        <span className="flex items-center gap-2">
+                          <svg className="w-3 h-3 animate-spin" viewBox="0 0 24 24" fill="none">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                          </svg>
+                          Importing...
+                        </span>
+                      ) : 'Import All'}
                     </button>
                   </div>
                   <ul className="space-y-2">
                     {category.tasks.map((task, i) => {
                       const exists = taskExists(task)
+                      const isAnimating = recentlyImported.has(task)
                       return (
                         <li 
                           key={i} 
                           onClick={(e) => {
                             e.stopPropagation()
                             if (!exists) {
-                              setNewTaskContent(task)
-                              setTimeout(() => {
-                                const fakeEvent = { preventDefault: () => {} } as React.FormEvent
-                                onAddTask(fakeEvent)
-                              }, 50)
+                              handleImportSingleTask(task)
                             }
                           }}
-                          className={`text-sm flex items-start gap-2 rounded-lg px-2 py-1.5 -mx-2 transition-all duration-150 ${
+                          className={`text-sm flex items-start gap-2 rounded-lg px-2 py-1.5 -mx-2 transition-all duration-300 ${
                             exists 
-                              ? 'text-[var(--primary)] cursor-default' 
+                              ? 'cursor-default' 
                               : 'text-white/70 hover:text-[var(--primary)] hover:bg-[var(--primary)]/10 cursor-pointer'
-                          }`}
+                          } ${isAnimating ? 'scale-[1.02] bg-[var(--primary)]/20' : ''}`}
                         >
-                          <span className={exists ? 'text-[var(--primary)]' : 'text-white/40'}>
-                            {exists ? '✓' : '○'}
+                          <span className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all duration-300 ${
+                            exists 
+                              ? 'bg-[var(--primary)] border-[var(--primary)]' 
+                              : 'border-white/30'
+                          } ${isAnimating ? 'scale-110' : ''}`}>
+                            {exists && (
+                              <svg className="w-2.5 h-2.5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4">
+                                <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                            )}
                           </span>
-                          <span className={exists ? 'line-through opacity-60' : ''}>{task}</span>
+                          <span className={`transition-all duration-300 ${exists ? 'line-through text-[var(--primary)]/70' : ''}`}>{task}</span>
                         </li>
                       )
                     })}
