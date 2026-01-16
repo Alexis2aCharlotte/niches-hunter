@@ -5,7 +5,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
 }
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  // @ts-expect-error - Stripe API version may vary between environments
+  // @ts-ignore - Stripe API version may vary between environments
   apiVersion: '2025-11-17.clover',
   typescript: true,
 })
