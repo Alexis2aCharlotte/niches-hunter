@@ -26,11 +26,12 @@ export async function POST(request: Request) {
     }
 
     // Format the feedback type
-    const typeEmoji = {
+    const feedbackTypes: Record<string, string> = {
       bug: '🐛 Bug Report',
       feature: '✨ Feature Request',
       general: '💬 General Feedback',
-    }[type] || '💬 Feedback'
+    }
+    const typeEmoji = feedbackTypes[type as string] || '💬 Feedback'
 
     // Send email via Resend
     const response = await fetch('https://api.resend.com/emails', {

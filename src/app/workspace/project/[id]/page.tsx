@@ -1376,7 +1376,7 @@ function TasksTab({
 
       {/* Suggested Tasks - Collapsible */}
       {sourceData && (
-        <LiquidCard className="p-6 border border-[var(--primary)]/20 bg-[var(--primary)]/5" noHover>
+        <LiquidCard className="p-6 border border-[var(--primary)]/20 bg-[var(--primary)]/5">
           {/* Header - Clickable to expand/collapse */}
           <div 
             className="flex items-center justify-between cursor-pointer select-none"
@@ -1685,7 +1685,7 @@ function MilestonesTab({
 
       {/* Suggested Milestones - Collapsible */}
       {sourceData && (
-        <LiquidCard className="p-6 border border-[var(--primary)]/20 bg-[var(--primary)]/5" noHover>
+        <LiquidCard className="p-6 border border-[var(--primary)]/20 bg-[var(--primary)]/5">
           {/* Header - Clickable to expand/collapse */}
           <div 
             className="flex items-center justify-between cursor-pointer select-none"
@@ -2063,7 +2063,7 @@ function CompetitorsTab({
 
       {/* Suggested Competitors from Niche - Collapsible */}
       {suggestedCompetitors.length > 0 && (
-        <LiquidCard className="p-6 border border-[var(--primary)]/20 bg-[var(--primary)]/5" noHover>
+        <LiquidCard className="p-6 border border-[var(--primary)]/20 bg-[var(--primary)]/5">
           {/* Header - Clickable to expand/collapse */}
           <div 
             className="flex items-center justify-between cursor-pointer select-none"
@@ -3084,7 +3084,7 @@ function SwotTab({
 
       {/* Suggestions from Source - Collapsible */}
       {hasSuggestions && (
-        <LiquidCard className="p-6 border border-[var(--primary)]/20 bg-[var(--primary)]/5" noHover>
+        <LiquidCard className="p-6 border border-[var(--primary)]/20 bg-[var(--primary)]/5">
           {/* Header - Clickable to expand/collapse */}
           <div 
             className="flex items-center justify-between cursor-pointer select-none"
