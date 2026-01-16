@@ -187,7 +187,7 @@ const statusConfig: Record<string, { label: string; color: string; bg: string; i
 
 const statusOrder: Project['status'][] = ['idea', 'researching', 'building', 'launched']
 
-type TabId = 'overview' | 'tasks' | 'milestones' | 'competitors' | 'notes' | 'resources' | 'swot' | 'revenue' | 'market'
+type TabId = 'overview' | 'tasks' | 'milestones' | 'competitors' | 'notes' | 'resources' | 'swot' | 'revenue' | 'costs' | 'market'
 
 const tabs: { id: TabId; label: string; icon: string }[] = [
   { id: 'overview', label: 'Overview', icon: '📋' },
@@ -198,6 +198,7 @@ const tabs: { id: TabId; label: string; icon: string }[] = [
   { id: 'resources', label: 'Resources', icon: '🔗' },
   { id: 'swot', label: 'Analysis', icon: '📊' },
   { id: 'revenue', label: 'Revenue', icon: '💰' },
+  { id: 'costs', label: 'Costs', icon: '💸' },
   { id: 'market', label: 'My App', icon: '🎯' },
 ]
 
@@ -954,6 +955,11 @@ export default function ProjectDetailPage() {
           project={project}
           projectId={projectId}
           onUpdate={(updates) => setProject({ ...project, ...updates })}
+        />
+
+      case 'costs':
+        return <CostsTab 
+          projectId={projectId}
         />
 
       case 'market':
@@ -3938,6 +3944,378 @@ function MarketTab({
             </>
           )}
         </button>
+      )}
+    </div>
+  )
+}
+
+// ============================================
+// COSTS TAB
+// ============================================
+
+interface Cost {
+  id: string
+  name: string
+  amount: number
+  frequency: 'monthly' | 'yearly' | 'one-time'
+  category: string
+  created_at: string
+}
+
+const COST_CATEGORIES = [
+  { id: 'tools', label: 'Tools & Software', icon: '🛠️' },
+  { id: 'api', label: 'APIs & Services', icon: '🔌' },
+  { id: 'hosting', label: 'Hosting & Infra', icon: '☁️' },
+  { id: 'marketing', label: 'Marketing', icon: '📢' },
+  { id: 'other', label: 'Other', icon: '📦' },
+]
+
+const SUGGESTED_COSTS = [
+  { name: 'Cursor Pro', amount: 20, frequency: 'monthly' as const, category: 'tools' },
+  { name: 'ChatGPT Plus', amount: 20, frequency: 'monthly' as const, category: 'api' },
+  { name: 'OpenAI API', amount: 0, frequency: 'monthly' as const, category: 'api' },
+  { name: 'Apple Developer', amount: 99, frequency: 'yearly' as const, category: 'tools' },
+  { name: 'Vercel Pro', amount: 20, frequency: 'monthly' as const, category: 'hosting' },
+  { name: 'Supabase Pro', amount: 25, frequency: 'monthly' as const, category: 'hosting' },
+  { name: 'Domain', amount: 12, frequency: 'yearly' as const, category: 'hosting' },
+  { name: 'Figma', amount: 15, frequency: 'monthly' as const, category: 'tools' },
+]
+
+function CostsTab({
+  projectId,
+}: {
+  projectId: string
+}) {
+  const [costs, setCosts] = useState<Cost[]>([])
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  
+  // New cost form
+  const [showAddForm, setShowAddForm] = useState(false)
+  const [newCost, setNewCost] = useState({
+    name: '',
+    amount: '',
+    frequency: 'monthly' as 'monthly' | 'yearly' | 'one-time',
+    category: 'tools',
+  })
+
+  // Load costs
+  useEffect(() => {
+    const loadCosts = async () => {
+      try {
+        const res = await fetch(`/api/projects/${projectId}/costs`, {
+          credentials: 'include',
+        })
+        if (res.ok) {
+          const data = await res.json()
+          setCosts(data.costs || [])
+        }
+      } catch (error) {
+        console.error('Error loading costs:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadCosts()
+  }, [projectId])
+
+  const handleAddCost = async (costData?: typeof SUGGESTED_COSTS[0]) => {
+    const data = costData || newCost
+    if (!data.name.trim() || !data.amount) return
+
+    setSaving(true)
+    try {
+      const res = await fetch(`/api/projects/${projectId}/costs`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          name: data.name.trim(),
+          amount: parseFloat(data.amount.toString()),
+          frequency: data.frequency,
+          category: data.category,
+        }),
+      })
+
+      if (res.ok) {
+        const result = await res.json()
+        setCosts([...costs, result.cost])
+        setNewCost({ name: '', amount: '', frequency: 'monthly', category: 'tools' })
+        setShowAddForm(false)
+      }
+    } catch (error) {
+      console.error('Error adding cost:', error)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleDeleteCost = async (costId: string) => {
+    try {
+      const res = await fetch(`/api/projects/${projectId}/costs?costId=${costId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      })
+
+      if (res.ok) {
+        setCosts(costs.filter(c => c.id !== costId))
+      }
+    } catch (error) {
+      console.error('Error deleting cost:', error)
+    }
+  }
+
+  // Calculate totals
+  const monthlyTotal = costs.reduce((sum, cost) => {
+    if (cost.frequency === 'monthly') return sum + cost.amount
+    if (cost.frequency === 'yearly') return sum + (cost.amount / 12)
+    return sum
+  }, 0)
+
+  const yearlyTotal = costs.reduce((sum, cost) => {
+    if (cost.frequency === 'monthly') return sum + (cost.amount * 12)
+    if (cost.frequency === 'yearly') return sum + cost.amount
+    if (cost.frequency === 'one-time') return sum + cost.amount
+    return sum
+  }, 0)
+
+  const costExists = (name: string) => {
+    return costs.some(c => c.name.toLowerCase() === name.toLowerCase())
+  }
+
+  if (loading) {
+    return (
+      <LiquidCard className="p-6">
+        <div className="animate-pulse space-y-4">
+          <div className="h-6 w-32 bg-white/10 rounded" />
+          <div className="h-20 bg-white/5 rounded-xl" />
+          <div className="h-20 bg-white/5 rounded-xl" />
+        </div>
+      </LiquidCard>
+    )
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Summary Cards */}
+      <div className="grid md:grid-cols-2 gap-4">
+        <LiquidCard className="p-6">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-white/50">Monthly Costs</span>
+            <span className="text-2xl">💸</span>
+          </div>
+          <p className="text-3xl font-bold text-red-400">
+            ${monthlyTotal.toFixed(0)}<span className="text-lg text-white/40">/mo</span>
+          </p>
+        </LiquidCard>
+        
+        <LiquidCard className="p-6">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-white/50">Yearly Costs</span>
+            <span className="text-2xl">📊</span>
+          </div>
+          <p className="text-3xl font-bold text-orange-400">
+            ${yearlyTotal.toFixed(0)}<span className="text-lg text-white/40">/yr</span>
+          </p>
+        </LiquidCard>
+      </div>
+
+      {/* Quick Add from Suggestions */}
+      <LiquidCard className="p-6">
+        <h3 className="text-sm font-bold text-white/60 uppercase tracking-wider mb-4">Quick Add Common Costs</h3>
+        <div className="flex flex-wrap gap-2">
+          {SUGGESTED_COSTS.map((suggestion) => {
+            const exists = costExists(suggestion.name)
+            return (
+              <button
+                key={suggestion.name}
+                onClick={() => !exists && handleAddCost(suggestion)}
+                disabled={exists || saving}
+                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
+                  exists
+                    ? 'bg-[var(--primary)]/20 text-[var(--primary)] cursor-default'
+                    : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white border border-white/10 hover:border-white/20'
+                }`}
+              >
+                {exists ? (
+                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                    <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                ) : (
+                  <span className="text-white/40">+</span>
+                )}
+                {suggestion.name}
+                <span className="text-white/40">${suggestion.amount}/{suggestion.frequency === 'yearly' ? 'yr' : 'mo'}</span>
+              </button>
+            )
+          })}
+        </div>
+      </LiquidCard>
+
+      {/* Current Costs List */}
+      <LiquidCard className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-sm font-bold text-white/60 uppercase tracking-wider">Your Costs ({costs.length})</h3>
+          <button
+            onClick={() => setShowAddForm(true)}
+            className="px-3 py-1.5 rounded-lg bg-[var(--primary)]/20 text-[var(--primary)] text-sm font-medium hover:bg-[var(--primary)]/30 transition-all flex items-center gap-2"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+            Add Custom
+          </button>
+        </div>
+
+        {costs.length === 0 ? (
+          <div className="text-center py-8">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-white/5 flex items-center justify-center">
+              <span className="text-3xl">💸</span>
+            </div>
+            <p className="text-white/40 mb-2">No costs tracked yet</p>
+            <p className="text-sm text-white/30">Add costs from suggestions above or create custom ones</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {costs.map((cost) => {
+              const category = COST_CATEGORIES.find(c => c.id === cost.category)
+              return (
+                <div
+                  key={cost.id}
+                  className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10 group hover:border-white/20 transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-lg">{category?.icon || '📦'}</span>
+                    <div>
+                      <p className="font-medium text-white">{cost.name}</p>
+                      <p className="text-xs text-white/40">{category?.label || 'Other'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="text-right">
+                      <p className="font-mono text-red-400 font-medium">${cost.amount}</p>
+                      <p className="text-xs text-white/40">
+                        {cost.frequency === 'monthly' ? '/month' : cost.frequency === 'yearly' ? '/year' : 'one-time'}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => handleDeleteCost(cost.id)}
+                      className="p-2 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-red-500/20 text-white/30 hover:text-red-400 transition-all"
+                    >
+                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </LiquidCard>
+
+      {/* Add Custom Cost Modal */}
+      {showAddForm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setShowAddForm(false)} />
+          <div className="relative w-full max-w-md bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 shadow-2xl">
+            <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
+              <span className="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center">
+                <span className="text-xl">💸</span>
+              </span>
+              Add Cost
+            </h2>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm text-white/60 mb-2">Name *</label>
+                <input
+                  type="text"
+                  value={newCost.name}
+                  onChange={(e) => setNewCost({ ...newCost, name: e.target.value })}
+                  placeholder="e.g. Cursor Pro, ChatGPT API..."
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-[var(--primary)]/50 transition-colors"
+                  autoFocus
+                />
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm text-white/60 mb-2">Amount (USD) *</label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30">$</span>
+                    <input
+                      type="number"
+                      value={newCost.amount}
+                      onChange={(e) => setNewCost({ ...newCost, amount: e.target.value })}
+                      placeholder="0"
+                      min="0"
+                      step="0.01"
+                      className="w-full pl-8 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-[var(--primary)]/50 transition-colors"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm text-white/60 mb-2">Frequency</label>
+                  <select
+                    value={newCost.frequency}
+                    onChange={(e) => setNewCost({ ...newCost, frequency: e.target.value as 'monthly' | 'yearly' | 'one-time' })}
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-[var(--primary)]/50 transition-colors"
+                  >
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                    <option value="one-time">One-time</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm text-white/60 mb-2">Category</label>
+                <div className="flex flex-wrap gap-2">
+                  {COST_CATEGORIES.map((cat) => (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => setNewCost({ ...newCost, category: cat.id })}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
+                        newCost.category === cat.id
+                          ? 'bg-[var(--primary)]/20 text-[var(--primary)] border border-[var(--primary)]/30'
+                          : 'bg-white/5 text-white/60 border border-white/10 hover:bg-white/10'
+                      }`}
+                    >
+                      <span>{cat.icon}</span>
+                      {cat.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setShowAddForm(false)}
+                className="flex-1 py-3 rounded-xl bg-white/10 text-white font-medium hover:bg-white/15 transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleAddCost()}
+                disabled={!newCost.name.trim() || !newCost.amount || saving}
+                className="flex-1 py-3 rounded-xl bg-[var(--primary)] text-black font-bold hover:bg-[#00E847] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {saving ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                    Adding...
+                  </>
+                ) : (
+                  'Add Cost'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
