@@ -23,12 +23,22 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ user: null, subscription: null })
     }
 
-    // Récupérer le customer
-    const { data: customer } = await supabaseAdmin
+    // Récupérer le customer par user_id
+    let { data: customer } = await supabaseAdmin
       .from('customers')
       .select('*')
       .eq('user_id', user.id)
       .single()
+
+    // Fallback: chercher par email si pas trouvé par user_id
+    if (!customer && user.email) {
+      const { data: customerByEmail } = await supabaseAdmin
+        .from('customers')
+        .select('*')
+        .eq('email', user.email)
+        .single()
+      customer = customerByEmail
+    }
 
     // Récupérer les niches sauvegardées
     const { data: savedNiches } = await supabaseAdmin
