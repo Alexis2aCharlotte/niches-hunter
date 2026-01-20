@@ -21,11 +21,21 @@ interface Subscription {
   cancelAtPeriodEnd: boolean
 }
 
+interface Affiliate {
+  id: string
+  status: 'pending' | 'approved' | 'rejected'
+  promo_code: string | null
+  referral_count: number
+  total_earnings: number
+  created_at: string
+}
+
 
 export default function AccountPage() {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
   const [subscription, setSubscription] = useState<Subscription | null>(null)
+  const [affiliate, setAffiliate] = useState<Affiliate | null>(null)
   const [loading, setLoading] = useState(true)
   const [cancelLoading, setCancelLoading] = useState(false)
   const [portalLoading, setPortalLoading] = useState(false)
@@ -36,6 +46,7 @@ export default function AccountPage() {
   const [feedbackMessage, setFeedbackMessage] = useState('')
   const [feedbackLoading, setFeedbackLoading] = useState(false)
   const [feedbackSuccess, setFeedbackSuccess] = useState(false)
+  const [codeCopied, setCodeCopied] = useState(false)
 
   useEffect(() => {
     async function fetchUserData() {
@@ -50,6 +61,11 @@ export default function AccountPage() {
 
         setUser(userData.user)
         setSubscription(userData.subscription)
+
+        // Fetch affiliate data
+        const affiliateRes = await fetch('/api/affiliate/me')
+        const affiliateData = await affiliateRes.json()
+        setAffiliate(affiliateData.affiliate)
       } catch (error) {
         console.error('Error fetching user data:', error)
       } finally {
@@ -417,27 +433,118 @@ export default function AccountPage() {
               </div>
             </LiquidCard>
 
-            {/* Affiliate - Coming Soon */}
-            <LiquidCard className="p-6 opacity-50 cursor-not-allowed relative overflow-hidden">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center border border-amber-500/20">
-                    <span className="text-2xl">💰</span>
+            {/* Affiliate */}
+            {affiliate?.status === 'approved' && affiliate.promo_code ? (
+              // Approved affiliate with code
+              <LiquidCard className="p-6 border border-[var(--primary)]/30">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--primary)]/20 to-emerald-500/20 flex items-center justify-center border border-[var(--primary)]/20">
+                      <span className="text-2xl">💸</span>
+                    </div>
+                    <div>
+                      <h2 className="text-lg font-bold mb-0.5 text-[var(--primary)]">
+                        Affiliate Program
+                      </h2>
+                      <p className="text-white/40 text-sm">
+                        You&apos;re an approved affiliate!
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h2 className="text-lg font-bold mb-0.5 text-white/50">
-                      Affiliate
-                    </h2>
-                    <p className="text-white/30 text-sm">
-                      Earn by sharing Niches Hunter
-                    </p>
+                  <span className="px-2.5 py-1 rounded-full bg-[var(--primary)]/20 text-[var(--primary)] text-xs font-bold">
+                    Active
+                  </span>
+                </div>
+                
+                {/* Promo Code */}
+                <div className="p-4 rounded-xl bg-black/30 border border-white/10 mb-4">
+                  <p className="text-xs text-white/40 mb-1">Your promo code</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl font-mono font-bold text-[var(--primary)]">{affiliate.promo_code}</span>
+                    <button 
+                      onClick={() => {
+                        navigator.clipboard.writeText(affiliate.promo_code!)
+                        setCodeCopied(true)
+                        setTimeout(() => setCodeCopied(false), 2000)
+                      }}
+                      className={`px-3 py-1.5 rounded-lg text-xs transition-all ${codeCopied ? 'bg-[var(--primary)]/20 text-[var(--primary)]' : 'bg-white/5 hover:bg-white/10 text-white/60'}`}
+                    >
+                      {codeCopied ? (
+                        <span className="flex items-center gap-1">
+                          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                          Copied
+                        </span>
+                      ) : 'Copy'}
+                    </button>
                   </div>
                 </div>
-                <span className="px-2.5 py-1 rounded-full bg-white/5 text-white/40 text-xs font-medium border border-white/10">
-                  Coming soon
-                </span>
-              </div>
-            </LiquidCard>
+
+                {/* Stats */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-3 rounded-xl bg-white/5">
+                    <p className="text-xs text-white/40 mb-1">Referrals</p>
+                    <p className="text-xl font-bold">{affiliate.referral_count}</p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-white/5">
+                    <p className="text-xs text-white/40 mb-1">Earnings</p>
+                    <p className="text-xl font-bold text-[var(--primary)]">${affiliate.total_earnings.toFixed(2)}</p>
+                  </div>
+                </div>
+              </LiquidCard>
+            ) : affiliate?.status === 'pending' ? (
+              // Pending application
+              <LiquidCard className="p-6 border border-amber-500/30">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center border border-amber-500/20">
+                      <span className="text-2xl">⏳</span>
+                    </div>
+                    <div>
+                      <h2 className="text-lg font-bold mb-0.5 text-amber-400">
+                        Application Pending
+                      </h2>
+                      <p className="text-white/40 text-sm">
+                        We&apos;ll send your code within 24-48h
+                      </p>
+                    </div>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-400 text-xs font-bold">
+                    Pending
+                  </span>
+                </div>
+              </LiquidCard>
+            ) : (
+              // Not applied yet
+              <Link href="/affiliate">
+                <LiquidCard className="p-6 hover:bg-white/[0.03] transition-all group cursor-pointer">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--primary)]/20 to-emerald-500/20 flex items-center justify-center border border-[var(--primary)]/20">
+                        <span className="text-2xl">💸</span>
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-bold mb-0.5 group-hover:text-[var(--primary)] transition-colors">
+                          Affiliate Program
+                        </h2>
+                        <p className="text-white/40 text-sm">
+                          Earn $10 per referral (40%)
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="px-2.5 py-1 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] text-xs font-bold border border-[var(--primary)]/20">
+                        40%
+                      </span>
+                      <svg className="w-5 h-5 text-white/30 group-hover:text-[var(--primary)] group-hover:translate-x-1 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M9 18l6-6-6-6"/>
+                      </svg>
+                    </div>
+                  </div>
+                </LiquidCard>
+              </Link>
+            )}
           </div>
 
         </div>
