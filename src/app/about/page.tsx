@@ -1,6 +1,5 @@
 import { Metadata } from "next"
 import Link from "next/link"
-import Navbar from "@/components/Navbar"
 
 export const metadata: Metadata = {
   title: "About | NICHES HUNTER",
@@ -10,8 +9,6 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <main className="min-h-screen relative overflow-hidden text-white font-sans selection:bg-[#00CC3D] selection:text-black">
-      <Navbar />
-
       {/* Background Effects */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-blue-500/5 blur-[200px] rounded-full" />

@@ -2,12 +2,10 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-interface NavbarProps {
-  onSubscribeClick?: () => void;
-}
-
-export default function Navbar({ onSubscribeClick }: NavbarProps) {
+export default function Navbar() {
+  const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isPro, setIsPro] = useState(false);
@@ -16,7 +14,7 @@ export default function Navbar({ onSubscribeClick }: NavbarProps) {
     // Vérifier si l'utilisateur est connecté et s'il est Pro
     async function checkAuth() {
       try {
-        const res = await fetch('/api/auth/me', { credentials: 'include' });
+        const res = await fetch('/api/auth/me', { credentials: 'include', cache: 'no-store' });
         const data = await res.json();
         setIsLoggedIn(!!data.user);
         setIsPro(data.subscription?.status === 'active');
@@ -26,12 +24,12 @@ export default function Navbar({ onSubscribeClick }: NavbarProps) {
       }
     }
     checkAuth();
-  }, []);
+  }, [pathname]);
 
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 nav-blur">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between relative">
+        <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between relative">
 
           {/* Left: Logo */}
           <Link href="/" className="flex items-center relative z-50">
@@ -39,7 +37,7 @@ export default function Navbar({ onSubscribeClick }: NavbarProps) {
           </Link>
 
           {/* Center: Desktop Navigation Links */}
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[rgba(255,255,255,0.6)] absolute left-1/2 -translate-x-1/2 overflow-visible">
+          <div className="hidden md:flex items-center gap-8 text-base font-medium text-[rgba(255,255,255,0.6)] absolute left-1/2 -translate-x-1/2 overflow-visible">
             {isLoggedIn ? (
               <Link href="/account" className="hover:text-[var(--primary)] transition-colors flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-[var(--primary)]"></span>
@@ -153,12 +151,21 @@ export default function Navbar({ onSubscribeClick }: NavbarProps) {
           {/* Right: CTA & Mobile Button */}
           <div className="flex items-center gap-4">
             <div className="hidden md:block">
-              <button 
-                onClick={onSubscribeClick} 
-                className="btn-primary text-sm px-8 py-4 shadow-[0_0_20px_rgba(0,255,148,0.2)] hover:shadow-[0_0_30px_rgba(0,255,148,0.4)] transition-all font-bold"
-              >
-                Start Hunting
-              </button>
+              {isPro ? (
+                <Link 
+                  href="/workspace"
+                  className="btn-primary text-base px-14 py-5 shadow-[0_0_20px_rgba(0,255,148,0.2)] hover:shadow-[0_0_30px_rgba(0,255,148,0.4)] transition-all font-bold"
+                >
+                  Workspace
+                </Link>
+              ) : (
+                <Link 
+                  href="/niches"
+                  className="btn-primary text-sm px-8 py-4 shadow-[0_0_20px_rgba(0,255,148,0.2)] hover:shadow-[0_0_30px_rgba(0,255,148,0.4)] transition-all font-bold"
+                >
+                  Start Hunting
+                </Link>
+              )}
             </div>
 
             {/* Mobile Hamburger Button */}
@@ -237,12 +244,23 @@ export default function Navbar({ onSubscribeClick }: NavbarProps) {
                 </Link>
               </div>
             </div>
-            <button
-              onClick={() => { onSubscribeClick?.(); setIsMobileMenuOpen(false); }}
-              className="btn-primary text-lg px-10 py-5 mt-4 shadow-[0_0_30px_rgba(0,255,148,0.3)]"
-            >
-              Start Hunting
-            </button>
+            {isPro ? (
+              <Link
+                href="/workspace"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="btn-primary text-lg px-10 py-5 mt-4 shadow-[0_0_30px_rgba(0,255,148,0.3)]"
+              >
+                Workspace
+              </Link>
+            ) : (
+              <Link
+                href="/niches"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="btn-primary text-lg px-10 py-5 mt-4 shadow-[0_0_30px_rgba(0,255,148,0.3)]"
+              >
+                Start Hunting
+              </Link>
+            )}
           </nav>
 
           <div className="absolute bottom-10 text-xs text-white/20 font-mono">

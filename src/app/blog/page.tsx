@@ -1,7 +1,6 @@
 import { Metadata } from "next"
 import Link from "next/link"
 import Image from "next/image"
-import Navbar from "@/components/Navbar"
 import { fetchAllPosts, BlogPost, BLOG_CATEGORIES } from "./data"
 
 export const metadata: Metadata = {
@@ -90,8 +89,6 @@ export default async function BlogPage() {
 
   return (
     <main className="min-h-screen relative overflow-hidden text-white font-sans selection:bg-[#00CC3D] selection:text-black">
-      <Navbar />
-
       {/* Background Effects */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/3 w-[800px] h-[800px] bg-[var(--primary)]/3 blur-[200px] rounded-full" />

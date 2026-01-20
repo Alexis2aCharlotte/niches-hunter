@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import Navbar from '@/components/Navbar'
 import LiquidCard from '@/components/LiquidCard'
 
 interface User {
@@ -119,8 +118,8 @@ export default function AccountPage() {
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' })
-    // Force full page reload to clear all cached states (navbar, etc.)
-    window.location.href = '/'
+    // Force hard reload to clear all cached states
+    window.location.href = '/?t=' + Date.now()
   }
 
   const handleSendFeedback = async () => {
@@ -157,8 +156,6 @@ export default function AccountPage() {
   if (loading) {
     return (
       <main className="min-h-screen text-white font-sans selection:bg-[var(--primary)] selection:text-black">
-        <Navbar />
-        
         {/* Ambient Glows */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden">
           <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-[var(--primary)]/5 blur-[150px] rounded-full" />
@@ -209,8 +206,6 @@ export default function AccountPage() {
 
   return (
     <main className="min-h-screen text-white font-sans selection:bg-[var(--primary)] selection:text-black">
-      <Navbar />
-
       {/* Ambient Glows */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-[var(--primary)]/5 blur-[150px] rounded-full" />

@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
 
 // --- Liquid Glass Card Component ---
 function LiquidCard({
@@ -301,10 +300,6 @@ export default function Home() {
 
   return (
     <main className="min-h-screen relative overflow-hidden text-white font-sans selection:bg-[#00CC3D] selection:text-black">
-
-      {/* Navigation */}
-      <Navbar onSubscribeClick={() => window.location.href = '/niches'} />
-
       {/* Hero Section */}
       <section className="relative pt-40 pb-20 px-6">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-start">

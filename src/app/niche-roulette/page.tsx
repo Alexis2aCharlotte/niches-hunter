@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
 import { type Niche } from "../niches/data";
 
 // Fetch niches for roulette (shows title but hides details)
@@ -163,10 +162,6 @@ export default function NicheRoulettePage() {
 
   return (
     <main className="min-h-screen relative overflow-hidden text-white font-sans selection:bg-[var(--primary)] selection:text-black">
-      
-      {/* Navigation */}
-      <Navbar onSubscribeClick={() => setShowSubscribeModal(true)} />
-
       {/* Background Effects */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/3 w-[800px] h-[800px] bg-[var(--primary)]/3 blur-[200px] rounded-full" />

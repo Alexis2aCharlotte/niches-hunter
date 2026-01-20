@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import Navbar from "@/components/Navbar";
 import LiquidCard from "@/components/LiquidCard";
 import { fetchNicheByCode, type Niche, type TrendingApp } from "../data";
 
@@ -123,7 +122,6 @@ export default function NicheDetailPage() {
   if (loading) {
     return (
       <main className="min-h-screen relative overflow-hidden text-white font-sans bg-black">
-        <Navbar />
         <div className="pt-32 px-6 text-center">
           <div className="inline-block w-8 h-8 border-2 border-[var(--primary)] border-t-transparent rounded-full animate-spin mb-4" />
           <p className="text-white/40">Loading niche...</p>
@@ -136,7 +134,6 @@ export default function NicheDetailPage() {
   if (!niche) {
     return (
       <main className="min-h-screen relative overflow-hidden text-white font-sans bg-black">
-        <Navbar />
         <div className="pt-32 px-6 text-center">
           <h1 className="text-4xl font-bold mb-4">Niche not found</h1>
           <p className="text-white/50 mb-8">The niche you're looking for doesn't exist in the database.</p>
@@ -153,8 +150,6 @@ export default function NicheDetailPage() {
   if (isNicheLocked) {
     return (
       <main className="min-h-screen relative overflow-hidden text-white font-sans selection:bg-[#00CC3D] selection:text-black">
-        <Navbar />
-        
         {/* Background */}
         <div className="fixed inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/3 w-[800px] h-[800px] bg-[var(--primary)]/3 blur-[200px] rounded-full" />
@@ -353,8 +348,6 @@ export default function NicheDetailPage() {
 
   return (
     <main className="min-h-screen relative overflow-hidden text-white font-sans selection:bg-[#00CC3D] selection:text-black">
-      <Navbar />
-
       {/* Background */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/3 w-[800px] h-[800px] bg-[var(--primary)]/3 blur-[200px] rounded-full" />
