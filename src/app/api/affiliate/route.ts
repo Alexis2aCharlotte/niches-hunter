@@ -62,7 +62,7 @@ export async function POST(request: Request) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             chat_id: telegramChatId,
-            text: `🤝 New affiliate request: ${firstName} ${lastName} (${email})`
+            text: `🤝 New affiliate request`
           })
         })
       } catch (e) {
