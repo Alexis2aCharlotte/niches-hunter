@@ -56,14 +56,18 @@ export async function POST(request: Request) {
     const telegramToken = process.env.TELEGRAM_BOT_TOKEN
     const telegramChatId = process.env.TELEGRAM_CHAT_ID
     if (telegramToken && telegramChatId) {
-      fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: telegramChatId,
-          text: `🤝 New affiliate request: ${firstName} ${lastName} (${email})`
+      try {
+        await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: telegramChatId,
+            text: `🤝 New affiliate request: ${firstName} ${lastName} (${email})`
+          })
         })
-      }).catch(() => {})
+      } catch (e) {
+        console.error('Telegram error:', e)
+      }
     }
 
     // Email configuration
