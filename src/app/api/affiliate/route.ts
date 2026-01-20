@@ -52,6 +52,20 @@ export async function POST(request: Request) {
       )
     }
 
+    // Telegram notification
+    const telegramToken = process.env.TELEGRAM_BOT_TOKEN
+    const telegramChatId = process.env.TELEGRAM_CHAT_ID
+    if (telegramToken && telegramChatId) {
+      fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: telegramChatId,
+          text: `🤝 New affiliate request: ${firstName} ${lastName} (${email})`
+        })
+      }).catch(() => {})
+    }
+
     // Email configuration
     const RESEND_API_KEY = process.env.RESEND_API_KEY
     const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'contact@nicheshunter.com'
