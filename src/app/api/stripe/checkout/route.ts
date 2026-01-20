@@ -2,12 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import Stripe from 'stripe'
 
-// Coupons désactivés - UX garde l'affichage -40% mais pas de réduction réelle
-const COUPONS = {
-  lifetime: '', // Désactivé
-  monthly: '', // Désactivé
-}
-
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
@@ -30,25 +24,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Config selon le mode
     const isLifetime = mode === 'lifetime'
-    const couponId = isLifetime ? COUPONS.lifetime : COUPONS.monthly
-
-    // Vérifier si le coupon est valide
-    let validCoupon: string | null = null
-    if (couponId) {
-      try {
-        const coupon = await stripe.coupons.retrieve(couponId)
-        console.log('Coupon check:', { couponId, valid: coupon.valid, name: coupon.name })
-        if (coupon.valid) {
-          validCoupon = couponId
-        }
-      } catch (err) {
-        console.warn('Coupon error:', err)
-      }
-    }
-    
-    console.log('Using coupon:', validCoupon)
 
     // Créer la session Stripe Checkout
     let session: Stripe.Checkout.Session
@@ -63,14 +39,14 @@ export async function POST(request: NextRequest) {
         success_url: `${appUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${appUrl}/pricing`,
         billing_address_collection: 'auto',
-        customer_creation: 'always', // Crée un vrai client Stripe (pas Guest)
-        tax_id_collection: { enabled: true }, // Permet aux entreprises de saisir leur numéro de TVA
-        invoice_creation: { enabled: true }, // Génère une facture PDF pour les paiements uniques
+        customer_creation: 'always',
+        tax_id_collection: { enabled: true },
+        invoice_creation: { enabled: true },
+        allow_promotion_codes: true, // Permet l'entrée manuelle de codes promo
         payment_intent_data: {
           description: 'Niches Hunter - Lifetime Access',
-          setup_future_usage: 'off_session', // Sauvegarde la méthode de paiement sur le client
+          setup_future_usage: 'off_session',
         },
-        ...(validCoupon && { discounts: [{ coupon: validCoupon }] }),
       })
     } else {
       // Monthly - subscription
@@ -82,11 +58,11 @@ export async function POST(request: NextRequest) {
         success_url: `${appUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${appUrl}/pricing`,
         billing_address_collection: 'auto',
-        tax_id_collection: { enabled: true }, // Permet aux entreprises de saisir leur numéro de TVA
+        tax_id_collection: { enabled: true },
+        allow_promotion_codes: true, // Permet l'entrée manuelle de codes promo
         subscription_data: {
           description: 'Niches Hunter - Monthly Subscription',
         },
-        ...(validCoupon && { discounts: [{ coupon: validCoupon }] }),
       })
     }
 
