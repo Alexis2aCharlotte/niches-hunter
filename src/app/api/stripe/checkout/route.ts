@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import Stripe from 'stripe'
 
-// Coupon IDs - Expire Jan 10, 2026
+// Coupons désactivés - UX garde l'affichage -40% mais pas de réduction réelle
 const COUPONS = {
-  lifetime: 'iovmDFB9', // Early Hunter Lifetime - $20.99 off → $29
+  lifetime: '', // Désactivé
   monthly: '', // Désactivé
 }
 
