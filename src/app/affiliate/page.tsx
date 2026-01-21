@@ -114,8 +114,8 @@ export default function AffiliatePage() {
 
   return (
     <main className="min-h-screen relative overflow-hidden text-white font-sans selection:bg-[#00CC3D] selection:text-black">
-      {/* Background Effects */}
-      <div className="fixed inset-0 pointer-events-none">
+      {/* Background Effects - Hidden on mobile for performance */}
+      <div className="fixed inset-0 pointer-events-none hidden md:block">
         <div className="absolute top-0 left-1/3 w-[800px] h-[800px] bg-[var(--primary)]/5 blur-[200px] rounded-full" />
         <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-500/5 blur-[150px] rounded-full" />
       </div>
@@ -165,7 +165,7 @@ export default function AffiliatePage() {
         <div className="max-w-5xl mx-auto grid md:grid-cols-4 gap-6">
           {benefits.map((benefit, i) => (
             <LiquidCard key={i} className="p-8 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--primary)]/10 blur-[50px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+              <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--primary)]/10 blur-[50px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none hidden md:block" />
               <h3 className="text-lg font-bold mb-2 relative z-10">{benefit.title}</h3>
               <p className="text-white/50 relative z-10">{benefit.description}</p>
             </LiquidCard>
@@ -254,7 +254,7 @@ export default function AffiliatePage() {
           ) : isPro && affiliateStatus === 'approved' && affiliateCode ? (
             // Approved affiliate - show code
             <LiquidCard className="p-8 md:p-10 relative overflow-hidden border-2 border-[var(--primary)]/30">
-              <div className="absolute top-0 right-0 w-40 h-40 bg-[var(--primary)]/20 blur-[80px] rounded-full pointer-events-none" />
+              <div className="absolute top-0 right-0 w-40 h-40 bg-[var(--primary)]/20 blur-[80px] rounded-full pointer-events-none hidden md:block" />
               
               <div className="text-center relative z-10">
                 <div className="w-20 h-20 rounded-full bg-[var(--primary)]/20 flex items-center justify-center mx-auto mb-6">
@@ -297,7 +297,7 @@ export default function AffiliatePage() {
           ) : isPro && affiliateStatus === 'pending' ? (
             // Pending application
             <LiquidCard className="p-8 md:p-10 relative overflow-hidden border-2 border-amber-500/30">
-              <div className="absolute top-0 right-0 w-40 h-40 bg-amber-500/20 blur-[80px] rounded-full pointer-events-none" />
+              <div className="absolute top-0 right-0 w-40 h-40 bg-amber-500/20 blur-[80px] rounded-full pointer-events-none hidden md:block" />
               
               <div className="text-center relative z-10">
                 <div className="w-20 h-20 rounded-full bg-amber-500/20 flex items-center justify-center mx-auto mb-6">
@@ -313,7 +313,7 @@ export default function AffiliatePage() {
           ) : isPro ? (
             // Form for Pro users
             <LiquidCard className="p-8 md:p-10 relative overflow-hidden border-2 border-[var(--primary)]/30">
-              <div className="absolute top-0 right-0 w-40 h-40 bg-[var(--primary)]/20 blur-[80px] rounded-full pointer-events-none" />
+              <div className="absolute top-0 right-0 w-40 h-40 bg-[var(--primary)]/20 blur-[80px] rounded-full pointer-events-none hidden md:block" />
               
               {submitSuccess ? (
                 <div className="text-center py-8 relative z-10">
@@ -436,7 +436,7 @@ export default function AffiliatePage() {
           ) : (
             // CTA for non-Pro users
             <LiquidCard className="p-8 md:p-12 text-center relative overflow-hidden">
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-80 bg-[var(--primary)]/10 blur-[100px] rounded-full pointer-events-none" />
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-80 bg-[var(--primary)]/10 blur-[100px] rounded-full pointer-events-none hidden md:block" />
               
               <div className="relative z-10">
                 <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-6">
