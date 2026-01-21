@@ -150,8 +150,8 @@ export default function NicheDetailPage() {
   if (isNicheLocked) {
     return (
       <main className="min-h-screen relative overflow-hidden text-white font-sans selection:bg-[#00CC3D] selection:text-black">
-        {/* Background */}
-        <div className="fixed inset-0 pointer-events-none">
+        {/* Background - Hidden on mobile for performance */}
+        <div className="fixed inset-0 pointer-events-none hidden md:block">
           <div className="absolute top-0 left-1/3 w-[800px] h-[800px] bg-[var(--primary)]/3 blur-[200px] rounded-full" />
           <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-500/5 blur-[150px] rounded-full" />
         </div>
@@ -348,8 +348,8 @@ export default function NicheDetailPage() {
 
   return (
     <main className="min-h-screen relative overflow-hidden text-white font-sans selection:bg-[#00CC3D] selection:text-black">
-      {/* Background */}
-      <div className="fixed inset-0 pointer-events-none">
+      {/* Background - Hidden on mobile for performance */}
+      <div className="fixed inset-0 pointer-events-none hidden md:block">
         <div className="absolute top-0 left-1/3 w-[800px] h-[800px] bg-[var(--primary)]/3 blur-[200px] rounded-full" />
         <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-500/5 blur-[150px] rounded-full" />
       </div>
@@ -654,7 +654,7 @@ export default function NicheDetailPage() {
                       <LiquidCard 
                         key={i}
                         onClick={() => setSelectedApp(app)}
-                        className="p-6 cursor-pointer hover:scale-[1.01] transition-all group"
+                        className="p-6 cursor-pointer md:hover:scale-[1.01] transition-all group"
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-6">

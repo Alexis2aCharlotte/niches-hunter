@@ -41,7 +41,7 @@ function NicheCard({ niche, index, isUnlocked }: { niche: Niche; index: number; 
       <div
         ref={cardRef}
         onMouseMove={handleMouseMove}
-        className={`liquid-card p-6 group transition-all duration-300 hover:scale-[1.02] relative h-full flex flex-col ${isDemandBased ? 'exclusive-card' : ''}`}
+        className={`liquid-card p-6 group transition-all duration-300 md:hover:scale-[1.02] relative h-full flex flex-col ${isDemandBased ? 'exclusive-card' : ''}`}
         style={{ animationDelay: `${index * 100}ms` }}
       >
         {/* Header - Toujours visible */}
@@ -193,8 +193,8 @@ export default function NichesPage() {
 
   return (
     <main className="min-h-screen relative overflow-hidden text-white font-sans selection:bg-[#00CC3D] selection:text-black">
-      {/* Background Effects */}
-      <div className="fixed inset-0 pointer-events-none">
+      {/* Background Effects - Hidden on mobile for performance */}
+      <div className="fixed inset-0 pointer-events-none hidden md:block">
         <div className="absolute top-0 left-1/3 w-[800px] h-[800px] bg-[var(--primary)]/3 blur-[200px] rounded-full" />
         <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-500/5 blur-[150px] rounded-full" />
       </div>
