@@ -47,6 +47,17 @@ export default function AccountPage() {
   const [feedbackSuccess, setFeedbackSuccess] = useState(false)
   const [codeCopied, setCodeCopied] = useState(false)
 
+  // Reset loading states when user comes back (browser back button from Stripe)
+  useEffect(() => {
+    const handlePageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) {
+        setPortalLoading(false)
+      }
+    }
+    window.addEventListener('pageshow', handlePageShow)
+    return () => window.removeEventListener('pageshow', handlePageShow)
+  }, [])
+
   useEffect(() => {
     async function fetchUserData() {
       try {

@@ -310,8 +310,8 @@ export default function WorkspacePage() {
   return (
     <main className="workspace-page min-h-screen text-white font-sans selection:bg-[var(--primary)] selection:text-black">
 
-      {/* Workspace Header */}
-      <header className="sticky top-0 z-40 bg-[var(--bg-deep)]/80 backdrop-blur-xl border-b border-white/5">
+      {/* Workspace Header - Hidden on mobile, navbar handles navigation */}
+      <header className="hidden md:block sticky top-0 z-40 bg-[var(--bg-deep)]/80 backdrop-blur-xl border-b border-white/5">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link 
             href="/account"
@@ -332,15 +332,26 @@ export default function WorkspacePage() {
         <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-purple-500/5 blur-[120px] rounded-full" />
       </div>
 
-      <section className="relative pt-8 pb-20 px-6">
+      <section className="relative pt-24 md:pt-8 pb-20 px-4 md:px-6">
         <div className="max-w-6xl mx-auto">
 
+          {/* Mobile Back Button */}
+          <Link 
+            href="/account"
+            className="md:hidden flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors mb-6"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            Account
+          </Link>
+
           {/* Page Title */}
-          <div className="mb-10">
-            <h1 className="text-4xl md:text-5xl font-bold mb-3">
+          <div className="mb-8 md:mb-10">
+            <h1 className="text-3xl md:text-5xl font-bold mb-2 md:mb-3">
               Work<span className="text-flashy-green">space</span>
             </h1>
-            <p className="text-white/50 text-lg">Your projects, validations, and saved niches in one place.</p>
+            <p className="text-white/50 text-sm md:text-lg">Your projects, validations, and saved niches in one place.</p>
           </div>
 
           {/* Main Grid - Dashboard Style */}

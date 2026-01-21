@@ -993,46 +993,49 @@ export default function ProjectDetailPage() {
         <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-purple-500/5 blur-[120px] rounded-full" />
       </div>
 
-      {/* Workspace Header */}
-      <header className="sticky top-0 z-40 bg-[var(--bg-deep)]/80 backdrop-blur-xl border-b border-white/5">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between relative">
+      {/* Workspace Header - Simplified on mobile */}
+      <header className="sticky top-0 z-40 bg-[var(--bg-deep)] md:bg-[var(--bg-deep)]/80 md:backdrop-blur-xl border-b border-white/5">
+        <div className="max-w-5xl mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center justify-between relative">
           <Link 
             href="/workspace"
-            className="text-sm text-white/40 hover:text-white transition-colors"
+            className="text-sm text-white/60 hover:text-white transition-colors flex items-center gap-1"
           >
-            ← Go back
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            <span className="hidden sm:inline">Go back</span>
           </Link>
           <Link 
             href="/workspace"
-            className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 text-white hover:text-[var(--primary)] transition-colors"
+            className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-2 text-white hover:text-[var(--primary)] transition-colors"
           >
             <span className="font-bold text-lg tracking-wider">NICHES HUNTER</span>
           </Link>
-          <div className="w-20"></div>
+          <div className="w-8 md:w-20"></div>
         </div>
       </header>
 
-      <section className="relative pt-8 pb-20 px-6">
+      <section className="relative pt-6 md:pt-8 pb-20 px-4 md:px-6">
         <div className="max-w-5xl mx-auto">
           
           {/* Project Header */}
           <div className="mb-6">
-            <div className="flex items-start gap-4">
-              <span className="text-4xl shrink-0">{statusConfig[project.status].icon}</span>
+            <div className="flex items-start gap-3 md:gap-4">
+              <span className="text-3xl md:text-4xl shrink-0">{statusConfig[project.status].icon}</span>
               <div className="flex-1 min-w-0">
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="text-2xl md:text-3xl font-bold bg-transparent border-none focus:outline-none focus:ring-0 w-full truncate"
+                  className="text-xl md:text-3xl font-bold bg-transparent border-none focus:outline-none focus:ring-0 w-full"
                   placeholder="Project name"
                 />
-                <div className="flex items-center gap-3 mt-1">
+                <div className="flex flex-wrap items-center gap-2 md:gap-3 mt-1">
                   <span className={`text-xs px-2 py-1 rounded-lg ${statusConfig[project.status].bg} ${statusConfig[project.status].color}`}>
                     {statusConfig[project.status].label}
                   </span>
-                  <span className="text-sm text-white/40">
-                    Created {new Date(project.created_at).toLocaleDateString()}
+                  <span className="text-xs md:text-sm text-white/40">
+                    {new Date(project.created_at).toLocaleDateString()}
                   </span>
                 </div>
               </div>
@@ -1049,14 +1052,14 @@ export default function ProjectDetailPage() {
             </div>
           </div>
 
-          {/* Tab Navigation */}
-          <div className="mb-6">
-            <div className="flex gap-2 p-2">
+          {/* Tab Navigation - Horizontal scroll on mobile */}
+          <div className="mb-6 -mx-4 md:mx-0">
+            <div className="flex gap-2 p-2 overflow-x-auto scrollbar-hide px-4 md:px-2">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex-1 flex items-center justify-center px-3 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all border ${
+                  className={`shrink-0 flex items-center justify-center px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all border whitespace-nowrap ${
                     activeTab === tab.id
                       ? 'bg-[var(--primary)]/10 border-[var(--primary)] text-[var(--primary)]'
                       : 'bg-white/5 border-white/10 text-white/50 hover:text-white hover:border-white/20'

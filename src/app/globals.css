@@ -149,6 +149,15 @@ body {
   border-radius: 3px;
 }
 
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Typography Utils */
 .font-mono {
   font-family: 'JetBrains Mono', monospace;
