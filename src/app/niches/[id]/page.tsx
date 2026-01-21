@@ -21,6 +21,17 @@ export default function NicheDetailPage() {
   const [isSaved, setIsSaved] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
 
+  // Reset loading state when user comes back (browser back button from Stripe)
+  useEffect(() => {
+    const handlePageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) {
+        setCheckoutLoading(false);
+      }
+    };
+    window.addEventListener('pageshow', handlePageShow);
+    return () => window.removeEventListener('pageshow', handlePageShow);
+  }, []);
+
   // Vérifier si l'utilisateur a un abonnement actif (via /api/auth/me pour cohérence)
   useEffect(() => {
     async function checkSubscription() {
@@ -654,7 +665,7 @@ export default function NicheDetailPage() {
                       <LiquidCard 
                         key={i}
                         onClick={() => setSelectedApp(app)}
-                        className="p-6 cursor-pointer md:hover:scale-[1.01] transition-all group"
+                        className="p-6 cursor-pointer md:hover:scale-[1.01] md:transition-all group"
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-6">

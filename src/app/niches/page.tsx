@@ -9,8 +9,14 @@ const FREE_NICHES = ["0030", "0024", "0110"];
 
 // Composant carte avec effet de halo qui suit la souris
 function NicheCard({ niche, index, isUnlocked }: { niche: Niche; index: number; isUnlocked: boolean }) {
-  const isSafari = typeof navigator !== 'undefined' && /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   const isDemandBased = niche.sourceType === 'demand_based';
+  const cardRef = useRef<HTMLDivElement>(null);
+  
+  // Check if mobile or Safari (disable mouse tracking for performance)
+  const isMobileOrSafari = typeof window !== 'undefined' && (
+    window.innerWidth < 768 ||
+    /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+  );
 
   // Fonction pour rediriger vers la page pricing si verrouillé
   const handleLockedClick = (e: React.MouseEvent) => {
@@ -19,11 +25,10 @@ function NicheCard({ niche, index, isUnlocked }: { niche: Niche; index: number; 
       window.location.href = '/pricing';
     }
   };
-  const cardRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    // Disable mouse tracking on Safari to prevent memory issues
-    if (isSafari || !cardRef.current) return;
+    // Disable mouse tracking on mobile/Safari to prevent performance issues
+    if (isMobileOrSafari || !cardRef.current) return;
     
     const rect = cardRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -41,7 +46,7 @@ function NicheCard({ niche, index, isUnlocked }: { niche: Niche; index: number; 
       <div
         ref={cardRef}
         onMouseMove={handleMouseMove}
-        className={`liquid-card p-6 group transition-all duration-300 md:hover:scale-[1.02] relative h-full flex flex-col ${isDemandBased ? 'exclusive-card' : ''}`}
+        className={`liquid-card p-6 group md:transition-all md:duration-300 md:hover:scale-[1.02] relative h-full flex flex-col ${isDemandBased ? 'exclusive-card' : ''}`}
         style={{ animationDelay: `${index * 100}ms` }}
       >
         {/* Header - Toujours visible */}
