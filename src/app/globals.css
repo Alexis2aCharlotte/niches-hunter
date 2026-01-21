@@ -633,3 +633,102 @@ body {
 .workspace-item-card.niche-card:hover {
   background: rgba(0, 204, 61, 0.05);
 }
+
+/* ============================================
+   MOBILE PERFORMANCE OPTIMIZATIONS
+   Disable heavy CSS effects on mobile devices
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Disable background effects */
+  body {
+    background-image: none !important;
+    background-attachment: scroll !important;
+  }
+  
+  /* Disable ALL backdrop-filter (very expensive on mobile) */
+  *,
+  .liquid-card,
+  .nav-blur,
+  [class*="backdrop-blur"] {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  
+  /* Simplify navbar */
+  .nav-blur {
+    background: rgba(3, 3, 3, 0.95) !important;
+  }
+  
+  /* Disable liquid card effects */
+  .liquid-card {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  
+  .liquid-card::before,
+  .liquid-card::after {
+    display: none !important;
+  }
+  
+  .liquid-card:hover {
+    transform: none !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+  }
+  
+  /* Disable all hover transforms */
+  .workspace-item-card:hover,
+  .btn-primary:hover {
+    transform: none !important;
+  }
+  
+  /* Simplify buttons */
+  .btn-primary {
+    box-shadow: none !important;
+  }
+  
+  /* Disable text glow effects */
+  .text-flashy-green {
+    text-shadow: 0 0 10px rgba(0, 204, 61, 0.5) !important;
+  }
+  
+  /* Disable all animations */
+  .radar-sweep,
+  .radar-blip-animated::after,
+  .animate-ping,
+  .animate-pulse,
+  .animate-float,
+  .animate-spin,
+  .animate-spin-slow,
+  .animate-title-enter,
+  [class*="animate-"] {
+    animation: none !important;
+  }
+  
+  /* Disable transitions for performance */
+  .reveal-base {
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  
+  /* Hide ambient glow divs (the big blur circles) */
+  [class*="blur-[100px]"],
+  [class*="blur-[120px]"],
+  [class*="blur-[150px]"] {
+    display: none !important;
+  }
+  
+  /* Simplify box-shadows */
+  .deep-relief {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5) !important;
+  }
+  
+  /* Disable mix-blend-mode */
+  * {
+    mix-blend-mode: normal !important;
+  }
+}
