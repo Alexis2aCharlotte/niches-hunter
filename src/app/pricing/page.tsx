@@ -1,12 +1,23 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import LiquidCard from '@/components/LiquidCard'
 
 export default function PricingPage() {
   const [isLifetime, setIsLifetime] = useState(true)
   const [checkoutLoading, setCheckoutLoading] = useState(false)
+
+  // Reset loading state when user comes back (browser back button)
+  useEffect(() => {
+    const handlePageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) {
+        setCheckoutLoading(false)
+      }
+    }
+    window.addEventListener('pageshow', handlePageShow)
+    return () => window.removeEventListener('pageshow', handlePageShow)
+  }, [])
 
   // Pricing
   const monthly = {
@@ -110,8 +121,8 @@ export default function PricingPage() {
 
   return (
     <main className="min-h-screen relative overflow-hidden text-white font-sans selection:bg-[#00CC3D] selection:text-black">
-      {/* Background Effects */}
-      <div className="fixed inset-0 pointer-events-none">
+      {/* Background Effects - Hidden on mobile for performance */}
+      <div className="fixed inset-0 pointer-events-none hidden md:block">
         <div className="absolute top-0 left-1/3 w-[800px] h-[800px] bg-[var(--primary)]/5 blur-[200px] rounded-full" />
         <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-500/5 blur-[150px] rounded-full" />
       </div>
@@ -205,8 +216,8 @@ export default function PricingPage() {
 
           {/* Pro Plan */}
           <LiquidCard className="p-8 md:p-10 relative overflow-hidden border-2 border-[var(--primary)]/30">
-            {/* Glow effect */}
-            <div className="absolute top-0 right-0 w-40 h-40 bg-[var(--primary)]/20 blur-[80px] rounded-full pointer-events-none" />
+            {/* Glow effect - Hidden on mobile */}
+            <div className="absolute top-0 right-0 w-40 h-40 bg-[var(--primary)]/20 blur-[80px] rounded-full pointer-events-none hidden md:block" />
             
             {/* Badge - only show for lifetime */}
             {isLifetime && (
@@ -427,7 +438,7 @@ export default function PricingPage() {
       <section className="relative px-6 py-20">
         <div className="max-w-3xl mx-auto">
           <LiquidCard className="p-10 md:p-16 text-center relative overflow-hidden">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-80 bg-[var(--primary)]/10 blur-[100px] rounded-full pointer-events-none" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-80 bg-[var(--primary)]/10 blur-[100px] rounded-full pointer-events-none hidden md:block" />
             
             <h2 className="text-3xl md:text-4xl font-bold mb-4 relative z-10">
               Ready to Find Your Next <span className="text-flashy-green">Winning Niche</span>?

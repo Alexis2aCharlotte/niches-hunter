@@ -715,10 +715,8 @@ body {
     transform: none !important;
   }
   
-  /* Hide ambient glow divs (the big blur circles) */
-  [class*="blur-[100px]"],
-  [class*="blur-[120px]"],
-  [class*="blur-[150px]"] {
+  /* Hide ALL blur divs on mobile (very expensive) */
+  [class*="blur-["] {
     display: none !important;
   }
   
