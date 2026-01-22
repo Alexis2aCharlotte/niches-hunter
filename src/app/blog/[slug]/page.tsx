@@ -244,6 +244,7 @@ export default async function BlogPostPage({
               <Link href="/niches" className="hover:text-white transition-colors">Niches</Link>
               <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
               <Link href="/about" className="hover:text-white transition-colors">About</Link>
+              <Link href="https://x.com/nicheshunter" className="hover:text-white transition-colors">Twitter</Link>
             </div>
             <span className="text-xs text-white/20">© 2026 Niches Hunter. All rights reserved.</span>
           </div>

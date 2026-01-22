@@ -240,8 +240,8 @@ export default function NicheValidatorPage() {
           
           {/* Subscription Required State */}
           {requiresSubscription && !isAnalyzing && (
-            <LiquidCard className="p-8 md:p-12 relative overflow-hidden">
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--primary)]/5 blur-[120px] rounded-full pointer-events-none" />
+            <LiquidCard className="p-8 md:p-12 relative overflow-hidden no-glow">
+              <div className="card-glow absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--primary)]/5 blur-[120px] rounded-full pointer-events-none" />
               
               <div className="relative z-10 text-center">
                 <div className="w-24 h-24 mx-auto mb-6 rounded-2xl bg-[var(--primary)]/10 border border-[var(--primary)]/20 flex items-center justify-center">
@@ -273,7 +273,7 @@ export default function NicheValidatorPage() {
 
           {/* Error State */}
           {error && !isAnalyzing && !requiresSubscription && (
-            <LiquidCard className="p-8 md:p-12 relative overflow-hidden">
+            <LiquidCard className="p-8 md:p-12 relative overflow-hidden no-glow">
               <div className="relative z-10 text-center">
                 <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
                   <span className="text-4xl">⚠️</span>
@@ -292,9 +292,9 @@ export default function NicheValidatorPage() {
 
           {/* Form State - Accessible for everyone */}
           {!result && !isAnalyzing && !requiresSubscription && !error && (
-            <LiquidCard className="p-8 md:p-12 relative overflow-hidden">
-            {/* Background glow */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--primary)]/5 blur-[120px] rounded-full pointer-events-none" />
+            <LiquidCard className="p-8 md:p-12 relative overflow-hidden no-glow">
+            {/* Background glow - hidden on Safari */}
+              <div className="card-glow absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--primary)]/5 blur-[120px] rounded-full pointer-events-none" />
               
               <div className="relative z-10">
                 <div className="text-center mb-8">
@@ -355,8 +355,8 @@ export default function NicheValidatorPage() {
 
           {/* Loading State */}
           {isAnalyzing && (
-            <LiquidCard className="p-12 md:p-16 relative overflow-hidden">
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[var(--primary)]/5 blur-[100px] rounded-full pointer-events-none animate-pulse" />
+            <LiquidCard className="p-12 md:p-16 relative overflow-hidden no-glow">
+              <div className="card-glow absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[var(--primary)]/5 blur-[100px] rounded-full pointer-events-none animate-pulse" />
               
               <div className="relative z-10 text-center">
                 {/* Terminal style loading */}
@@ -399,8 +399,8 @@ export default function NicheValidatorPage() {
 
           {/* Results State */}
           {result && !isAnalyzing && (
-            <LiquidCard className="p-8 md:p-12 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[var(--primary)]/10 blur-[100px] rounded-full pointer-events-none" />
+            <LiquidCard className="p-8 md:p-12 relative overflow-hidden no-glow">
+              <div className="card-glow absolute top-0 right-0 w-[400px] h-[400px] bg-[var(--primary)]/10 blur-[100px] rounded-full pointer-events-none" />
               
               <div className="relative z-10">
                 {/* Score Circle */}
@@ -590,19 +590,64 @@ export default function NicheValidatorPage() {
         </div>
       </section>
 
+      {/* FAQ Section */}
+      <section className="py-16 px-6">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl font-bold text-center mb-10">
+            Frequently Asked <span className="text-[var(--primary)]">Questions</span>
+          </h2>
+          
+          <div className="space-y-4">
+            {[
+              {
+                q: "How do I know if my iOS app idea is profitable?",
+                a: "A profitable iOS app idea has three key indicators: real market demand, manageable competition, and clear monetization potential. Our AI analyzes these factors using data from 40,000+ iOS apps on the App Store to give you a viability score."
+              },
+              {
+                q: "What makes a good iOS app niche for indie developers?",
+                a: "The best iOS app niches for indie developers have: low to medium competition, a target audience willing to pay, reasonable development complexity (MVP in 4-8 weeks), and growing demand. Utility apps, productivity tools, and vertical B2B apps often fit these criteria."
+              },
+              {
+                q: "How does the AI validate my mobile app idea?",
+                a: "Our AI is trained on App Store data from over 40,000 iOS apps. It analyzes competitor apps, keyword search volume, revenue estimates, and success patterns in your target category. You get a score from 0-100 plus detailed recommendations."
+              },
+              {
+                q: "Should I validate my app idea before building?",
+                a: "Yes. Most iOS app failures happen because developers skip validation. Validating your mobile app idea before coding saves months of wasted time. A 10-second validation can prevent you from entering oversaturated markets."
+              },
+              {
+                q: "What iOS app categories have the best opportunities in 2026?",
+                a: "In 2026, the best iOS app opportunities include: productivity apps for specific audiences, health and wellness niches, utility apps, and B2B vertical apps. Avoid oversaturated categories like social networks and casual games."
+              }
+            ].map((faq, i) => (
+              <details 
+                key={i} 
+                className="group p-5 rounded-xl bg-white/[0.02] border border-white/10 hover:border-white/20 transition-colors"
+              >
+                <summary className="flex items-center justify-between cursor-pointer list-none">
+                  <span className="font-medium text-white/90 pr-4">{faq.q}</span>
+                  <span className="text-white/30 group-open:rotate-45 transition-transform text-xl">+</span>
+                </summary>
+                <p className="mt-4 text-sm text-white/50 leading-relaxed">{faq.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Back to Tools */}
       <section className="py-12 px-6">
         <div className="max-w-3xl mx-auto text-center">
           <p className="text-white/40 mb-4">Explore more tools</p>
           <div className="flex flex-wrap justify-center gap-4">
             <a href="/niches" className="px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-medium hover:bg-white/10 transition-all flex items-center gap-2">
-              💡 Niche Ideas
+              Niche Ideas
             </a>
             <a href="/niche-roulette" className="px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-medium hover:bg-white/10 transition-all flex items-center gap-2">
-              🎰 Niche Roulette
+              Niche Roulette
             </a>
             <a href="/revenue-estimator" className="px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-medium hover:bg-white/10 transition-all flex items-center gap-2">
-              💰 Revenue Estimator
+              Revenue Estimator
             </a>
           </div>
         </div>
@@ -617,7 +662,7 @@ export default function NicheValidatorPage() {
           <div className="flex gap-8 text-sm text-[rgba(255,255,255,0.4)]">
             <a href="#" className="hover:text-white transition-colors">Privacy</a>
             <a href="#" className="hover:text-white transition-colors">Terms</a>
-            <a href="https://x.com/Tobby_scraper" className="hover:text-white transition-colors">Twitter</a>
+            <a href="https://x.com/nicheshunter" className="hover:text-white transition-colors">Twitter</a>
           </div>
           <div className="text-xs text-[rgba(255,255,255,0.2)]">
             © 2026 Niches Hunter. All rights reserved.

@@ -4,12 +4,29 @@ import Image from "next/image"
 import { fetchAllPosts, BlogPost, BLOG_CATEGORIES } from "./data"
 
 export const metadata: Metadata = {
-  title: "Blog | NICHES HUNTER - iOS App Market Insights",
-  description: "Discover strategies, market analysis, and success stories to help you build profitable iOS apps. Expert insights on App Store opportunities.",
+  title: "Blog - iOS App Market Insights & Strategies | NICHES HUNTER",
+  description: "Discover strategies, market analysis, and success stories to help you build profitable iOS apps. Expert insights on finding and validating app ideas.",
+  keywords: [
+    "ios app development blog",
+    "app market insights",
+    "profitable app strategies",
+    "indie developer blog",
+    "app store success stories",
+    "mobile app market analysis",
+  ],
   openGraph: {
-    title: "Blog | NICHES HUNTER",
+    title: "Blog - iOS App Market Insights | NICHES HUNTER",
     description: "Discover strategies, market analysis, and success stories to help you build profitable iOS apps.",
     type: "website",
+    url: "https://nicheshunter.app/blog",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Blog - iOS App Market Insights | NICHES HUNTER",
+    description: "Discover strategies and insights to build profitable iOS apps.",
+  },
+  alternates: {
+    canonical: "https://nicheshunter.app/blog",
   },
 }
 
@@ -177,6 +194,7 @@ export default async function BlogPage() {
             <Link href="/niches" className="hover:text-white transition-colors">Niches</Link>
             <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
             <Link href="/about" className="hover:text-white transition-colors">About</Link>
+            <Link href="https://x.com/nicheshunter" className="hover:text-white transition-colors">Twitter</Link>
           </div>
           <span className="text-xs text-white/20">© 2026 Niches Hunter. All rights reserved.</span>
         </div>

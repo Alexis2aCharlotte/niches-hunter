@@ -467,7 +467,7 @@ export default function NicheRoulettePage() {
           <div className="flex gap-8 text-sm text-[rgba(255,255,255,0.4)]">
             <a href="#" className="hover:text-white transition-colors">Privacy</a>
             <a href="#" className="hover:text-white transition-colors">Terms</a>
-            <a href="https://x.com/Tobby_scraper" className="hover:text-white transition-colors">Twitter</a>
+            <a href="https://x.com/nicheshunter" className="hover:text-white transition-colors">Twitter</a>
           </div>
           <div className="text-xs text-[rgba(255,255,255,0.2)]">
             © 2026 Niches Hunter. All rights reserved.

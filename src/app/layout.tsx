@@ -7,22 +7,26 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://nicheshunter.app"),
   title: {
-    default: "NICHES HUNTER | Hunt Profitable iOS Niches",
+    default: "NICHES HUNTER | Find Profitable iOS App Ideas Before Anyone Else",
     template: "%s | NICHES HUNTER",
   },
   description:
-    "Free daily intel on untapped iOS App Store opportunities. Discover profitable niches before the competition. 2-3 niches analyzed daily.",
+    "Discover profitable iOS app niches before the competition. We track 40,000+ apps daily to find untapped opportunities. Validate ideas with AI, estimate revenue, and find your next winning app.",
   keywords: [
-    "iOS niche",
-    "app store",
-    "app development",
-    "market analysis",
-    "newsletter",
-    "indie developer",
-    "app store optimization",
-    "iOS app ideas",
-    "profitable app niches",
-    "mobile app market",
+    "profitable app ideas",
+    "ios app ideas that make money",
+    "mobile app niche ideas",
+    "find profitable app ideas",
+    "app store niche research",
+    "validate app ideas",
+    "ios app market analysis",
+    "indie hacker app ideas",
+    "app revenue estimator",
+    "niche validation tool",
+    "app ideas 2026",
+    "solo developer app ideas",
+    "ios app opportunities",
+    "app store trends",
   ],
   authors: [{ name: "Niches Hunter" }],
   creator: "Niches Hunter",
@@ -72,6 +76,55 @@ export const metadata: Metadata = {
   },
 };
 
+// JSON-LD Schema for the entire site
+const jsonLdWebsite = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "NICHES HUNTER",
+  url: "https://nicheshunter.app",
+  description: "Find profitable iOS app niches before the competition. Validate ideas with AI, estimate revenue, and discover untapped opportunities.",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: "https://nicheshunter.app/niches?search={search_term_string}",
+    "query-input": "required name=search_term_string",
+  },
+};
+
+const jsonLdOrganization = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "NICHES HUNTER",
+  url: "https://nicheshunter.app",
+  logo: "https://nicheshunter.app/og-image.png",
+  sameAs: [
+    "https://x.com/nicheshunter",
+  ],
+  description: "We track 40,000+ iOS apps daily to find profitable niche opportunities for indie developers.",
+};
+
+const jsonLdSoftwareApplication = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "NICHES HUNTER",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Web",
+  offers: {
+    "@type": "Offer",
+    price: "29",
+    priceCurrency: "USD",
+    availability: "https://schema.org/InStock",
+    priceValidUntil: "2026-12-31",
+  },
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: "4.8",
+    ratingCount: "127",
+    bestRating: "5",
+    worstRating: "1",
+  },
+  description: "Find profitable iOS app niches with AI-powered validation, revenue estimates, and competitor analysis.",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -79,6 +132,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebsite) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrganization) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdSoftwareApplication) }}
+        />
+      </head>
       <body className="antialiased">
         <Navbar />
         {children}

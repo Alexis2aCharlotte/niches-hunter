@@ -348,7 +348,7 @@ export default function NicheDetailPage() {
             <div className="flex items-center gap-6 text-xs text-white/30">
               <Link href="#" className="hover:text-white transition-colors">Privacy</Link>
               <Link href="#" className="hover:text-white transition-colors">Terms</Link>
-              <Link href="https://x.com/Tobby_scraper" className="hover:text-white transition-colors">Twitter</Link>
+              <Link href="https://x.com/nicheshunter" className="hover:text-white transition-colors">Twitter</Link>
             </div>
             <span className="text-xs text-white/20">© 2026 Niches Hunter. All rights reserved.</span>
           </div>
@@ -772,7 +772,7 @@ export default function NicheDetailPage() {
           <div className="flex items-center gap-6 text-xs text-white/30">
             <Link href="#" className="hover:text-white transition-colors">Privacy</Link>
             <Link href="#" className="hover:text-white transition-colors">Terms</Link>
-            <Link href="https://x.com/Tobby_scraper" className="hover:text-white transition-colors">Twitter</Link>
+            <Link href="https://x.com/nicheshunter" className="hover:text-white transition-colors">Twitter</Link>
           </div>
           <span className="text-xs text-white/20">© 2026 Niches Hunter. All rights reserved.</span>
         </div>

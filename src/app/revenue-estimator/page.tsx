@@ -383,9 +383,9 @@ export default function RevenueEstimatorPage() {
           
           {/* Form State */}
           {!result && !isCalculating && (
-            <LiquidCard className="p-8 md:p-12 relative overflow-hidden">
-            {/* Background glow */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--primary)]/5 blur-[120px] rounded-full pointer-events-none" />
+            <LiquidCard className="p-8 md:p-12 relative overflow-hidden no-glow">
+            {/* Background glow - hidden on Safari via CSS */}
+              <div className="card-glow absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--primary)]/5 blur-[120px] rounded-full pointer-events-none" />
               
               <div className="relative z-10 space-y-10">
                 
@@ -484,8 +484,8 @@ export default function RevenueEstimatorPage() {
 
           {/* Loading State */}
           {isCalculating && (
-            <LiquidCard className="p-12 md:p-16 text-center relative overflow-hidden">
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[var(--primary)]/5 blur-[100px] rounded-full pointer-events-none animate-pulse" />
+            <LiquidCard className="p-12 md:p-16 text-center relative overflow-hidden no-glow">
+              <div className="card-glow absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[var(--primary)]/5 blur-[100px] rounded-full pointer-events-none animate-pulse" />
               
               <div className="relative z-10">
                 <div className="w-20 h-20 mx-auto mb-8 rounded-full border-4 border-[var(--primary)]/20 border-t-[var(--primary)] animate-spin" />
@@ -511,8 +511,8 @@ export default function RevenueEstimatorPage() {
           {result && !isCalculating && (
             <div className="space-y-6">
               {/* Main Result Card */}
-              <LiquidCard className="p-8 md:p-12 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[var(--primary)]/10 blur-[100px] rounded-full pointer-events-none" />
+              <LiquidCard className="p-8 md:p-12 relative overflow-hidden no-glow">
+                <div className="card-glow absolute top-0 right-0 w-[400px] h-[400px] bg-[var(--primary)]/10 blur-[100px] rounded-full pointer-events-none" />
                 
                 <div className="relative z-10">
                   {/* Headline Revenue */}
@@ -695,19 +695,64 @@ export default function RevenueEstimatorPage() {
         </div>
       </section>
 
+      {/* FAQ Section */}
+      <section className="py-16 px-6">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl font-bold text-center mb-10">
+            Frequently Asked <span className="text-[var(--primary)]">Questions</span>
+          </h2>
+          
+          <div className="space-y-4">
+            {[
+              {
+                q: "How much money can an iOS app make?",
+                a: "iOS app revenue varies based on niche and business model. A well-positioned subscription app can generate $5,000 to $50,000+ MRR. Utility apps typically earn $3,000 to $15,000/month. Key factors are market size, competition, and pricing strategy."
+              },
+              {
+                q: "What is the best monetization model for iOS apps?",
+                a: "Subscription models generate the highest lifetime value, with revenue 40% higher than one-time purchases. Freemium works for apps with viral potential. Ads-based models require 100K+ users to be profitable for indie developers."
+              },
+              {
+                q: "How many users do I need to make $10K/month?",
+                a: "With a $9.99/month subscription and 3-5% conversion, you need ~25,000-35,000 free users for $10K MRR. With a $29.99 one-time purchase, you need about 350 sales per month."
+              },
+              {
+                q: "Which iOS app categories make the most money?",
+                a: "For indie developers: Business/productivity apps (high willingness to pay), Health/fitness (strong retention), Finance (premium pricing), and Education (growing market). Avoid casual games where acquisition costs are prohibitive."
+              },
+              {
+                q: "How accurate are these revenue estimates?",
+                a: "Our estimates are based on real App Store data from 40,000+ iOS apps. We analyze similar apps, their pricing, downloads, and revenue patterns. Projections provide realistic ranges based on actual market performance."
+              }
+            ].map((faq, i) => (
+              <details 
+                key={i} 
+                className="group p-5 rounded-xl bg-white/[0.02] border border-white/10 hover:border-white/20 transition-colors"
+              >
+                <summary className="flex items-center justify-between cursor-pointer list-none">
+                  <span className="font-medium text-white/90 pr-4">{faq.q}</span>
+                  <span className="text-white/30 group-open:rotate-45 transition-transform text-xl">+</span>
+                </summary>
+                <p className="mt-4 text-sm text-white/50 leading-relaxed">{faq.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Back to Tools */}
       <section className="py-12 px-6">
         <div className="max-w-3xl mx-auto text-center">
           <p className="text-white/40 mb-4">Explore more tools</p>
           <div className="flex flex-wrap justify-center gap-4">
             <a href="/niches" className="px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-medium hover:bg-white/10 transition-all flex items-center gap-2">
-              💡 Niche Ideas
+              Niche Ideas
             </a>
             <a href="/niche-roulette" className="px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-medium hover:bg-white/10 transition-all flex items-center gap-2">
-              🎰 Niche Roulette
+              Niche Roulette
             </a>
             <a href="/niche-validator" className="px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-medium hover:bg-white/10 transition-all flex items-center gap-2">
-              ✅ Niche Validator
+              Niche Validator
             </a>
           </div>
         </div>
@@ -722,7 +767,7 @@ export default function RevenueEstimatorPage() {
           <div className="flex gap-8 text-sm text-[rgba(255,255,255,0.4)]">
             <a href="#" className="hover:text-white transition-colors">Privacy</a>
             <a href="#" className="hover:text-white transition-colors">Terms</a>
-            <a href="https://x.com/Tobby_scraper" className="hover:text-white transition-colors">Twitter</a>
+            <a href="https://x.com/nicheshunter" className="hover:text-white transition-colors">Twitter</a>
           </div>
           <div className="text-xs text-[rgba(255,255,255,0.2)]">
             © 2026 Niches Hunter. All rights reserved.

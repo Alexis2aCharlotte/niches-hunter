@@ -128,6 +128,8 @@ function NicheCard({ niche, index, isUnlocked }: { niche: Niche; index: number; 
   );
 }
 
+const NICHES_PER_PAGE = 20;
+
 export default function NichesPage() {
   const [niches, setNiches] = useState<Niche[]>([]);
   const [loading, setLoading] = useState(true);
@@ -135,6 +137,7 @@ export default function NichesPage() {
   const [hasSubscription, setHasSubscription] = useState(false);
   const [subscriptionChecked, setSubscriptionChecked] = useState(false);
   const [showExclusiveOnly, setShowExclusiveOnly] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Charger les niches depuis l'API sécurisée (inclut la vérification d'abonnement)
   useEffect(() => {
@@ -195,6 +198,18 @@ export default function NichesPage() {
   const exclusiveCount = useMemo(() => {
     return niches.filter(niche => niche.sourceType === 'demand_based').length;
   }, [niches]);
+
+  // Pagination
+  const totalPages = Math.ceil(filteredNiches.length / NICHES_PER_PAGE);
+  const paginatedNiches = useMemo(() => {
+    const startIndex = (currentPage - 1) * NICHES_PER_PAGE;
+    return filteredNiches.slice(startIndex, startIndex + NICHES_PER_PAGE);
+  }, [filteredNiches, currentPage]);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, showExclusiveOnly]);
 
   return (
     <main className="min-h-screen relative overflow-hidden text-white font-sans selection:bg-[#00CC3D] selection:text-black">
@@ -291,7 +306,7 @@ export default function NichesPage() {
       </section>
 
       {/* Niches Grid */}
-      <section className="relative px-6 pb-24">
+      <section className="relative px-6 pb-12">
         <div className="max-w-7xl mx-auto">
           {loading ? (
             <div className="text-center py-16">
@@ -303,12 +318,125 @@ export default function NichesPage() {
               <p className="text-white/40">No niches found yet. Add some in Supabase!</p>
             </div>
           ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredNiches.map((niche, index) => (
-                <NicheCard key={niche.id} niche={niche} index={index} isUnlocked={isNicheUnlocked(niche.displayCode)} />
-              ))}
+            <>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {paginatedNiches.map((niche, index) => (
+                  <NicheCard key={niche.id} niche={niche} index={index} isUnlocked={isNicheUnlocked(niche.displayCode)} />
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center gap-2 mt-12">
+                  <button
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white/60 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                  >
+                    ← Previous
+                  </button>
+                  
+                  <div className="flex items-center gap-1 mx-4">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => {
+                      // Show first, last, current, and adjacent pages
+                      if (
+                        page === 1 ||
+                        page === totalPages ||
+                        (page >= currentPage - 1 && page <= currentPage + 1)
+                      ) {
+                        return (
+                          <button
+                            key={page}
+                            onClick={() => setCurrentPage(page)}
+                            className={`w-10 h-10 rounded-lg text-sm font-medium transition-all ${
+                              currentPage === page
+                                ? "bg-[var(--primary)] text-black"
+                                : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white"
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        );
+                      } else if (
+                        page === currentPage - 2 ||
+                        page === currentPage + 2
+                      ) {
+                        return <span key={page} className="text-white/30 px-1">...</span>;
+                      }
+                      return null;
+                    })}
                   </div>
-                )}
+
+                  <button
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white/60 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                  >
+                    Next →
+                  </button>
+                </div>
+              )}
+
+              {/* Page indicator */}
+              <div className="text-center mt-4 text-sm text-white/30">
+                Showing {((currentPage - 1) * NICHES_PER_PAGE) + 1}-{Math.min(currentPage * NICHES_PER_PAGE, filteredNiches.length)} of {filteredNiches.length} niches
+              </div>
+            </>
+          )}
+        </div>
+      </section>
+
+      {/* Learn More */}
+      <section className="relative px-6 pb-20">
+        <div className="max-w-3xl mx-auto">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="h-px flex-1 bg-white/10" />
+            <span className="text-xs font-mono text-white/30 uppercase tracking-wider">Learn more</span>
+            <div className="h-px flex-1 bg-white/10" />
+          </div>
+          
+          <div className="space-y-3">
+            <Link 
+              href="/blog/how-to-find-profitable-ios-app-ideas"
+              className="group flex items-center justify-between py-3 border-b border-white/5 hover:border-[var(--primary)]/20 transition-colors"
+            >
+              <span className="text-white/70 group-hover:text-white transition-colors">How to Find Profitable iOS App Ideas</span>
+              <span className="text-white/20 group-hover:text-[var(--primary)] transition-colors">→</span>
+            </Link>
+
+            <Link 
+              href="/blog/why-app-ideas-fail"
+              className="group flex items-center justify-between py-3 border-b border-white/5 hover:border-[var(--primary)]/20 transition-colors"
+            >
+              <span className="text-white/70 group-hover:text-white transition-colors">Why 90% of App Ideas Fail</span>
+              <span className="text-white/20 group-hover:text-[var(--primary)] transition-colors">→</span>
+            </Link>
+
+            <Link 
+              href="/blog/best-tools-find-profitable-app-ideas"
+              className="group flex items-center justify-between py-3 border-b border-white/5 hover:border-[var(--primary)]/20 transition-colors"
+            >
+              <span className="text-white/70 group-hover:text-white transition-colors">Best Tools for App Research</span>
+              <span className="text-white/20 group-hover:text-[var(--primary)] transition-colors">→</span>
+            </Link>
+
+            <Link 
+              href="/blog/app-ideas-indie-hackers-solo-devs-studios"
+              className="group flex items-center justify-between py-3 border-b border-white/5 hover:border-[var(--primary)]/20 transition-colors"
+            >
+              <span className="text-white/70 group-hover:text-white transition-colors">Guide for Indie Hackers & Solo Devs</span>
+              <span className="text-white/20 group-hover:text-[var(--primary)] transition-colors">→</span>
+            </Link>
+          </div>
+
+          <div className="mt-6 text-center">
+            <Link 
+              href="/blog"
+              className="text-sm text-white/40 hover:text-[var(--primary)] transition-colors"
+            >
+              View all articles
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -319,7 +447,7 @@ export default function NichesPage() {
           <div className="flex items-center gap-6 text-xs text-white/30">
             <Link href="#" className="hover:text-white transition-colors">Privacy</Link>
             <Link href="#" className="hover:text-white transition-colors">Terms</Link>
-            <Link href="https://x.com/Tobby_scraper" className="hover:text-white transition-colors">Twitter</Link>
+            <Link href="https://x.com/nicheshunter" className="hover:text-white transition-colors">Twitter</Link>
           </div>
           <span className="text-xs text-white/20">© 2026 Niches Hunter. All rights reserved.</span>
         </div>

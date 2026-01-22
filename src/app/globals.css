@@ -88,8 +88,13 @@ body {
     animation: none !important;
   }
   
-  /* Fix #4: Disable the liquid card hover glow effect */
-  .liquid-card::after {
+  /* Fix #4: Disable the liquid card hover glow effect on large cards */
+  .liquid-card.no-glow::after {
+    display: none !important;
+  }
+  
+  /* Fix #4b: Hide centered glow divs inside cards */
+  .card-glow {
     display: none !important;
   }
   
