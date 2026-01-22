@@ -362,7 +362,7 @@ export default function PricingPage() {
             </div>
             
             <p className="text-xs text-white/40 mt-4">
-              <span className="text-[var(--primary)] font-bold">66 users</span> already joined • Next price increase at 100 users
+              <span className="text-[var(--primary)] font-bold">68 users</span> already joined • Next price increase at 100 users
             </p>
           </LiquidCard>
         </div>
@@ -444,7 +444,7 @@ export default function PricingPage() {
               Ready to Find Your Next <span className="text-flashy-green">Winning Niche</span>?
             </h2>
             <p className="text-white/50 mb-8 relative z-10">
-              Join 2,100+ indie developers already hunting profitable iOS niches.
+              Join 68+ indie developers already hunting profitable iOS niches.
             </p>
             
             <button

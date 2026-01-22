@@ -14,6 +14,10 @@ export default function AffiliatePage() {
   const [lastName, setLastName] = useState('')
   const [paymentMethod, setPaymentMethod] = useState('')
   const [twitterHandle, setTwitterHandle] = useState('')
+  const [promotionPlatform, setPromotionPlatform] = useState('')
+  const [promotionUrl, setPromotionUrl] = useState('')
+  const [audienceSize, setAudienceSize] = useState('')
+  const [externalEmail, setExternalEmail] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
   const [submitError, setSubmitError] = useState('')
@@ -30,7 +34,7 @@ export default function AffiliatePage() {
         setIsPro(data.subscription?.status === 'active')
         setUserEmail(data.user?.email || '')
 
-        // Check affiliate status
+        // Check affiliate status for Pro users
         if (data.subscription?.status === 'active') {
           const affiliateRes = await fetch('/api/affiliate/me')
           const affiliateData = await affiliateRes.json()
@@ -69,10 +73,12 @@ export default function AffiliatePage() {
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent, isExternal: boolean = false) => {
     e.preventDefault()
     setIsSubmitting(true)
     setSubmitError('')
+
+    const emailToUse = isExternal ? externalEmail : userEmail
 
     try {
       const response = await fetch('/api/affiliate', {
@@ -81,19 +87,26 @@ export default function AffiliatePage() {
         body: JSON.stringify({
           firstName,
           lastName,
-          email: userEmail,
+          email: emailToUse,
           paymentMethod,
           twitterHandle,
+          affiliateType: isExternal ? 'external' : 'pro',
+          promotionPlatform: isExternal ? promotionPlatform : null,
+          promotionUrl: isExternal ? promotionUrl : null,
+          audienceSize: isExternal ? audienceSize : null,
         }),
       })
 
+      const data = await response.json()
+
       if (!response.ok) {
-        throw new Error('Failed to submit')
+        throw new Error(data.error || 'Failed to submit')
       }
 
       setSubmitSuccess(true)
-    } catch {
-      setSubmitError('Something went wrong. Please try again.')
+      setAffiliateStatus('pending')
+    } catch (err: any) {
+      setSubmitError(err.message || 'Something went wrong. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
@@ -234,7 +247,7 @@ export default function AffiliatePage() {
             </div>
             
             <p className="text-xs text-white/40 mt-4">
-              <span className="text-[var(--primary)] font-bold">66 users</span> already joined • Next commission increase at 100 users
+              <span className="text-[var(--primary)] font-bold">68 users</span> already joined • Next commission increase at 100 users
             </p>
             
             <p className="text-sm text-white/50 mt-6">
@@ -434,48 +447,194 @@ export default function AffiliatePage() {
               )}
             </LiquidCard>
           ) : (
-            // CTA for non-Pro users
-            <LiquidCard className="p-8 md:p-12 text-center relative overflow-hidden">
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-80 bg-[var(--primary)]/10 blur-[100px] rounded-full pointer-events-none hidden md:block" />
+            // Form for external affiliates (non-Pro users)
+            <LiquidCard className="p-8 md:p-10 relative overflow-hidden border-2 border-[var(--primary)]/30">
+              <div className="absolute top-0 right-0 w-40 h-40 bg-[var(--primary)]/20 blur-[80px] rounded-full pointer-events-none hidden md:block" />
               
-              <div className="relative z-10">
-                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-6">
-                  <svg className="w-8 h-8 text-white/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
-                  </svg>
-                </div>
-                
-                <h2 className="text-2xl md:text-3xl font-bold mb-4">
-                  Become a <span className="text-flashy-green">Pro Member</span> First
-                </h2>
-                <p className="text-white/50 mb-8 max-w-md mx-auto">
-                  The affiliate program is exclusive to Pro members. Get lifetime access and reimburse your subscription with just 3 referrals.
-                </p>
-                
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <button
-                    onClick={handleCheckout}
-                    disabled={checkoutLoading}
-                    className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[var(--primary)] text-black font-bold rounded-xl hover:bg-[#00E847] transition-all shadow-[0_0_30px_rgba(0,204,61,0.3)] hover:shadow-[0_0_40px_rgba(0,204,61,0.5)] disabled:opacity-50"
+              {submitSuccess ? (
+                <div className="text-center py-8 relative z-10">
+                  <div className="w-16 h-16 rounded-full bg-[var(--primary)]/20 flex items-center justify-center mx-auto mb-6">
+                    <svg className="w-8 h-8 text-[var(--primary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold text-[var(--primary)] mb-2">Application Received!</h3>
+                  <p className="text-white/60 mb-6">
+                    We&apos;ll review your application and send your unique affiliate code to <span className="text-white font-medium">{externalEmail}</span> within 24-48 hours.
+                  </p>
+                  <a 
+                    href="https://x.com/nicheshunter" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white/80 hover:bg-white/10 hover:text-white transition-all"
                   >
-                    {checkoutLoading ? (
-                      <span className="flex items-center gap-2">
-                        <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                        </svg>
-                        Processing...
-                      </span>
-                    ) : (
-                      'Get Pro for $29 →'
-                    )}
-                  </button>
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                    Follow @nicheshunter for updates
+                  </a>
                 </div>
-                
-                <p className="mt-6 text-xs text-white/30">
-                  One-time payment • Lifetime access • Instant affiliate eligibility
-                </p>
-              </div>
+              ) : (
+                <>
+                  <div className="mb-8 relative z-10">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--primary)]/20 text-[var(--primary)] text-xs font-bold mb-4">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--primary)]" />
+                      EXTERNAL AFFILIATE
+                    </div>
+                    <h2 className="text-2xl md:text-3xl font-bold mb-2">Apply as External Affiliate</h2>
+                    <p className="text-white/50">Share Niches Hunter with your audience and earn 40% commission on every sale.</p>
+                  </div>
+
+                  <form onSubmit={(e) => handleSubmit(e, true)} className="space-y-6 relative z-10">
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-white/70 mb-2">First Name *</label>
+                        <input
+                          type="text"
+                          value={firstName}
+                          onChange={(e) => setFirstName(e.target.value)}
+                          required
+                          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:border-[var(--primary)]/50 focus:outline-none transition-colors"
+                          placeholder="John"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-white/70 mb-2">Last Name *</label>
+                        <input
+                          type="text"
+                          value={lastName}
+                          onChange={(e) => setLastName(e.target.value)}
+                          required
+                          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:border-[var(--primary)]/50 focus:outline-none transition-colors"
+                          placeholder="Doe"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-white/70 mb-2">Email *</label>
+                      <input
+                        type="email"
+                        value={externalEmail}
+                        onChange={(e) => setExternalEmail(e.target.value)}
+                        required
+                        className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:border-[var(--primary)]/50 focus:outline-none transition-colors"
+                        placeholder="you@example.com"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-white/70 mb-2">Promotion Platform *</label>
+                      <select
+                        value={promotionPlatform}
+                        onChange={(e) => setPromotionPlatform(e.target.value)}
+                        required
+                        className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-[var(--primary)]/50 focus:outline-none transition-colors appearance-none cursor-pointer"
+                      >
+                        <option value="" className="bg-[#111]">Select your main platform</option>
+                        <option value="twitter" className="bg-[#111]">𝕏 Twitter</option>
+                        <option value="reddit" className="bg-[#111]">Reddit</option>
+                        <option value="youtube" className="bg-[#111]">YouTube</option>
+                        <option value="blog" className="bg-[#111]">Blog</option>
+                        <option value="newsletter" className="bg-[#111]">Newsletter</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-white/70 mb-2">Profile / Platform URL *</label>
+                      <input
+                        type="url"
+                        value={promotionUrl}
+                        onChange={(e) => setPromotionUrl(e.target.value)}
+                        required
+                        className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:border-[var(--primary)]/50 focus:outline-none transition-colors"
+                        placeholder="https://twitter.com/yourhandle"
+                      />
+                      <p className="text-xs text-white/30 mt-1">Link to your profile or platform where you&apos;ll promote</p>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-white/70 mb-2">Audience Size</label>
+                      <select
+                        value={audienceSize}
+                        onChange={(e) => setAudienceSize(e.target.value)}
+                        className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-[var(--primary)]/50 focus:outline-none transition-colors appearance-none cursor-pointer"
+                      >
+                        <option value="" className="bg-[#111]">Select your audience size</option>
+                        <option value="500-1K" className="bg-[#111]">500 - 1K followers</option>
+                        <option value="1K-5K" className="bg-[#111]">1K - 5K followers</option>
+                        <option value="5K-10K" className="bg-[#111]">5K - 10K followers</option>
+                        <option value="10K-50K" className="bg-[#111]">10K - 50K followers</option>
+                        <option value="50K+" className="bg-[#111]">50K+ followers</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-white/70 mb-2">
+                        {promotionPlatform === 'twitter' ? '𝕏 Twitter' : 
+                         promotionPlatform === 'youtube' ? 'YouTube' :
+                         promotionPlatform === 'reddit' ? 'Reddit' :
+                         promotionPlatform === 'newsletter' ? 'Newsletter' :
+                         promotionPlatform === 'blog' ? 'Blog' : 'Platform'} Handle <span className="text-white/30">(optional)</span>
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30">@</span>
+                        <input
+                          type="text"
+                          value={twitterHandle}
+                          onChange={(e) => setTwitterHandle(e.target.value.replace('@', ''))}
+                          className="w-full pl-8 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:border-[var(--primary)]/50 focus:outline-none transition-colors"
+                          placeholder="yourhandle"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-white/70 mb-2">Preferred Payment Method *</label>
+                      <select
+                        value={paymentMethod}
+                        onChange={(e) => setPaymentMethod(e.target.value)}
+                        required
+                        className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-[var(--primary)]/50 focus:outline-none transition-colors appearance-none cursor-pointer"
+                      >
+                        <option value="" className="bg-[#111]">Select payment method</option>
+                        <option value="paypal" className="bg-[#111]">PayPal</option>
+                        <option value="stripe" className="bg-[#111]">Stripe</option>
+                        <option value="wise" className="bg-[#111]">Wise</option>
+                        <option value="revolut" className="bg-[#111]">Revolut</option>
+                      </select>
+                    </div>
+
+                    {submitError && (
+                      <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+                        {submitError}
+                      </div>
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full py-4 rounded-xl bg-[var(--primary)] text-black font-bold hover:bg-[#00E847] transition-all shadow-[0_0_30px_rgba(0,204,61,0.3)] hover:shadow-[0_0_40px_rgba(0,204,61,0.5)] disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isSubmitting ? (
+                        <span className="flex items-center justify-center gap-2">
+                          <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                          </svg>
+                          Submitting...
+                        </span>
+                      ) : (
+                        'Apply Now →'
+                      )}
+                    </button>
+
+                    <p className="text-xs text-white/30 text-center">
+                      Applications are reviewed within 24-48 hours
+                    </p>
+                  </form>
+                </>
+              )}
             </LiquidCard>
           )}
         </div>

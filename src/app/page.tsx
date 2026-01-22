@@ -352,9 +352,9 @@ export default function Home() {
               </div>
             )}
 
-            <div className="mt-8 flex items-center justify-center lg:justify-start gap-6 text-xs text-[rgba(255,255,255,0.4)] font-mono">
-              <span className="flex items-center gap-2"><span className="text-[var(--primary)]">●</span> 2,100+ smart builders</span>
-              <span className="flex items-center gap-2"><span className="text-[var(--primary)]">●</span> $2.4M revenue tracked</span>
+            <div className="mt-8 flex items-center justify-center lg:justify-start gap-6 text-sm text-[rgba(255,255,255,0.6)] font-mono">
+              <span className="flex items-center gap-2"><span className="text-[var(--primary)]">●</span> <span className="font-bold text-white">68+</span> smart builders</span>
+              <span className="flex items-center gap-2"><span className="text-[var(--primary)]">●</span> <span className="font-bold text-white">$2.4M</span> revenue tracked</span>
               <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[var(--primary)] animate-pulse" /> Updated live</span>
             </div>
 
@@ -860,6 +860,41 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Affiliate Section */}
+      <section className="py-12 md:py-16 px-4 sm:px-6">
+        <div className="max-w-4xl mx-auto">
+          <Link href="/affiliate" className="block group">
+            <div className="relative overflow-hidden rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-6 sm:p-8 md:p-10 hover:border-[var(--primary)]/30 transition-all duration-500">
+              {/* Background glow on hover */}
+              <div className="absolute top-0 right-0 w-60 h-60 bg-[var(--primary)]/10 blur-[100px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+              
+              <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="flex items-center gap-4 md:gap-6">
+                  <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-[var(--primary)]/10 border border-[var(--primary)]/20 flex items-center justify-center text-2xl md:text-3xl shrink-0 group-hover:scale-110 transition-transform duration-500">
+                    💸
+                  </div>
+                  <div className="text-center md:text-left">
+                    <h3 className="text-xl md:text-2xl font-bold text-white mb-1 group-hover:text-[var(--primary)] transition-colors">
+                      Become an Affiliate
+                    </h3>
+                    <p className="text-sm md:text-base text-white/50">
+                      Earn <span className="text-[var(--primary)] font-semibold">$10</span> for every sale you refer • 40% commission
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--primary)]/10 border border-[var(--primary)]/20 text-[var(--primary)] font-medium text-sm group-hover:bg-[var(--primary)] group-hover:text-black transition-all duration-300">
+                  Join Program
+                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </Link>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-16 md:py-24 px-4 sm:px-6 text-center">
         <div className="max-w-4xl mx-auto relative">
@@ -992,7 +1027,7 @@ export default function Home() {
               <div className="mt-8 text-center">
                 <div className="flex justify-center gap-1 mb-2 text-[var(--primary)] text-xs">★★★★★</div>
                 <p className="text-[10px] text-white/30">
-                  Join <span className="text-white/60 font-medium">2,100+ indie devs</span> already hunting niches. <br />
+                  Join <span className="text-white/60 font-medium">68+ indie devs</span> already hunting niches. <br />
                   <span className="opacity-50">100% free • Unsubscribe anytime • No spam ever</span>
                 </p>
               </div>
