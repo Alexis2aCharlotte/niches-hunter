@@ -596,6 +596,39 @@ body {
   }
 }
 
+/* Testimonial Scroll Animations */
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes scroll-right {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-scroll-left {
+  animation: scroll-left 40s linear infinite;
+}
+
+.animate-scroll-right {
+  animation: scroll-right 40s linear infinite;
+}
+
+/* Pause on hover */
+.animate-scroll-left:hover,
+.animate-scroll-right:hover {
+  animation-play-state: paused;
+}
+
 /* ============================================
    WORKSPACE STYLES
    ============================================ */
@@ -709,7 +742,7 @@ body {
     text-shadow: 0 0 10px rgba(0, 204, 61, 0.5) !important;
   }
   
-  /* Disable all animations */
+  /* Disable all animations EXCEPT testimonial scroll */
   .radar-sweep,
   .radar-blip-animated::after,
   .animate-ping,
@@ -718,8 +751,18 @@ body {
   .animate-spin,
   .animate-spin-slow,
   .animate-title-enter,
-  [class*="animate-"] {
+  .animate-flip-in,
+  .animate-flap-drop,
+  .animate-scale-up {
     animation: none !important;
+  }
+  
+  /* Keep testimonial scroll but slower on mobile */
+  .animate-scroll-left {
+    animation: scroll-left 60s linear infinite !important;
+  }
+  .animate-scroll-right {
+    animation: scroll-right 60s linear infinite !important;
   }
   
   /* Disable transitions for performance */

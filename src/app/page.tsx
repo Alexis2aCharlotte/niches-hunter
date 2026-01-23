@@ -23,11 +23,16 @@ function LiquidCard({
   clickableOnMobile?: boolean
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const isSafari = typeof navigator !== 'undefined' && /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  
+  // Detect mobile/Safari once - disable mouse tracking for performance
+  const isMobileOrSafari = typeof window !== 'undefined' && (
+    window.innerWidth < 768 ||
+    /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+  );
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    // Disable mouse tracking on Safari to prevent memory issues
-    if (isSafari || !cardRef.current) return;
+    // Disable mouse tracking on mobile/Safari
+    if (isMobileOrSafari || !cardRef.current) return;
     
     const rect = cardRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -40,7 +45,7 @@ function LiquidCard({
   return (
     <div
       ref={cardRef}
-      onMouseMove={handleMouseMove}
+      onMouseMove={isMobileOrSafari ? undefined : handleMouseMove}
       onClick={onClick}
       className={`liquid-card ${animate} ${enableReveal ? 'reveal-base' : ''} ${clickableOnMobile ? 'lg:cursor-default cursor-pointer' : ''} ${className}`}
       style={style}
@@ -67,8 +72,23 @@ function useScrollReveal() {
   }, []);
 }
 
+// --- Mobile Detection Hook ---
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
+  return isMobile;
+}
+
 export default function Home() {
   const router = useRouter();
+  const isMobile = useIsMobile();
   const [email, setEmail] = useState("");
   const [modalEmail, setModalEmail] = useState("");
   const [activeBlip, setActiveBlip] = useState(0);
@@ -256,7 +276,11 @@ export default function Home() {
     setSelectedApp(null);
   }, [activeFocusIndex]);
 
+  // Radar blip animations - Desktop only
   useEffect(() => {
+    // Skip on mobile - radar not rendered
+    if (typeof window !== 'undefined' && window.innerWidth < 768) return;
+    
     const blipInt = setInterval(() => {
       setActiveBlip(prev => (prev + 1) % niches.length);
     }, 2000);
@@ -300,6 +324,23 @@ export default function Home() {
 
   return (
     <main className="min-h-screen relative overflow-hidden text-white font-sans selection:bg-[#00CC3D] selection:text-black">
+      {/* Mobile: Ambient glow background effect */}
+      {isMobile && (
+        <div 
+          className="fixed inset-0 pointer-events-none z-0"
+          style={{
+            background: `
+              radial-gradient(
+                ellipse 100% 70% at 50% 0%,
+                rgba(0, 204, 61, 0.12) 0%,
+                rgba(0, 204, 61, 0.05) 30%,
+                transparent 70%
+              )
+            `
+          }}
+        />
+      )}
+      
       {/* Hero Section */}
       <section className="relative pt-40 pb-20 px-6">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-start">
@@ -352,23 +393,31 @@ export default function Home() {
               </div>
             )}
 
-            <div className="mt-8 flex items-center justify-center lg:justify-start gap-6 text-sm text-[rgba(255,255,255,0.6)] font-mono">
-              <span className="flex items-center gap-2"><span className="text-[var(--primary)]">●</span> <span className="font-bold text-white">68+</span> smart builders</span>
-              <span className="flex items-center gap-2"><span className="text-[var(--primary)]">●</span> <span className="font-bold text-white">$2.4M</span> revenue tracked</span>
-              <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[var(--primary)] animate-pulse" /> Updated live</span>
+            {/* Social proof stats */}
+            <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-x-4 gap-y-2 text-xs text-[rgba(255,255,255,0.6)] font-mono">
+              <span className="flex items-center gap-1.5">
+                <span className="text-[var(--primary)]">●</span>
+                <span className="font-bold text-white">68+</span> builders
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="text-[var(--primary)]">●</span>
+                <span className="font-bold text-white">$2.4M</span> tracked
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--primary)]" />
+                Live
+              </span>
             </div>
 
           </div>
 
-          {/* Right Visual - PRO FLAT RADAR (No Status Cards) */}
-          <div className="relative flex flex-col items-center justify-center w-full h-auto mt-20 lg:mt-32">
-
-            {/* The Radar Itself */}
+          {/* Right Visual - Radar (Desktop only, hidden on mobile via CSS) */}
+          <div className="hidden md:flex relative flex-col items-center justify-center w-full h-auto mt-20 lg:mt-32">
             <div className="relative w-full h-[400px] flex items-center justify-center">
               {/* Ambient Glow */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-[var(--primary)]/5 blur-[80px] rounded-full pointer-events-none" />
 
-              <div className="radar-stage scale-90 md:scale-100">
+              <div className="radar-stage">
                 <div className="radar-plate">
                   {/* Rings */}
                   <div className="radar-ring" />
@@ -399,7 +448,6 @@ export default function Home() {
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </section>
@@ -409,7 +457,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-12 md:mb-20 reveal-base reveal-up">
             <h2 className="text-4xl md:text-6xl font-bold mb-6">Hunt <span className="text-flashy-green">Smarter</span> <br /><span className="text-flashy-green">Ship</span> Faster</h2>
-            <p className="text-lg md:text-xl text-[rgba(255,255,255,0.6)]">50+ validated niches ready to build. We spot winners early so you can ship before competition hits.</p>
+            <p className="text-lg md:text-xl text-[rgba(255,255,255,0.6)]">99+ validated niches ready to build. We spot winners early so you can ship before competition hits.</p>
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
@@ -448,62 +496,115 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
-            {/* Feature Niche Card - CAROUSEL (Col 1 & 2) */}
-            <LiquidCard
-              key={activeFocusIndex} // Animation key
-              animate="animate-flip-in"
-              className="col-span-1 lg:col-span-2 p-6 sm:p-8 lg:p-10 group deep-relief flex flex-col justify-between h-full"
-              onClick={handleNicheCardClick}
-              clickableOnMobile={true}
-            >
-                <div>
-                  <div className="absolute top-0 right-0 p-40 bg-[var(--primary)]/10 blur-[90px] rounded-full group-hover:bg-[var(--primary)]/20 transition-all duration-700 pointer-events-none" />
-
-                  <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6 sm:mb-8 relative z-10">
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4 break-words leading-tight">{focusNiches[activeFocusIndex].title}</h3>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-[10px] sm:text-xs font-bold text-[var(--primary)] uppercase tracking-widest">#{focusNiches[activeFocusIndex].id}</span>
-                        <span className="text-white/20">·</span>
-                        {focusNiches[activeFocusIndex].tags.map(tag => (
-                          <span key={tag} className="px-2 py-0.5 rounded border border-white/20 bg-white/10 text-[10px] text-white">{tag}</span>
-                        ))}
+          {/* MOBILE: 3 niches stacked */}
+          {isMobile ? (
+            <div className="space-y-4">
+              {focusNiches.map((niche, index) => (
+                <div 
+                  key={niche.id}
+                  className="p-5 rounded-2xl bg-white/[0.03] border border-white/10"
+                  onClick={handleNicheCardClick}
+                >
+                  {/* Header */}
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] text-white/40 font-mono">#{niche.id}</span>
+                      <span className="px-2 py-0.5 rounded bg-white/10 text-[10px] text-white/70">{niche.tags[0]}</span>
+                    </div>
+                    <span className="text-sm font-bold text-[var(--primary)]">{niche.score}/100</span>
+                  </div>
+                  
+                  {/* Title */}
+                  <h3 className="text-lg font-bold text-white mb-2 leading-tight">{niche.title}</h3>
+                  
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    {niche.tags.map(tag => (
+                      <span key={tag} className="px-2 py-0.5 rounded bg-white/5 text-[10px] text-white/50">{tag}</span>
+                    ))}
+                  </div>
+                  
+                  {/* Description (shortened) */}
+                  <p className="text-sm text-white/60 leading-relaxed mb-4 line-clamp-2">
+                    {niche.opportunity}
+                  </p>
+                  
+                  {/* Stats */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="p-3 rounded-xl bg-black/40 border border-white/5">
+                      <div className="text-[9px] text-white/40 uppercase tracking-wider mb-1">Competition</div>
+                      <div className={`text-sm font-bold ${niche.stats.competition === 'Low' ? 'text-[var(--primary)]' : niche.stats.competition === 'Medium' ? 'text-yellow-400' : 'text-orange-400'}`}>
+                        {niche.stats.competition}
                       </div>
                     </div>
-                    <div className="px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-[var(--primary)] text-black text-[10px] sm:text-xs font-bold shadow-[0_0_20px_rgba(0,204,61,0.4)] whitespace-nowrap shrink-0">
-                      {focusNiches[activeFocusIndex].score}/100 SCORE
+                    <div className="p-3 rounded-xl bg-black/40 border border-white/5">
+                      <div className="text-[9px] text-white/40 uppercase tracking-wider mb-1">Est. Revenue</div>
+                      <div className="text-sm font-bold text-white">{niche.stats.revenue}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            /* DESKTOP: Carousel with apps */
+            <>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
+              {/* Feature Niche Card - CAROUSEL (Col 1 & 2) */}
+              <LiquidCard
+                key={activeFocusIndex}
+                animate="animate-flip-in"
+                className="col-span-1 lg:col-span-2 p-6 sm:p-8 lg:p-10 group deep-relief flex flex-col justify-between h-full"
+                onClick={handleNicheCardClick}
+                clickableOnMobile={true}
+              >
+                  <div>
+                    {/* Glow */}
+                    <div className="absolute top-0 right-0 p-40 bg-[var(--primary)]/10 blur-[90px] rounded-full group-hover:bg-[var(--primary)]/20 transition-all duration-700 pointer-events-none" />
+
+                    <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6 sm:mb-8 relative z-10">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4 break-words leading-tight">{focusNiches[activeFocusIndex].title}</h3>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-[10px] sm:text-xs font-bold text-[var(--primary)] uppercase tracking-widest">#{focusNiches[activeFocusIndex].id}</span>
+                          <span className="text-white/20">·</span>
+                          {focusNiches[activeFocusIndex].tags.map(tag => (
+                            <span key={tag} className="px-2 py-0.5 rounded border border-white/20 bg-white/10 text-[10px] text-white">{tag}</span>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-[var(--primary)] text-black text-[10px] sm:text-xs font-bold shadow-[0_0_20px_rgba(0,204,61,0.4)] whitespace-nowrap shrink-0">
+                        {focusNiches[activeFocusIndex].score}/100 SCORE
+                      </div>
+                    </div>
+
+                    <div className="space-y-5 mb-8 sm:mb-10 relative z-10">
+                      <p className="text-white text-lg sm:text-xl lg:text-2xl leading-relaxed">
+                        {focusNiches[activeFocusIndex].opportunity}
+                      </p>
+                      <p className="text-[rgba(255,255,255,0.6)] text-base sm:text-lg lg:text-xl leading-relaxed">
+                        {focusNiches[activeFocusIndex].gap}
+                      </p>
+                      <p className="text-[rgba(255,255,255,0.6)] text-base sm:text-lg lg:text-xl leading-relaxed">
+                        {focusNiches[activeFocusIndex].move}
+                      </p>
                     </div>
                   </div>
 
-                  <div className="space-y-5 mb-8 sm:mb-10 relative z-10">
-                    <p className="text-white text-lg sm:text-xl lg:text-2xl leading-relaxed">
-                      {focusNiches[activeFocusIndex].opportunity}
-                    </p>
-                    <p className="text-[rgba(255,255,255,0.6)] text-base sm:text-lg lg:text-xl leading-relaxed">
-                      {focusNiches[activeFocusIndex].gap}
-                    </p>
-                    <p className="text-[rgba(255,255,255,0.6)] text-base sm:text-lg lg:text-xl leading-relaxed">
-                      {focusNiches[activeFocusIndex].move}
-                    </p>
+                  {/* BOTTOM BLOCK: Stats */}
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 relative z-10">
+                    {[
+                      { label: "Competition", value: focusNiches[activeFocusIndex].stats.competition, color: "text-[var(--primary)]" },
+                      { label: "Potential", value: focusNiches[activeFocusIndex].stats.potential, color: "text-[var(--primary)]" },
+                      { label: "MRR", value: focusNiches[activeFocusIndex].stats.revenue, color: "text-white" },
+                      { label: "Best Market", value: focusNiches[activeFocusIndex].stats.market, color: "text-white" },
+                    ].map((stat, i) => (
+                      <div key={i} className="p-3 sm:p-4 lg:p-5 rounded-xl bg-black/40 border border-white/10 backdrop-blur-md">
+                        <div className="text-[10px] sm:text-xs text-white/40 uppercase mb-1 sm:mb-2 tracking-wider">{stat.label}</div>
+                        <div className={`font-mono text-base sm:text-lg lg:text-xl font-bold ${stat.color} whitespace-nowrap`}>{stat.value}</div>
+                      </div>
+                    ))}
                   </div>
-                </div>
-
-                {/* BOTTOM BLOCK: Stats */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 relative z-10">
-                  {[
-                    { label: "Competition", value: focusNiches[activeFocusIndex].stats.competition, color: "text-[var(--primary)]" },
-                    { label: "Potential", value: focusNiches[activeFocusIndex].stats.potential, color: "text-[var(--primary)]" },
-                    { label: "MRR", value: focusNiches[activeFocusIndex].stats.revenue, color: "text-white" },
-                    { label: "Best Market", value: focusNiches[activeFocusIndex].stats.market, color: "text-white" },
-                  ].map((stat, i) => (
-                    <div key={i} className="p-3 sm:p-4 lg:p-5 rounded-xl bg-black/40 border border-white/10 backdrop-blur-md">
-                      <div className="text-[10px] sm:text-xs text-white/40 uppercase mb-1 sm:mb-2 tracking-wider">{stat.label}</div>
-                      <div className={`font-mono text-base sm:text-lg lg:text-xl font-bold ${stat.color} whitespace-nowrap`}>{stat.value}</div>
-                    </div>
-                  ))}
-                </div>
-            </LiquidCard>
+              </LiquidCard>
 
             {/* Trending List / Detail View Switcher */}
             <LiquidCard 
@@ -609,18 +710,20 @@ export default function Home() {
                 )}
 
             </LiquidCard>
-          </div>
+            </div>
 
-          {/* Pagination Dots - Centered on full page width */}
-          <div className="flex justify-center gap-4 mt-8">
-            {focusNiches.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setActiveFocusIndex(i)}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${activeFocusIndex === i ? 'bg-[var(--primary)] scale-125 shadow-[0_0_10px_#00CC3D]' : 'bg-white/20 hover:bg-white/40'}`}
-              />
-            ))}
-          </div>
+            {/* Pagination Dots */}
+            <div className="flex justify-center gap-4 mt-8">
+              {focusNiches.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActiveFocusIndex(i)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${activeFocusIndex === i ? 'bg-[var(--primary)] scale-125 shadow-[0_0_10px_#00CC3D]' : 'bg-white/20 hover:bg-white/40'}`}
+                />
+              ))}
+            </div>
+            </>
+          )}
         </div>
       </section>
 
@@ -641,7 +744,7 @@ export default function Home() {
           </div>
 
           {/* Tools Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
             {[
               { icon: "💡", title: "Niche Ideas", desc: "Browse our curated database of validated niche ideas with revenue potential.", cta: "Browse niches →", href: "/niches" },
               { icon: "🎰", title: "Niche Roulette", desc: "Can't decide? Let fate pick your next startup idea from our database.", cta: "Spin the wheel →", href: "/niche-roulette" },
@@ -649,13 +752,13 @@ export default function Home() {
               { icon: "✅", title: "Niche Validator", desc: "Validate your niche idea with AI. Get a score and recommendations.", cta: "Validate idea →", href: "/niche-validator" },
             ].map((tool, i) => (
               <Link key={i} href={tool.href} className="group">
-                <LiquidCard animate="reveal-up" className="p-8 group cursor-pointer h-full flex flex-col" style={{ transitionDelay: `${i * 100}ms` }}>
-                  <div className="w-14 h-14 rounded-2xl bg-[var(--primary)]/10 text-[var(--primary)] flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform duration-500 border border-[var(--primary)]/20 shadow-[0_0_30px_rgba(0,204,61,0.1)]">
+                <LiquidCard animate={isMobile ? "" : "reveal-up"} className="p-4 md:p-8 group cursor-pointer h-full flex flex-col" style={{ transitionDelay: `${i * 100}ms` }}>
+                  <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-[var(--primary)]/10 text-[var(--primary)] flex items-center justify-center text-xl md:text-2xl mb-3 md:mb-6 border border-[var(--primary)]/20">
                     {tool.icon}
                   </div>
-                  <h3 className="text-xl font-bold mb-3 text-white">{tool.title}</h3>
-                  <p className="text-sm text-[rgba(255,255,255,0.5)] leading-relaxed flex-grow">{tool.desc}</p>
-                  <p className="text-sm text-[var(--primary)] font-medium mt-4 group-hover:translate-x-1 transition-transform">{tool.cta}</p>
+                  <h3 className="text-sm md:text-xl font-bold mb-1 md:mb-3 text-white">{tool.title}</h3>
+                  <p className="text-xs md:text-sm text-[rgba(255,255,255,0.5)] leading-relaxed flex-grow line-clamp-2 md:line-clamp-none">{tool.desc}</p>
+                  <p className="text-xs md:text-sm text-[var(--primary)] font-medium mt-2 md:mt-4">{tool.cta}</p>
                 </LiquidCard>
               </Link>
             ))}
@@ -758,9 +861,9 @@ export default function Home() {
               </LiquidCard>
 
             {/* Pro Plan */}
-            <LiquidCard animate="reveal-up" className="p-5 sm:p-6 md:p-8 relative overflow-hidden border-2 border-[var(--primary)]/30" style={{ transitionDelay: '100ms' }}>
-              {/* Glow effect */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--primary)]/20 blur-[60px] rounded-full pointer-events-none" />
+            <LiquidCard animate={isMobile ? "" : "reveal-up"} className="p-5 sm:p-6 md:p-8 relative overflow-hidden border-2 border-[var(--primary)]/30" style={{ transitionDelay: '100ms' }}>
+              {/* Glow effect - Desktop only */}
+              {!isMobile && <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--primary)]/20 blur-[60px] rounded-full pointer-events-none" />}
               
               {/* Badge - Only for Lifetime */}
               {isLifetime && (
@@ -860,13 +963,190 @@ export default function Home() {
         </div>
       </section>
 
+      {/* FAQ Section */}
+      <section className="py-16 md:py-24 px-4 sm:px-6">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-10 md:mb-14">
+            <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white">
+              Frequently Asked <span className="text-flashy-green">Questions</span>
+            </h2>
+            <p className="text-base md:text-lg text-white/50">
+              Everything you need to know about Niches Hunter
+            </p>
+          </div>
+
+          <div className="space-y-3 md:space-y-4">
+            {[
+              {
+                q: "What exactly is Niches Hunter?",
+                a: "Niches Hunter is a tool that helps you find profitable app ideas by analyzing the App Store. We track 40,000+ apps daily and identify gaps in the market where you can build something people actually want. Think of it as your research assistant for finding your next app idea."
+              },
+              {
+                q: "What do I get with the Pro plan?",
+                a: "Full access to our database of 99+ validated niches with detailed analysis, competition scores, revenue estimates, and market gaps. You also get the Workspace to save and organize your favorite niches, track competitors, and take notes. Plus the daily newsletter with fresh insights."
+              },
+              {
+                q: "How does the tool work?",
+                a: "We analyze App Store data daily to spot trends, track revenue estimates, and identify niches with low competition but high demand. Each niche comes with detailed info: what's working, what's missing, competitor analysis, and actionable next steps."
+              },
+              {
+                q: "What do I receive every day?",
+                a: "A short email with 2-3 trending apps, market insights, and occasionally a new niche opportunity. It's designed to be quick to read — no fluff, just useful info you can act on."
+              },
+              {
+                q: "Is this good for beginners?",
+                a: "Yes! You don't need to be an expert. Each niche includes clear explanations of the opportunity, who the competitors are, and what you could build. It's perfect if you're looking for your first app idea or want to explore new markets."
+              },
+              {
+                q: "Can I build my app from A to Z with this?",
+                a: "That's exactly what the Workspace is for. You can save niches, add your own notes, track competitors, define milestones, and build a clear roadmap for your project. Everything is consolidated in one place so you always know what's next. It's designed to take you from idea to launch with a clear vision."
+              },
+              {
+                q: "How often is the data updated?",
+                a: "Daily. Our system tracks app rankings, reviews, and revenue estimates every day. New niches are added regularly based on emerging trends and market shifts."
+              },
+              {
+                q: "Can I cancel anytime?",
+                a: "Yes, no questions asked. If you're on monthly, just cancel before your next billing date. For lifetime, it's a one-time payment — no recurring charges ever."
+              },
+            ].map((faq, i) => (
+              <details key={i} className="group p-4 md:p-6 rounded-2xl bg-white/[0.02] border border-white/10 cursor-pointer">
+                <summary className="flex items-center justify-between font-medium text-sm md:text-base text-white list-none">
+                  {faq.q}
+                  <span className="text-white/40 group-open:rotate-180 transition-transform ml-4 shrink-0">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </span>
+                </summary>
+                <p className="mt-4 text-sm md:text-base text-white/60 leading-relaxed">{faq.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section - Loved by Builders */}
+      <section className="py-16 md:py-24 overflow-hidden">
+        <div className="text-center mb-12 px-6">
+          <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white">
+            Loved by <span className="text-flashy-green">Builders</span> Worldwide
+          </h2>
+          <p className="text-base md:text-lg text-white/50 max-w-xl mx-auto">
+            Join 70+ developers and entrepreneurs building their app dreams with Niches Hunter
+          </p>
+        </div>
+
+        {/* Scrolling Testimonials */}
+        <div className="relative">
+          {/* Gradient fade left */}
+          <div className="absolute left-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none" />
+          {/* Gradient fade right */}
+          <div className="absolute right-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none" />
+          
+          {/* Row 1 - Left to Right */}
+          <div className="flex gap-4 md:gap-6 mb-4 md:mb-6 animate-scroll-left">
+            {[
+              { stars: 5, text: "I used to spend hours scrolling through the App Store trying to find gaps. Now I just check Niches Hunter in the morning with my coffee.", name: "Marc D.", role: "Indie Dev", source: "𝕏" },
+              { stars: 5, text: "The workspace is so handy. I have all my notes, competitors, and ideas in one place. No more messy Notion pages.", name: "Sarah K.", role: "Solo Founder", source: "Email" },
+              { stars: 5, text: "Honestly didn't expect much but the niche details are surprisingly thorough. Saved me a ton of research time.", name: "James L.", role: "iOS Developer", source: "𝕏" },
+              { stars: 5, text: "Love that I can save niches and come back to them later. The workspace keeps everything organized.", name: "Anna M.", role: "App Builder", source: "Message" },
+              { stars: 5, text: "Finally found a tool that actually shows what's working in the App Store. The competitor info is really useful.", name: "Tom B.", role: "Developer", source: "𝕏" },
+            ].map((t, i) => (
+              <div key={i} className="flex-shrink-0 w-[300px] md:w-[380px] p-5 md:p-6 rounded-2xl bg-white/[0.03] border border-white/10">
+                <div className="flex gap-0.5 mb-3 text-yellow-400">
+                  {Array.from({ length: t.stars }).map((_, j) => <span key={j}>★</span>)}
+                </div>
+                <p className="text-sm md:text-base text-white/80 mb-4 leading-relaxed">"{t.text}"</p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="font-medium text-white text-sm">{t.name}</div>
+                    <div className="text-xs text-white/40">{t.role}</div>
+                  </div>
+                  <div className="text-xs text-white/30">{t.source}</div>
+                </div>
+              </div>
+            ))}
+            {/* Duplicate for infinite scroll */}
+            {[
+              { stars: 5, text: "I used to spend hours scrolling through the App Store trying to find gaps. Now I just check Niches Hunter in the morning with my coffee.", name: "Marc D.", role: "Indie Dev", source: "𝕏" },
+              { stars: 5, text: "The workspace is so handy. I have all my notes, competitors, and ideas in one place. No more messy Notion pages.", name: "Sarah K.", role: "Solo Founder", source: "Email" },
+              { stars: 5, text: "Honestly didn't expect much but the niche details are surprisingly thorough. Saved me a ton of research time.", name: "James L.", role: "iOS Developer", source: "𝕏" },
+              { stars: 5, text: "Love that I can save niches and come back to them later. The workspace keeps everything organized.", name: "Anna M.", role: "App Builder", source: "Message" },
+              { stars: 5, text: "Finally found a tool that actually shows what's working in the App Store. The competitor info is really useful.", name: "Tom B.", role: "Developer", source: "𝕏" },
+            ].map((t, i) => (
+              <div key={`dup-${i}`} className="flex-shrink-0 w-[300px] md:w-[380px] p-5 md:p-6 rounded-2xl bg-white/[0.03] border border-white/10">
+                <div className="flex gap-0.5 mb-3 text-yellow-400">
+                  {Array.from({ length: t.stars }).map((_, j) => <span key={j}>★</span>)}
+                </div>
+                <p className="text-sm md:text-base text-white/80 mb-4 leading-relaxed">"{t.text}"</p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="font-medium text-white text-sm">{t.name}</div>
+                    <div className="text-xs text-white/40">{t.role}</div>
+                  </div>
+                  <div className="text-xs text-white/30">{t.source}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Row 2 - Right to Left */}
+          <div className="flex gap-4 md:gap-6 animate-scroll-right">
+            {[
+              { stars: 5, text: "Super useful to have everything in one dashboard. I can track my progress, save ideas, and check competitors without switching tabs.", name: "David R.", role: "Maker", source: "𝕏" },
+              { stars: 5, text: "The newsletter is actually good? Like I actually read it every morning. Short, useful, no fluff.", name: "Emily C.", role: "Product Designer", source: "Email" },
+              { stars: 5, text: "Was skeptical at first but the data quality surprised me. Way better than doing manual research.", name: "Mike S.", role: "Founder", source: "Message" },
+              { stars: 5, text: "Simple and clean. I know exactly what's trending and what's saturated. Helps me focus on the right stuff.", name: "Rachel W.", role: "Solo Dev", source: "𝕏" },
+              { stars: 5, text: "The niche roulette thing is fun lol. Spun it a few times and actually found something interesting.", name: "Kevin T.", role: "Builder", source: "𝕏" },
+            ].map((t, i) => (
+              <div key={i} className="flex-shrink-0 w-[300px] md:w-[380px] p-5 md:p-6 rounded-2xl bg-white/[0.03] border border-white/10">
+                <div className="flex gap-0.5 mb-3 text-yellow-400">
+                  {Array.from({ length: t.stars }).map((_, j) => <span key={j}>★</span>)}
+                </div>
+                <p className="text-sm md:text-base text-white/80 mb-4 leading-relaxed">"{t.text}"</p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="font-medium text-white text-sm">{t.name}</div>
+                    <div className="text-xs text-white/40">{t.role}</div>
+                  </div>
+                  <div className="text-xs text-white/30">{t.source}</div>
+                </div>
+              </div>
+            ))}
+            {/* Duplicate for infinite scroll */}
+            {[
+              { stars: 5, text: "Super useful to have everything in one dashboard. I can track my progress, save ideas, and check competitors without switching tabs.", name: "David R.", role: "Maker", source: "𝕏" },
+              { stars: 5, text: "The newsletter is actually good? Like I actually read it every morning. Short, useful, no fluff.", name: "Emily C.", role: "Product Designer", source: "Email" },
+              { stars: 5, text: "Was skeptical at first but the data quality surprised me. Way better than doing manual research.", name: "Mike S.", role: "Founder", source: "Message" },
+              { stars: 5, text: "Simple and clean. I know exactly what's trending and what's saturated. Helps me focus on the right stuff.", name: "Rachel W.", role: "Solo Dev", source: "𝕏" },
+              { stars: 5, text: "The niche roulette thing is fun lol. Spun it a few times and actually found something interesting.", name: "Kevin T.", role: "Builder", source: "𝕏" },
+            ].map((t, i) => (
+              <div key={`dup-${i}`} className="flex-shrink-0 w-[300px] md:w-[380px] p-5 md:p-6 rounded-2xl bg-white/[0.03] border border-white/10">
+                <div className="flex gap-0.5 mb-3 text-yellow-400">
+                  {Array.from({ length: t.stars }).map((_, j) => <span key={j}>★</span>)}
+                </div>
+                <p className="text-sm md:text-base text-white/80 mb-4 leading-relaxed">"{t.text}"</p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="font-medium text-white text-sm">{t.name}</div>
+                    <div className="text-xs text-white/40">{t.role}</div>
+                  </div>
+                  <div className="text-xs text-white/30">{t.source}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Affiliate Section */}
       <section className="py-12 md:py-16 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto">
           <Link href="/affiliate" className="block group">
             <div className="relative overflow-hidden rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-6 sm:p-8 md:p-10 hover:border-[var(--primary)]/30 transition-all duration-500">
-              {/* Background glow on hover */}
-              <div className="absolute top-0 right-0 w-60 h-60 bg-[var(--primary)]/10 blur-[100px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+              {/* Background glow on hover - Desktop only */}
+              {!isMobile && <div className="absolute top-0 right-0 w-60 h-60 bg-[var(--primary)]/10 blur-[100px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />}
               
               <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
                 <div className="flex items-center gap-4 md:gap-6">
@@ -898,10 +1178,10 @@ export default function Home() {
       {/* CTA Section */}
       <section className="py-16 md:py-24 px-4 sm:px-6 text-center">
         <div className="max-w-4xl mx-auto relative">
-          {/* Glow behind container */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-r from-[var(--primary)]/10 to-[#6366F1]/10 blur-[100px] rounded-full pointer-events-none" />
+          {/* Glow behind container - Desktop only */}
+          {!isMobile && <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-r from-[var(--primary)]/10 to-[#6366F1]/10 blur-[100px] rounded-full pointer-events-none" />}
 
-          <LiquidCard animate="reveal-up" className="p-8 sm:p-12 md:p-16 rounded-[30px] md:rounded-[40px] border-white/10 overflow-hidden">
+          <LiquidCard animate={isMobile ? "" : "reveal-up"} className="p-8 sm:p-12 md:p-16 rounded-[30px] md:rounded-[40px] border-white/10 overflow-hidden">
             <div className="relative z-10">
               <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-4 md:mb-6">Start The Hunt Now</h2>
               <p className="text-sm sm:text-base md:text-lg text-[rgba(255,255,255,0.7)] mb-6 md:mb-10 max-w-md mx-auto">
@@ -939,24 +1219,24 @@ export default function Home() {
 
       {/* SUBSCRIBE MODAL */}
       {showSubscribeModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl"
+        <div className={`fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 ${isMobile ? '' : 'backdrop-blur-xl'}`}
           onClick={() => setShowSubscribeModal(false)}
         >
           <LiquidCard
             enableReveal={false}
-            className="w-full max-w-lg p-1 !p-1 relative animate-scale-up shadow-[0_0_150px_rgba(0,204,61,0.2)]"
+            className={`w-full max-w-lg p-1 !p-1 relative ${isMobile ? '' : 'animate-scale-up shadow-[0_0_150px_rgba(0,204,61,0.2)]'}`}
           >
             <div className="bg-[#050505] rounded-[22px] p-8 md:p-10 relative overflow-hidden" onClick={(e) => e.stopPropagation()}>
               {/* Close Button */}
               <button onClick={(e) => { e.stopPropagation(); setShowSubscribeModal(false); }} className="absolute top-5 right-5 text-white/20 hover:text-white text-xl transition-colors z-20">✕</button>
 
-              {/* Radar Top Icon */}
+              {/* Radar Top Icon - Simplified on mobile */}
               <div className="relative flex justify-center mb-6">
                 <div className="w-16 h-16 rounded-full border border-[var(--primary)]/20 flex items-center justify-center relative">
-                  <div className="w-16 h-16 absolute border border-[var(--primary)]/10 rounded-full animate-ping opacity-30" />
+                  {!isMobile && <div className="w-16 h-16 absolute border border-[var(--primary)]/10 rounded-full animate-ping opacity-30" />}
                   <div className="w-1.5 h-1.5 bg-[var(--primary)] rounded-full shadow-[0_0_10px_#00CC3D]" />
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[var(--primary)]/5 rounded-full" />
-                  <div className="w-[1px] h-8 bg-[var(--primary)]/30 absolute shadow-[0_0_5px_rgba(0,204,61,0.5)] origin-bottom animate-spin-slow" />
+                  {!isMobile && <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[var(--primary)]/5 rounded-full" />}
+                  {!isMobile && <div className="w-[1px] h-8 bg-[var(--primary)]/30 absolute shadow-[0_0_5px_rgba(0,204,61,0.5)] origin-bottom animate-spin-slow" />}
                 </div>
               </div>
 
@@ -1037,8 +1317,8 @@ export default function Home() {
       )}
 
       {showModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm" onClick={() => setShowModal(false)}>
-          <LiquidCard enableReveal={false} className="p-10 rounded-3xl text-center max-w-sm shadow-[0_0_50px_rgba(0,204,61,0.2)]">
+        <div className={`fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 ${isMobile ? '' : 'backdrop-blur-sm'}`} onClick={() => setShowModal(false)}>
+          <LiquidCard enableReveal={false} className={`p-10 rounded-3xl text-center max-w-sm ${isMobile ? '' : 'shadow-[0_0_50px_rgba(0,204,61,0.2)]'}`}>
             <div className="text-6xl mb-6">🎉</div>
             <h3 className="text-2xl font-bold text-white mb-3">You're In!</h3>
             <p className="text-[rgba(255,255,255,0.6)] mb-4 text-lg">{message?.text}</p>
