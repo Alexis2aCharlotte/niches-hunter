@@ -52,6 +52,7 @@ interface ValidationResult {
   weaknesses: string[];
   recommendations: string[];
   marketInsights: string;
+  asoKeywords: string[];
 }
 
 // Loading messages (terminal style)

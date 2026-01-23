@@ -77,6 +77,20 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Si le projet est créé depuis une validation, récupérer les ASO keywords
+    let keywords: string[] | null = null
+    if (validation_id) {
+      const { data: validation } = await supabaseAdmin
+        .from('niche_validations')
+        .select('aso_keywords')
+        .eq('id', validation_id)
+        .single()
+      
+      if (validation?.aso_keywords) {
+        keywords = validation.aso_keywords
+      }
+    }
+
     const { data: project, error } = await supabaseAdmin
       .from('projects')
       .insert({
@@ -86,6 +100,7 @@ export async function POST(request: NextRequest) {
         notes,
         validation_id,
         saved_niche_id,
+        keywords,
       })
       .select()
       .single()

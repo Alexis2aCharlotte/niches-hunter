@@ -21,6 +21,12 @@ export interface MarketingStrategy {
   estimatedCost: string;
 }
 
+export interface ASOOptimization {
+  primaryKeywords: string[];
+  secondaryKeywords: string[];
+  appNameIdeas: string[];
+}
+
 export const APPLE_CATEGORIES = [
   "All",
   "Education",
@@ -72,6 +78,7 @@ export interface Niche {
   techStack: string[];
   risks: string[];
   trending: TrendingApp[];
+  asoOptimization: ASOOptimization | null;
   locked?: boolean;
   hasPremium?: boolean;
   sourceType?: 'automated' | 'demand_based' | null;
@@ -119,6 +126,7 @@ function transformSupabaseToNiche(row: NicheRow): Niche {
     techStack: row.tech_stack || [],
     risks: row.risks || [],
     trending: row.trending || [],
+    asoOptimization: row.aso_optimization || null,
     locked: row.locked || false,
     hasPremium: row.has_premium || false,
     sourceType: row.source_type || null,

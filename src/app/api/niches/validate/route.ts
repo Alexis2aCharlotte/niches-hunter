@@ -20,6 +20,18 @@ interface ValidationResponse {
   weaknesses: string[]
   recommendations: string[]
   marketInsights: string
+  asoKeywords: string[]
+}
+
+// Récupérer le user_id depuis le token
+async function getUserId(): Promise<string | null> {
+  const cookieStore = await cookies()
+  const accessToken = cookieStore.get('access_token')?.value
+  
+  if (!accessToken) return null
+  
+  const { data: { user } } = await supabaseAdmin.auth.getUser(accessToken)
+  return user?.id || null
 }
 
 // Vérifier l'abonnement via access_token ET user_id (plus fiable)
@@ -84,7 +96,8 @@ You must respond ONLY with valid JSON matching this exact structure:
   "strengths": ["<strength 1>", "<strength 2>", "<strength 3>"],
   "weaknesses": ["<weakness 1>", "<weakness 2>", "<weakness 3>"],
   "recommendations": ["<recommendation 1>", "<recommendation 2>", "<recommendation 3>"],
-  "marketInsights": "<A brief 2-3 sentence about who are users, what is the problem they are trying to solve, what is the solution you are proposing>"
+  "marketInsights": "<A brief 2-3 sentence about who are users, what is the problem they are trying to solve, what is the solution you are proposing>",
+  "asoKeywords": ["<keyword1>", "<keyword2>", "<keyword3>", "<keyword4>", "<keyword5>"]
 }
 
 Scoring guidelines:
@@ -92,6 +105,12 @@ Scoring guidelines:
 - 60-79: Good potential - Solid market with some challenges
 - 40-59: Needs work - Significant challenges but not impossible
 - 0-39: High risk - Very competitive or small market
+
+ASO Keywords guidelines:
+- Provide exactly 5 relevant App Store keywords
+- Keywords should be what users would search for to find this type of app
+- Mix of broad and specific terms
+- Single words or short phrases (2-3 words max)
 
 Be realistic and data-driven. Consider:
 - Current app market trends
@@ -157,6 +176,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Récupérer le user_id pour sauvegarder la validation
+    const userId = await getUserId()
+
     // Récupérer l'idée de niche
     const body = await request.json()
     const { nicheIdea } = body
@@ -173,6 +195,32 @@ export async function POST(request: NextRequest) {
 
     // Analyser avec l'IA
     const analysis = await analyzeNicheWithAI(sanitizedIdea)
+
+    // Sauvegarder automatiquement la validation dans le workspace
+    if (userId) {
+      const { error: saveError } = await supabaseAdmin
+        .from('niche_validations')
+        .insert({
+          user_id: userId,
+          query: sanitizedIdea,
+          score: analysis.score,
+          score_label: analysis.scoreLabel,
+          market_size: analysis.marketSize,
+          competition: analysis.competition,
+          difficulty: analysis.difficulty,
+          time_to_mvp: analysis.timeToMVP,
+          strengths: analysis.strengths,
+          weaknesses: analysis.weaknesses,
+          recommendations: analysis.recommendations,
+          market_insights: analysis.marketInsights,
+          aso_keywords: analysis.asoKeywords || null,
+        })
+
+      if (saveError) {
+        console.error('Error saving validation:', saveError)
+        // On continue quand même, la validation a réussi
+      }
+    }
 
     return NextResponse.json({ 
       success: true,

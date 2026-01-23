@@ -91,6 +91,12 @@ export interface NicheTrendingApp {
   weakPoints: string[];
 }
 
+export interface NicheASOOptimization {
+  primaryKeywords: string[];
+  secondaryKeywords: string[];
+  appNameIdeas: string[];
+}
+
 export interface NicheRow {
   id: string;
   display_code: string;
@@ -110,6 +116,7 @@ export interface NicheRow {
   marketing_strategies: NicheMarketingStrategy[];
   monetization: NicheMonetization;
   trending: NicheTrendingApp[];
+  aso_optimization: NicheASOOptimization | null;
   locked: boolean;
   has_premium: boolean;
   source_app_ids: string[];
@@ -136,6 +143,7 @@ export interface NicheInsert {
   marketing_strategies?: NicheMarketingStrategy[];
   monetization?: NicheMonetization;
   trending?: NicheTrendingApp[];
+  aso_optimization?: NicheASOOptimization | null;
   locked?: boolean;
   has_premium?: boolean;
   source_app_ids?: string[];

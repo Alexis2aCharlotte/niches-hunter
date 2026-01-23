@@ -14,7 +14,7 @@ export default function NicheDetailPage() {
   const [isLocked, setIsLocked] = useState(false);
   const [loading, setLoading] = useState(true);
   const [selectedApp, setSelectedApp] = useState<TrendingApp | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'apps' | 'strategy'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'apps' | 'strategy' | 'aso'>('overview');
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [hasSubscription, setHasSubscription] = useState(false);
   const [subscriptionChecked, setSubscriptionChecked] = useState(false);
@@ -441,6 +441,7 @@ export default function NicheDetailPage() {
               { id: 'overview', label: 'Overview & Analysis' },
               { id: 'apps', label: 'Trending Apps' },
               { id: 'strategy', label: 'Strategy & Execution' },
+              ...(niche.asoOptimization ? [{ id: 'aso', label: 'ASO Optimization' }] : []),
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -760,6 +761,73 @@ export default function NicheDetailPage() {
                   <p className="text-white/50">Strategy data not available for this niche yet.</p>
                 </LiquidCard>
               )}
+            </div>
+          )}
+
+          {activeTab === 'aso' && niche.asoOptimization && (
+            <div className="space-y-6">
+              {/* Primary Keywords */}
+              <LiquidCard className="p-8">
+                <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
+                  <span className="w-8 h-8 rounded-lg bg-[var(--primary)]/20 flex items-center justify-center text-[var(--primary)]">🔑</span>
+                  Primary Keywords
+                </h2>
+                <div className="flex flex-wrap gap-3">
+                  {niche.asoOptimization.primaryKeywords.map((keyword, i) => (
+                    <span 
+                      key={i} 
+                      className="px-4 py-2 rounded-xl bg-[var(--primary)]/10 border border-[var(--primary)]/30 text-sm font-medium text-[var(--primary)]"
+                    >
+                      {keyword}
+                    </span>
+                  ))}
+                </div>
+              </LiquidCard>
+
+              {/* Long-tail Keywords */}
+              <LiquidCard className="p-8">
+                <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
+                  <span className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400">🎯</span>
+                  Long-tail Keywords
+                </h2>
+                <div className="flex flex-wrap gap-3">
+                  {niche.asoOptimization.secondaryKeywords.map((keyword, i) => (
+                    <span 
+                      key={i} 
+                      className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-white/70"
+                    >
+                      {keyword}
+                    </span>
+                  ))}
+                </div>
+              </LiquidCard>
+
+              {/* App Name Ideas */}
+              <LiquidCard className="p-8">
+                <h2 className="text-xl font-bold mb-6 flex items-center gap-3">
+                  <span className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400">💡</span>
+                  App Name Ideas
+                </h2>
+                <div className="grid md:grid-cols-3 gap-4">
+                  {niche.asoOptimization.appNameIdeas.map((name, i) => (
+                    <div 
+                      key={i} 
+                      className="p-5 rounded-xl bg-white/5 border border-white/10 text-center"
+                    >
+                      <div className="text-xs text-white/40 uppercase mb-2">Suggestion {i + 1}</div>
+                      <div className="text-lg font-bold text-white">{name}</div>
+                    </div>
+                  ))}
+                </div>
+              </LiquidCard>
+
+              {/* Disclaimer */}
+              <div className="flex items-center justify-center gap-2 text-xs text-white/30">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Validate keywords with an ASO tool</span>
+              </div>
             </div>
           )}
         </div>

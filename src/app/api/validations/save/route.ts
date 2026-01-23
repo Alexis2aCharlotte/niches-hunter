@@ -41,7 +41,8 @@ export async function POST(request: NextRequest) {
       strengths,
       weaknesses,
       recommendations,
-      marketInsights
+      marketInsights,
+      asoKeywords
     } = body
 
     if (!query) {
@@ -67,6 +68,7 @@ export async function POST(request: NextRequest) {
         weaknesses,
         recommendations,
         market_insights: marketInsights,
+        aso_keywords: asoKeywords || null,
       })
       .select()
       .single()
