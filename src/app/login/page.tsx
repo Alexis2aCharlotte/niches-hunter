@@ -68,12 +68,14 @@ export default function LoginPage() {
                 <p className="text-sm text-white/50">Sign in to access your niche intelligence</p>
               </div>
 
-              {/* Error Message */}
-              {error && (
-                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm text-center relative z-10">
-                  {error}
-                </div>
-              )}
+              {/* Error Message - Espace réservé pour éviter le CLS */}
+              <div className={`mb-6 p-4 rounded-xl text-sm text-center relative z-10 transition-all duration-200 ${
+                error 
+                  ? 'bg-red-500/10 border border-red-500/20 text-red-400 opacity-100' 
+                  : 'h-0 p-0 mb-0 opacity-0 overflow-hidden'
+              }`}>
+                {error || '\u00A0'}
+              </div>
 
               {/* Form */}
               <form onSubmit={handleSubmit} className="space-y-5 relative z-10">

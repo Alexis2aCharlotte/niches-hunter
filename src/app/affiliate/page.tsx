@@ -1,58 +1,103 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, memo } from 'react'
 import Link from 'next/link'
 import LiquidCard from '@/components/LiquidCard'
 
+// Composant FAQ mémorisé pour éviter les re-renders
+const FAQItem = memo(function FAQItem({ question, answer }: { question: string; answer: string }) {
+  return (
+    <details className="group liquid-card p-6 cursor-pointer">
+      <summary className="flex items-center justify-between font-bold text-lg list-none">
+        {question}
+        <span className="text-white/40 group-open:rotate-180 transition-transform">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </span>
+      </summary>
+      <p className="mt-4 text-white/60 leading-relaxed">{answer}</p>
+    </details>
+  )
+})
+
 export default function AffiliatePage() {
-  const [isPro, setIsPro] = useState(false)
-  const [userEmail, setUserEmail] = useState('')
-  const [isLoading, setIsLoading] = useState(true)
+  // Auth state groupé
+  const [authState, setAuthState] = useState({
+    isPro: false,
+    userEmail: '',
+    isLoading: true,
+    affiliateStatus: 'none' as 'none' | 'pending' | 'approved',
+    affiliateCode: null as string | null,
+  })
   
-  // Form state
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [paymentMethod, setPaymentMethod] = useState('')
-  const [twitterHandle, setTwitterHandle] = useState('')
-  const [promotionPlatform, setPromotionPlatform] = useState('')
-  const [promotionUrl, setPromotionUrl] = useState('')
-  const [audienceSize, setAudienceSize] = useState('')
-  const [externalEmail, setExternalEmail] = useState('')
+  // Form state groupé
+  const [formState, setFormState] = useState({
+    firstName: '',
+    lastName: '',
+    paymentMethod: '',
+    twitterHandle: '',
+    promotionPlatform: '',
+    promotionUrl: '',
+    audienceSize: '',
+    externalEmail: '',
+  })
+  
+  // UI state
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
   const [submitError, setSubmitError] = useState('')
   const [checkoutLoading, setCheckoutLoading] = useState(false)
-  const [affiliateStatus, setAffiliateStatus] = useState<'none' | 'pending' | 'approved'>('none')
-  const [affiliateCode, setAffiliateCode] = useState<string | null>(null)
   const [codeCopied, setCodeCopied] = useState(false)
+
+  // Helper pour update le form
+  const updateForm = useCallback((field: string, value: string) => {
+    setFormState(prev => ({ ...prev, [field]: value }))
+  }, [])
 
   useEffect(() => {
     async function checkAuth() {
       try {
+        // Fetch auth en premier
         const res = await fetch('/api/auth/me', { credentials: 'include' })
         const data = await res.json()
-        setIsPro(data.subscription?.status === 'active')
-        setUserEmail(data.user?.email || '')
-
-        // Check affiliate status for Pro users
-        if (data.subscription?.status === 'active') {
+        
+        const isPro = data.subscription?.status === 'active'
+        const userEmail = data.user?.email || ''
+        
+        // Si Pro, fetch affiliate status en parallèle
+        if (isPro) {
           const affiliateRes = await fetch('/api/affiliate/me')
           const affiliateData = await affiliateRes.json()
-          if (affiliateData.affiliate) {
-            setAffiliateStatus(affiliateData.affiliate.status)
-            setAffiliateCode(affiliateData.affiliate.promo_code)
-          }
+          
+          setAuthState({
+            isPro,
+            userEmail,
+            isLoading: false,
+            affiliateStatus: affiliateData.affiliate?.status || 'none',
+            affiliateCode: affiliateData.affiliate?.promo_code || null,
+          })
+        } else {
+          setAuthState({
+            isPro: false,
+            userEmail,
+            isLoading: false,
+            affiliateStatus: 'none',
+            affiliateCode: null,
+          })
         }
       } catch {
-        setIsPro(false)
-      } finally {
-        setIsLoading(false)
+        setAuthState(prev => ({ ...prev, isPro: false, isLoading: false }))
       }
     }
     checkAuth()
   }, [])
 
-  const handleCheckout = async () => {
+  // Destructure pour faciliter l'usage
+  const { isPro, userEmail, isLoading, affiliateStatus, affiliateCode } = authState
+  const { firstName, lastName, paymentMethod, twitterHandle, promotionPlatform, promotionUrl, audienceSize, externalEmail } = formState
+
+  const handleCheckout = useCallback(async () => {
     setCheckoutLoading(true)
     try {
       const response = await fetch('/api/stripe/checkout', {
@@ -71,9 +116,9 @@ export default function AffiliatePage() {
       console.error('Checkout error:', error)
       setCheckoutLoading(false)
     }
-  }
+  }, [])
 
-  const handleSubmit = async (e: React.FormEvent, isExternal: boolean = false) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent, isExternal: boolean = false) => {
     e.preventDefault()
     setIsSubmitting(true)
     setSubmitError('')
@@ -104,13 +149,13 @@ export default function AffiliatePage() {
       }
 
       setSubmitSuccess(true)
-      setAffiliateStatus('pending')
+      setAuthState(prev => ({ ...prev, affiliateStatus: 'pending' }))
     } catch (err: any) {
       setSubmitError(err.message || 'Something went wrong. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
-  }
+  }, [firstName, lastName, paymentMethod, twitterHandle, promotionPlatform, promotionUrl, audienceSize, externalEmail, userEmail])
 
   const benefits = [
     { title: '40% Commission', description: 'Earn $10 for every sale you refer' },
@@ -358,7 +403,7 @@ export default function AffiliatePage() {
                         <input
                           type="text"
                           value={firstName}
-                          onChange={(e) => setFirstName(e.target.value)}
+                          onChange={(e) => updateForm('firstName', e.target.value)}
                           required
                           className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:border-[var(--primary)]/50 focus:outline-none transition-colors"
                           placeholder="John"
@@ -369,7 +414,7 @@ export default function AffiliatePage() {
                         <input
                           type="text"
                           value={lastName}
-                          onChange={(e) => setLastName(e.target.value)}
+                          onChange={(e) => updateForm('lastName', e.target.value)}
                           required
                           className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:border-[var(--primary)]/50 focus:outline-none transition-colors"
                           placeholder="Doe"
@@ -392,7 +437,7 @@ export default function AffiliatePage() {
                       <label className="block text-sm font-medium text-white/70 mb-2">Preferred Payment Method *</label>
                       <select
                         value={paymentMethod}
-                        onChange={(e) => setPaymentMethod(e.target.value)}
+                        onChange={(e) => updateForm('paymentMethod', e.target.value)}
                         required
                         className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-[var(--primary)]/50 focus:outline-none transition-colors appearance-none cursor-pointer"
                       >
@@ -411,7 +456,7 @@ export default function AffiliatePage() {
                         <input
                           type="text"
                           value={twitterHandle}
-                          onChange={(e) => setTwitterHandle(e.target.value.replace('@', ''))}
+                          onChange={(e) => updateForm('twitterHandle', e.target.value.replace('@', ''))}
                           className="w-full pl-8 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:border-[var(--primary)]/50 focus:outline-none transition-colors"
                           placeholder="yourhandle"
                         />
@@ -492,7 +537,7 @@ export default function AffiliatePage() {
                         <input
                           type="text"
                           value={firstName}
-                          onChange={(e) => setFirstName(e.target.value)}
+                          onChange={(e) => updateForm('firstName', e.target.value)}
                           required
                           className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:border-[var(--primary)]/50 focus:outline-none transition-colors"
                           placeholder="John"
@@ -503,7 +548,7 @@ export default function AffiliatePage() {
                         <input
                           type="text"
                           value={lastName}
-                          onChange={(e) => setLastName(e.target.value)}
+                          onChange={(e) => updateForm('lastName', e.target.value)}
                           required
                           className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:border-[var(--primary)]/50 focus:outline-none transition-colors"
                           placeholder="Doe"
@@ -516,7 +561,7 @@ export default function AffiliatePage() {
                       <input
                         type="email"
                         value={externalEmail}
-                        onChange={(e) => setExternalEmail(e.target.value)}
+                        onChange={(e) => updateForm('externalEmail', e.target.value)}
                         required
                         className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:border-[var(--primary)]/50 focus:outline-none transition-colors"
                         placeholder="you@example.com"
@@ -527,7 +572,7 @@ export default function AffiliatePage() {
                       <label className="block text-sm font-medium text-white/70 mb-2">Promotion Platform *</label>
                       <select
                         value={promotionPlatform}
-                        onChange={(e) => setPromotionPlatform(e.target.value)}
+                        onChange={(e) => updateForm('promotionPlatform', e.target.value)}
                         required
                         className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-[var(--primary)]/50 focus:outline-none transition-colors appearance-none cursor-pointer"
                       >
@@ -545,7 +590,7 @@ export default function AffiliatePage() {
                       <input
                         type="url"
                         value={promotionUrl}
-                        onChange={(e) => setPromotionUrl(e.target.value)}
+                        onChange={(e) => updateForm('promotionUrl', e.target.value)}
                         required
                         className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:border-[var(--primary)]/50 focus:outline-none transition-colors"
                         placeholder="https://twitter.com/yourhandle"
@@ -557,7 +602,7 @@ export default function AffiliatePage() {
                       <label className="block text-sm font-medium text-white/70 mb-2">Audience Size</label>
                       <select
                         value={audienceSize}
-                        onChange={(e) => setAudienceSize(e.target.value)}
+                        onChange={(e) => updateForm('audienceSize', e.target.value)}
                         className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-[var(--primary)]/50 focus:outline-none transition-colors appearance-none cursor-pointer"
                       >
                         <option value="" className="bg-[#111]">Select your audience size</option>
@@ -582,7 +627,7 @@ export default function AffiliatePage() {
                         <input
                           type="text"
                           value={twitterHandle}
-                          onChange={(e) => setTwitterHandle(e.target.value.replace('@', ''))}
+                          onChange={(e) => updateForm('twitterHandle', e.target.value.replace('@', ''))}
                           className="w-full pl-8 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:border-[var(--primary)]/50 focus:outline-none transition-colors"
                           placeholder="yourhandle"
                         />
@@ -593,7 +638,7 @@ export default function AffiliatePage() {
                       <label className="block text-sm font-medium text-white/70 mb-2">Preferred Payment Method *</label>
                       <select
                         value={paymentMethod}
-                        onChange={(e) => setPaymentMethod(e.target.value)}
+                        onChange={(e) => updateForm('paymentMethod', e.target.value)}
                         required
                         className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-[var(--primary)]/50 focus:outline-none transition-colors appearance-none cursor-pointer"
                       >
@@ -640,7 +685,7 @@ export default function AffiliatePage() {
         </div>
       </section>
 
-      {/* FAQ */}
+      {/* FAQ - Composants mémorisés pour performance */}
       <section className="relative px-6 py-20">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">
@@ -648,40 +693,26 @@ export default function AffiliatePage() {
           </h2>
 
           <div className="space-y-4">
-            {[
-              {
-                q: "How much can I earn?",
-                a: "You earn 40% commission on every sale. With the lifetime plan at $25 (after your referral's $4 discount), that's $10 per sale. There's no cap on earnings!"
-              },
-              {
-                q: "When do I get paid?",
-                a: "Payouts are processed weekly. We'll send your earnings via your preferred payment method (PayPal, Stripe, Wise, or Revolut) every week."
-              },
-              {
-                q: "How do I track my referrals?",
-                a: "Once approved, you'll receive a unique promo code. We track all sales made with your code and will provide you with regular updates on your earnings."
-              },
-              {
-                q: "Is there a minimum payout?",
-                a: "No minimum! Even if you refer just one person, we'll send you your $10 commission."
-              },
-              {
-                q: "Can I promote on social media?",
-                a: "Absolutely! Share your code on Twitter/X, YouTube, TikTok, newsletters, or anywhere your audience is. Just be transparent that it's an affiliate link."
-              }
-            ].map((faq, i) => (
-              <details key={i} className="group liquid-card p-6 cursor-pointer">
-                <summary className="flex items-center justify-between font-bold text-lg list-none">
-                    {faq.q}
-                    <span className="text-white/40 group-open:rotate-180 transition-transform">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </span>
-                  </summary>
-                  <p className="mt-4 text-white/60 leading-relaxed">{faq.a}</p>
-              </details>
-            ))}
+            <FAQItem 
+              question="How much can I earn?"
+              answer="You earn 40% commission on every sale. With the lifetime plan at $25 (after your referral's $4 discount), that's $10 per sale. There's no cap on earnings!"
+            />
+            <FAQItem 
+              question="When do I get paid?"
+              answer="Payouts are processed weekly. We'll send your earnings via your preferred payment method (PayPal, Stripe, Wise, or Revolut) every week."
+            />
+            <FAQItem 
+              question="How do I track my referrals?"
+              answer="Once approved, you'll receive a unique promo code. We track all sales made with your code and will provide you with regular updates on your earnings."
+            />
+            <FAQItem 
+              question="Is there a minimum payout?"
+              answer="No minimum! Even if you refer just one person, we'll send you your $10 commission."
+            />
+            <FAQItem 
+              question="Can I promote on social media?"
+              answer="Absolutely! Share your code on Twitter/X, YouTube, TikTok, newsletters, or anywhere your audience is. Just be transparent that it's an affiliate link."
+            />
           </div>
         </div>
       </section>

@@ -193,15 +193,27 @@ export default function NicheRoulettePage() {
             {/* Background glow */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--primary)]/5 blur-[120px] rounded-full pointer-events-none" />
             
-            {/* Loading state */}
+            {/* Loading state - Skeleton avec même dimensions que l'état initial */}
             {loading ? (
-              <div className="text-center py-16 relative z-10">
-                <div className="w-12 h-12 border-2 border-[var(--primary)]/30 border-t-[var(--primary)] rounded-full animate-spin mx-auto mb-4" />
-                <p className="text-white/50">Loading niches...</p>
+              <div className="text-center relative z-10 min-h-[400px] flex flex-col items-center justify-center">
+                {/* Skeleton du bouton SPIN */}
+                <div className="mb-8">
+                  <div className="w-44 h-44 md:w-52 md:h-52 rounded-full mx-auto bg-white/5 border-2 border-white/10 animate-pulse flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-full bg-white/10" />
+                  </div>
+                </div>
+                {/* Skeleton du texte */}
+                <div className="h-4 w-48 bg-white/10 rounded mb-8 animate-pulse" />
+                {/* Skeleton des filtres */}
+                <div className="flex flex-wrap justify-center gap-3">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="h-10 w-20 bg-white/5 rounded-full animate-pulse" />
+                  ))}
+                </div>
               </div>
             ) : !currentNiche ? (
-              // Initial State - Spin Button
-              <div className="text-center relative z-10">
+              // Initial State - Spin Button - Hauteur fixe pour éviter CLS
+              <div className="text-center relative z-10 min-h-[400px] flex flex-col items-center justify-center">
                 <div className="mb-8">
                   <button
                     onClick={handleSpin}
@@ -265,8 +277,8 @@ export default function NicheRoulettePage() {
                 </div>
               </div>
             ) : (
-              // Result State - TEASER VERSION
-              <div className="relative z-10">
+              // Result State - TEASER VERSION - Hauteur minimale pour stabilité
+              <div className="relative z-10 min-h-[400px]">
                 <div className="text-center mb-8 pt-4">
                   {/* Category badge */}
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/10 mb-4">
@@ -402,13 +414,9 @@ export default function NicheRoulettePage() {
             )}
           </LiquidCard>
 
-          {/* Social proof */}
-          <div className="text-center mt-8 text-sm text-white/30 font-mono">
-            {niches.length > 0 ? (
-              <span>{niches.length} real niches • Spun {12847 + spinCount} times today</span>
-            ) : (
-              <span>Loading...</span>
-            )}
+          {/* Social proof - Largeur fixe pour éviter CLS */}
+          <div className="text-center mt-8 text-sm text-white/30 font-mono min-h-[20px]">
+            <span className="tabular-nums">{loading ? '-- real niches • Spun ----- times today' : `${niches.length} real niches • Spun ${12847 + spinCount} times today`}</span>
           </div>
         </div>
       </section>

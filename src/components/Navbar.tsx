@@ -9,6 +9,7 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isPro, setIsPro] = useState(false);
+  const [authLoading, setAuthLoading] = useState(true);
 
   useEffect(() => {
     // Vérifier si l'utilisateur est connecté et s'il est Pro
@@ -21,6 +22,8 @@ export default function Navbar() {
       } catch {
         setIsLoggedIn(false);
         setIsPro(false);
+      } finally {
+        setAuthLoading(false);
       }
     }
     checkAuth();
@@ -38,16 +41,21 @@ export default function Navbar() {
 
           {/* Center: Desktop Navigation Links */}
           <div className="hidden md:flex items-center gap-8 text-base font-medium text-[rgba(255,255,255,0.6)] absolute left-1/2 -translate-x-1/2 overflow-visible">
-            {isLoggedIn ? (
-              <Link href="/account" className="hover:text-[var(--primary)] transition-colors flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[var(--primary)]"></span>
-                My Account
-              </Link>
-            ) : (
-              <Link href="/login" className="hover:text-[var(--primary)] transition-colors">
-                Login
-              </Link>
-            )}
+            {/* Auth link avec largeur fixe pour éviter le CLS */}
+            <div className="w-[100px]">
+              {authLoading ? (
+                <div className="h-5 w-16 bg-white/10 rounded animate-pulse" />
+              ) : isLoggedIn ? (
+                <Link href="/account" className="hover:text-[var(--primary)] transition-colors flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[var(--primary)]"></span>
+                  My Account
+                </Link>
+              ) : (
+                <Link href="/login" className="hover:text-[var(--primary)] transition-colors">
+                  Login
+                </Link>
+              )}
+            </div>
 
             {/* Niches Toolkit Dropdown */}
             <div className="relative group">
@@ -150,18 +158,21 @@ export default function Navbar() {
 
           {/* Right: CTA & Mobile Button */}
           <div className="flex items-center gap-4">
-            <div className="hidden md:block">
-              {isPro ? (
+            {/* CTA avec dimensions fixes pour éviter le CLS */}
+            <div className="hidden md:block w-[160px] h-[52px]">
+              {authLoading ? (
+                <div className="h-full w-full bg-white/10 rounded-xl animate-pulse" />
+              ) : isPro ? (
                 <Link 
                   href="/workspace"
-                  className="btn-primary text-base px-14 py-5 shadow-[0_0_20px_rgba(0,255,148,0.2)] hover:shadow-[0_0_30px_rgba(0,255,148,0.4)] transition-all font-bold"
+                  className="btn-primary text-sm px-8 py-4 shadow-[0_0_20px_rgba(0,255,148,0.2)] hover:shadow-[0_0_30px_rgba(0,255,148,0.4)] transition-all font-bold block text-center"
                 >
                   Workspace
                 </Link>
               ) : (
                 <Link 
                   href="/niches"
-                  className="btn-primary text-sm px-8 py-4 shadow-[0_0_20px_rgba(0,255,148,0.2)] hover:shadow-[0_0_30px_rgba(0,255,148,0.4)] transition-all font-bold"
+                  className="btn-primary text-sm px-8 py-4 shadow-[0_0_20px_rgba(0,255,148,0.2)] hover:shadow-[0_0_30px_rgba(0,255,148,0.4)] transition-all font-bold block text-center"
                 >
                   Start Hunting
                 </Link>

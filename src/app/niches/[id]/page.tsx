@@ -129,13 +129,75 @@ export default function NicheDetailPage() {
     loadNiche();
   }, [nicheCode]);
 
-  // Loading state
+  // Loading state - Skeleton pour éviter le CLS
   if (loading) {
     return (
       <main className="min-h-screen relative overflow-hidden text-white font-sans bg-black">
-        <div className="pt-32 px-6 text-center">
-          <div className="inline-block w-8 h-8 border-2 border-[var(--primary)] border-t-transparent rounded-full animate-spin mb-4" />
-          <p className="text-white/40">Loading niche...</p>
+        {/* Background - Hidden on mobile for performance */}
+        <div className="fixed inset-0 pointer-events-none hidden md:block">
+          <div className="absolute top-0 left-1/3 w-[800px] h-[800px] bg-[var(--primary)]/3 blur-[200px] rounded-full" />
+          <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-500/5 blur-[150px] rounded-full" />
+        </div>
+
+        <div className="relative pt-32 pb-20 px-6">
+          <div className="max-w-5xl mx-auto animate-pulse">
+            {/* Back Link skeleton */}
+            <div className="h-5 w-32 bg-white/10 rounded mb-8" />
+
+            {/* Header skeleton */}
+            <div className="liquid-card p-8 mb-6">
+              <div className="flex justify-between items-start mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-4 w-12 bg-white/10 rounded" />
+                  <div className="h-6 w-20 bg-white/10 rounded-full" />
+                </div>
+                <div className="h-8 w-20 bg-white/10 rounded-full" />
+              </div>
+              <div className="h-10 w-3/4 bg-white/10 rounded mb-4" />
+              <div className="flex gap-2">
+                <div className="h-5 w-16 bg-white/5 rounded" />
+                <div className="h-5 w-20 bg-white/5 rounded" />
+                <div className="h-5 w-14 bg-white/5 rounded" />
+              </div>
+            </div>
+
+            {/* Tabs skeleton */}
+            <div className="flex gap-2 mb-6">
+              <div className="h-12 w-40 bg-white/10 rounded-xl" />
+              <div className="h-12 w-32 bg-white/5 rounded-xl" />
+              <div className="h-12 w-36 bg-white/5 rounded-xl" />
+            </div>
+
+            {/* Content skeleton */}
+            <div className="liquid-card p-8 mb-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-8 h-8 bg-white/10 rounded-lg" />
+                <div className="h-6 w-48 bg-white/10 rounded" />
+              </div>
+              <div className="grid md:grid-cols-3 gap-6">
+                {[1, 2, 3].map((i) => (
+                  <div key={i}>
+                    <div className="h-3 w-24 bg-white/10 rounded mb-3" />
+                    <div className="space-y-2">
+                      <div className="h-4 w-full bg-white/5 rounded" />
+                      <div className="h-4 w-full bg-white/5 rounded" />
+                      <div className="h-4 w-3/4 bg-white/5 rounded" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Stats skeleton */}
+            <div className="grid grid-cols-2 md:grid-cols-6 gap-3 md:gap-4">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="liquid-card p-4">
+                  <div className="h-2 w-16 bg-white/10 rounded mb-2" />
+                  <div className="h-5 w-12 bg-white/10 rounded" />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </main>
     );

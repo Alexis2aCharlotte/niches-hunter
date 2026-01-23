@@ -236,9 +236,9 @@ export default function NichesPage() {
               </p>
             </div>
             
-            <div className="flex items-center gap-3 px-4 py-2 rounded-full border border-white/10 bg-white/5">
+            <div className="flex items-center gap-3 px-4 py-2 rounded-full border border-white/10 bg-white/5 min-w-[140px] justify-center">
               <span className="w-2 h-2 rounded-full bg-[var(--primary)] animate-pulse" />
-              <span className="text-xs font-mono text-white/70">{filteredNiches.length} NICHES</span>
+              <span className="text-xs font-mono text-white/70 tabular-nums">{loading ? '---' : filteredNiches.length} NICHES</span>
             </div>
           </div>
         </div>
@@ -309,9 +309,46 @@ export default function NichesPage() {
       <section className="relative px-6 pb-12">
         <div className="max-w-7xl mx-auto">
           {loading ? (
-            <div className="text-center py-16">
-              <div className="inline-block w-8 h-8 border-2 border-[var(--primary)] border-t-transparent rounded-full animate-spin mb-4" />
-              <p className="text-white/40">Loading niches...</p>
+            // Skeleton cards - même taille que les vraies cartes pour éviter le CLS
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 12 }).map((_, i) => (
+                <div key={i} className="liquid-card p-6 h-[280px] animate-pulse">
+                  {/* Header skeleton */}
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="h-3 w-10 bg-white/10 rounded" />
+                        <div className="h-4 w-16 bg-white/10 rounded-full" />
+                      </div>
+                      <div className="h-6 w-3/4 bg-white/10 rounded mb-1" />
+                      <div className="h-6 w-1/2 bg-white/10 rounded" />
+                    </div>
+                    <div className="h-7 w-16 bg-white/10 rounded-full" />
+                  </div>
+                  {/* Tags skeleton */}
+                  <div className="flex gap-2 mb-4">
+                    <div className="h-5 w-14 bg-white/5 rounded" />
+                    <div className="h-5 w-16 bg-white/5 rounded" />
+                    <div className="h-5 w-12 bg-white/5 rounded" />
+                  </div>
+                  {/* Description skeleton */}
+                  <div className="space-y-2 mb-6">
+                    <div className="h-4 w-full bg-white/5 rounded" />
+                    <div className="h-4 w-4/5 bg-white/5 rounded" />
+                  </div>
+                  {/* Stats skeleton */}
+                  <div className="grid grid-cols-2 gap-3 mt-auto">
+                    <div className="p-3 rounded-lg bg-black/40 border border-white/5">
+                      <div className="h-2 w-16 bg-white/10 rounded mb-2" />
+                      <div className="h-4 w-10 bg-white/10 rounded" />
+                    </div>
+                    <div className="p-3 rounded-lg bg-black/40 border border-white/5">
+                      <div className="h-2 w-16 bg-white/10 rounded mb-2" />
+                      <div className="h-4 w-14 bg-white/10 rounded" />
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           ) : filteredNiches.length === 0 ? (
             <div className="text-center py-16">
