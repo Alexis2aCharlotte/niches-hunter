@@ -310,41 +310,14 @@ export default function WorkspacePage() {
   return (
     <main className="workspace-page min-h-screen text-white font-sans selection:bg-[var(--primary)] selection:text-black pt-20">
 
-      {/* Workspace Header - Hidden on mobile, navbar handles navigation */}
-      <header className="hidden md:block sticky top-20 z-40 bg-[var(--bg-deep)]/80 backdrop-blur-xl border-b border-white/5">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link 
-            href="/account"
-            className="text-sm text-white/40 hover:text-white transition-colors flex items-center gap-2"
-          >
-            ← Account
-          </Link>
-          <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 text-white">
-            <span className="font-bold text-lg tracking-wider">NICHES HUNTER</span>
-          </div>
-          <div className="w-20"></div>
-        </div>
-      </header>
-
       {/* Ambient Glows */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-[var(--primary)]/5 blur-[150px] rounded-full" />
         <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-purple-500/5 blur-[120px] rounded-full" />
       </div>
 
-      <section className="relative pt-24 md:pt-8 pb-20 px-4 md:px-6">
+      <section className="relative pt-8 pb-20 px-4 md:px-6">
         <div className="max-w-6xl mx-auto">
-
-          {/* Mobile Back Button */}
-          <Link 
-            href="/account"
-            className="md:hidden flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors mb-6"
-          >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M15 18l-6-6 6-6"/>
-            </svg>
-            Account
-          </Link>
 
           {/* Page Title */}
           <div className="mb-8 md:mb-10">
