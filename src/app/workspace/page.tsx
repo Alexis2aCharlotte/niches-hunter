@@ -284,12 +284,12 @@ export default function WorkspacePage() {
 
   if (loading) {
     return (
-      <main className="workspace-page min-h-screen text-white font-sans">
+      <main className="workspace-page min-h-screen text-white font-sans pt-20">
         <div className="fixed inset-0 pointer-events-none overflow-hidden">
           <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-[var(--primary)]/5 blur-[150px] rounded-full" />
           <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-purple-500/5 blur-[120px] rounded-full" />
         </div>
-        <section className="relative pt-12 pb-20 px-6">
+        <section className="relative pt-8 pb-20 px-6">
           <div className="max-w-6xl mx-auto">
             <div className="h-8 w-32 bg-white/5 rounded-lg animate-pulse mb-8" />
             <div className="h-12 w-48 bg-white/5 rounded-lg animate-pulse mb-8" />
@@ -308,10 +308,10 @@ export default function WorkspacePage() {
   }
 
   return (
-    <main className="workspace-page min-h-screen text-white font-sans selection:bg-[var(--primary)] selection:text-black">
+    <main className="workspace-page min-h-screen text-white font-sans selection:bg-[var(--primary)] selection:text-black pt-20">
 
       {/* Workspace Header - Hidden on mobile, navbar handles navigation */}
-      <header className="hidden md:block sticky top-0 z-40 bg-[var(--bg-deep)]/80 backdrop-blur-xl border-b border-white/5">
+      <header className="hidden md:block sticky top-20 z-40 bg-[var(--bg-deep)]/80 backdrop-blur-xl border-b border-white/5">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link 
             href="/account"
