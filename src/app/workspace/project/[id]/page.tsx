@@ -993,29 +993,7 @@ export default function ProjectDetailPage() {
         <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-purple-500/5 blur-[120px] rounded-full" />
       </div>
 
-      {/* Workspace Header - Simplified on mobile */}
-      <header className="sticky top-20 z-40 bg-[var(--bg-deep)] md:bg-[var(--bg-deep)]/80 md:backdrop-blur-xl border-b border-white/5">
-        <div className="max-w-5xl mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center justify-between relative">
-          <Link 
-            href="/workspace"
-            className="text-sm text-white/60 hover:text-white transition-colors flex items-center gap-1"
-          >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M15 18l-6-6 6-6"/>
-            </svg>
-            <span className="hidden sm:inline">Go back</span>
-          </Link>
-          <Link 
-            href="/workspace"
-            className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-2 text-white hover:text-[var(--primary)] transition-colors"
-          >
-            <span className="font-bold text-lg tracking-wider">NICHES HUNTER</span>
-          </Link>
-          <div className="w-8 md:w-20"></div>
-        </div>
-      </header>
-
-      <section className="relative pt-6 md:pt-8 pb-20 px-4 md:px-6">
+      <section className="relative pt-8 pb-20 px-4 md:px-6">
         <div className="max-w-5xl mx-auto">
           
           {/* Project Header */}
