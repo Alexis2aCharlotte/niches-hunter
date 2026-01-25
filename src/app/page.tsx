@@ -1307,7 +1307,7 @@ export default function Home() {
               <div className="mt-8 text-center">
                 <div className="flex justify-center gap-1 mb-2 text-[var(--primary)] text-xs">★★★★★</div>
                 <p className="text-[10px] text-white/30">
-                  Join <span className="text-white/60 font-medium">68+ indie devs</span> already hunting niches. <br />
+                  Join <span className="text-white/60 font-medium">71+ indie devs</span> already hunting niches. <br />
                   <span className="opacity-50">100% free • Unsubscribe anytime • No spam ever</span>
                 </p>
               </div>
