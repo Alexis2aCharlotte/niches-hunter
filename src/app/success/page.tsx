@@ -1,8 +1,15 @@
 'use client'
 
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense, useEffect, useState, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
+
+// Declare gtag for TypeScript
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void
+  }
+}
 
 interface SessionData {
   email: string | null
@@ -22,6 +29,30 @@ function SuccessContent() {
   const [formLoading, setFormLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const conversionTracked = useRef(false)
+
+  // Track purchase conversion in Google Analytics
+  useEffect(() => {
+    if (sessionId && !conversionTracked.current) {
+      conversionTracked.current = true
+      
+      // Send purchase event to GA4
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'purchase', {
+          transaction_id: sessionId,
+          value: 29.00,
+          currency: 'USD',
+          items: [{
+            item_id: 'niches_hunter_pro',
+            item_name: 'Niches Hunter Pro',
+            price: 29.00,
+            quantity: 1
+          }]
+        })
+        console.log('GA4: Purchase event sent')
+      }
+    }
+  }, [sessionId])
 
   useEffect(() => {
     if (sessionId) {
