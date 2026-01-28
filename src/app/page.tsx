@@ -397,7 +397,7 @@ export default function Home() {
             <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-x-4 gap-y-2 text-xs text-[rgba(255,255,255,0.6)] font-mono">
               <span className="flex items-center gap-1.5">
                 <span className="text-[var(--primary)]">●</span>
-                <span className="font-bold text-white">71+</span> builders
+                <span className="font-bold text-white">73+</span> builders
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="text-[var(--primary)]">●</span>
@@ -1307,7 +1307,7 @@ export default function Home() {
               <div className="mt-8 text-center">
                 <div className="flex justify-center gap-1 mb-2 text-[var(--primary)] text-xs">★★★★★</div>
                 <p className="text-[10px] text-white/30">
-                  Join <span className="text-white/60 font-medium">71+ indie devs</span> already hunting niches. <br />
+                  Join <span className="text-white/60 font-medium">73+ indie devs</span> already hunting niches. <br />
                   <span className="opacity-50">100% free • Unsubscribe anytime • No spam ever</span>
                 </p>
               </div>
