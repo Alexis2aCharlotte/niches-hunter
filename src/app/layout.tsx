@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import "./globals.css";
 
 const GA_MEASUREMENT_ID = "G-MV228L76KT";
+const REDDIT_PIXEL_ID = "a2_idm7qyipkyo1";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://nicheshunter.app"),
@@ -147,6 +148,15 @@ export default function RootLayout({
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', '${GA_MEASUREMENT_ID}');
+          `}
+        </Script>
+
+        {/* Reddit Pixel */}
+        <Script id="reddit-pixel" strategy="afterInteractive">
+          {`
+            !function(w,d){if(!w.rdt){var p=w.rdt=function(){p.sendEvent?p.sendEvent.apply(p,arguments):p.callQueue.push(arguments)};p.callQueue=[];var t=d.createElement("script");t.src="https://www.redditstatic.com/ads/pixel.js",t.async=!0;var s=d.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}}(window,document);
+            rdt('init','${REDDIT_PIXEL_ID}');
+            rdt('track', 'PageVisit');
           `}
         </Script>
         

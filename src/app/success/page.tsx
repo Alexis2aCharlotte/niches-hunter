@@ -4,10 +4,11 @@ import { Suspense, useEffect, useState, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 
-// Declare gtag for TypeScript
+// Declare gtag and rdt for TypeScript
 declare global {
   interface Window {
     gtag?: (...args: unknown[]) => void
+    rdt?: (...args: unknown[]) => void
   }
 }
 
@@ -50,6 +51,16 @@ function SuccessContent() {
           }]
         })
         console.log('GA4: Purchase event sent')
+      }
+
+      // Send purchase event to Reddit Pixel
+      if (typeof window !== 'undefined' && window.rdt) {
+        window.rdt('track', 'Purchase', {
+          value: 29.00,
+          currency: 'USD',
+          transactionId: sessionId
+        })
+        console.log('Reddit Pixel: Purchase event sent')
       }
     }
   }, [sessionId])
