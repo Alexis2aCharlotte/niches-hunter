@@ -766,6 +766,100 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Testimonials Section - Loved by Builders */}
+      <section className="py-16 md:py-24 px-4 sm:px-6">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white">
+            Loved by <span className="text-flashy-green">Builders</span> Worldwide
+          </h2>
+          <p className="text-base md:text-lg text-white/50 max-w-xl mx-auto">
+            Join 70+ developers and entrepreneurs building their app dreams with Niches Hunter
+          </p>
+        </div>
+
+        {/* Static Testimonials Grid */}
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+          {[
+            {
+              text: "I like having business ideas. And the newsletter is super useful. Well-argued and helps you make decisions about which apps to build. The tool itself is great. I mainly use it to save my niche ideas.",
+              name: "Victor 🧢",
+              handle: "@victor_bigfield",
+              image: "/testimonials/victor_bigfield.jpg",
+              twitterUrl: "https://x.com/victor_bigfield",
+              verified: true
+            },
+            {
+              text: "Knowing your distribution channel even before starting to build is crucial in 2026. Niches Hunter is probably the fastest way to know which consumer app is worth building",
+              name: "Mike ✦ viral.app",
+              handle: "@mikey_starts",
+              image: "/testimonials/mikey_starts.jpg",
+              twitterUrl: "https://x.com/mikey_starts",
+              verified: true
+            },
+            {
+              text: "Great analysis of the app ideas, in-depth research and also have app examples to structure your plan on how to outcompete them.",
+              name: "jnzks",
+              handle: "@jnzakoss",
+              image: "/testimonials/jnzakoss.jpg",
+              twitterUrl: "https://x.com/jnzakoss",
+              verified: false
+            },
+            {
+              text: "It's a fascinating app that quickly provides an overview of potential app ideas, including competition levels, competitor lists, potential revenue, and more.",
+              name: "Michael Opdebeeck",
+              handle: "@webdevmike",
+              image: "/testimonials/webdevmike.jpg",
+              twitterUrl: "https://x.com/webdevmike",
+              verified: true
+            },
+            {
+              text: "As someone new to app development, Niches Hunter has saved me tens of hours of research. Each curated opportunity comes with market analysis, key learnings, improvement opportunities, and risks to consider - all in one place. If you're looking for a complementary research tool to find your next app idea to vibe-code, this is it.",
+              name: "Tim",
+              handle: "@shippedbytim",
+              image: "/testimonials/shippedbytim.jpg",
+              twitterUrl: "https://x.com/shippedbytim",
+              verified: true
+            },
+            {
+              text: "I recommend you to use the workspace for having a clear vision on your roadmap to ship your app. You have all steps to deliver in a proper way and fast.",
+              name: "Tobby_scraper",
+              handle: "@Tobby_scraper · Founder",
+              image: "/testimonials/tobby_scraper.jpg",
+              twitterUrl: "https://x.com/Tobby_scraper",
+              verified: true
+            },
+          ].map((t, i) => (
+            <a
+              key={i}
+              href={t.twitterUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block p-4 rounded-xl bg-[#16181c] border border-[#2f3336] hover:bg-[#1d1f23] transition-all duration-200"
+            >
+              <div className="flex gap-3">
+                <img
+                  src={t.image}
+                  alt={t.name}
+                  className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5 mb-0.5">
+                    <span className="font-semibold text-white text-[15px]">{t.name}</span>
+                    {t.verified && (
+                      <svg viewBox="0 0 22 22" className="w-[18px] h-[18px] flex-shrink-0" aria-label="Verified account">
+                        <path fill="#1d9bf0" d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"/>
+                      </svg>
+                    )}
+                    <span className="text-white/40 text-[15px]">{t.handle}</span>
+                  </div>
+                  <p className="text-[15px] text-white/90 leading-[1.4] whitespace-pre-line">{t.text}</p>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+
       {/* Pricing Section */}
       <section id="pricing" className="py-16 md:py-24 px-4 sm:px-6 relative">
         <div className="max-w-5xl mx-auto">
@@ -1021,120 +1115,6 @@ export default function Home() {
                 </summary>
                 <p className="mt-4 text-sm md:text-base text-white/60 leading-relaxed">{faq.a}</p>
               </details>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section - Loved by Builders */}
-      <section className="py-16 md:py-24 overflow-hidden">
-        <div className="text-center mb-12 px-6">
-          <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white">
-            Loved by <span className="text-flashy-green">Builders</span> Worldwide
-          </h2>
-          <p className="text-base md:text-lg text-white/50 max-w-xl mx-auto">
-            Join 70+ developers and entrepreneurs building their app dreams with Niches Hunter
-          </p>
-        </div>
-
-        {/* Scrolling Testimonials */}
-        <div className="relative">
-          {/* Gradient fade left */}
-          <div className="absolute left-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none" />
-          {/* Gradient fade right */}
-          <div className="absolute right-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none" />
-          
-          {/* Row 1 - Left to Right */}
-          <div className="flex gap-4 md:gap-6 mb-4 md:mb-6 animate-scroll-left">
-            {[
-              { stars: 5, text: "I used to spend hours scrolling through the App Store trying to find gaps. Now I just check Niches Hunter in the morning with my coffee.", name: "Marc D.", role: "Indie Dev", source: "𝕏" },
-              { stars: 5, text: "The workspace is so handy. I have all my notes, competitors, and ideas in one place. No more messy Notion pages.", name: "Sarah K.", role: "Solo Founder", source: "Email" },
-              { stars: 5, text: "Honestly didn't expect much but the niche details are surprisingly thorough. Saved me a ton of research time.", name: "James L.", role: "iOS Developer", source: "𝕏" },
-              { stars: 5, text: "Love that I can save niches and come back to them later. The workspace keeps everything organized.", name: "Anna M.", role: "App Builder", source: "Message" },
-              { stars: 5, text: "Finally found a tool that actually shows what's working in the App Store. The competitor info is really useful.", name: "Tom B.", role: "Developer", source: "𝕏" },
-            ].map((t, i) => (
-              <div key={i} className="flex-shrink-0 w-[300px] md:w-[380px] p-5 md:p-6 rounded-2xl bg-white/[0.03] border border-white/10">
-                <div className="flex gap-0.5 mb-3 text-yellow-400">
-                  {Array.from({ length: t.stars }).map((_, j) => <span key={j}>★</span>)}
-                </div>
-                <p className="text-sm md:text-base text-white/80 mb-4 leading-relaxed">"{t.text}"</p>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium text-white text-sm">{t.name}</div>
-                    <div className="text-xs text-white/40">{t.role}</div>
-                  </div>
-                  <div className="text-xs text-white/30">{t.source}</div>
-                </div>
-              </div>
-            ))}
-            {/* Duplicate for infinite scroll */}
-            {[
-              { stars: 5, text: "I used to spend hours scrolling through the App Store trying to find gaps. Now I just check Niches Hunter in the morning with my coffee.", name: "Marc D.", role: "Indie Dev", source: "𝕏" },
-              { stars: 5, text: "The workspace is so handy. I have all my notes, competitors, and ideas in one place. No more messy Notion pages.", name: "Sarah K.", role: "Solo Founder", source: "Email" },
-              { stars: 5, text: "Honestly didn't expect much but the niche details are surprisingly thorough. Saved me a ton of research time.", name: "James L.", role: "iOS Developer", source: "𝕏" },
-              { stars: 5, text: "Love that I can save niches and come back to them later. The workspace keeps everything organized.", name: "Anna M.", role: "App Builder", source: "Message" },
-              { stars: 5, text: "Finally found a tool that actually shows what's working in the App Store. The competitor info is really useful.", name: "Tom B.", role: "Developer", source: "𝕏" },
-            ].map((t, i) => (
-              <div key={`dup-${i}`} className="flex-shrink-0 w-[300px] md:w-[380px] p-5 md:p-6 rounded-2xl bg-white/[0.03] border border-white/10">
-                <div className="flex gap-0.5 mb-3 text-yellow-400">
-                  {Array.from({ length: t.stars }).map((_, j) => <span key={j}>★</span>)}
-                </div>
-                <p className="text-sm md:text-base text-white/80 mb-4 leading-relaxed">"{t.text}"</p>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium text-white text-sm">{t.name}</div>
-                    <div className="text-xs text-white/40">{t.role}</div>
-                  </div>
-                  <div className="text-xs text-white/30">{t.source}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Row 2 - Right to Left */}
-          <div className="flex gap-4 md:gap-6 animate-scroll-right">
-            {[
-              { stars: 5, text: "Super useful to have everything in one dashboard. I can track my progress, save ideas, and check competitors without switching tabs.", name: "David R.", role: "Maker", source: "𝕏" },
-              { stars: 5, text: "The newsletter is actually good? Like I actually read it every morning. Short, useful, no fluff.", name: "Emily C.", role: "Product Designer", source: "Email" },
-              { stars: 5, text: "Was skeptical at first but the data quality surprised me. Way better than doing manual research.", name: "Mike S.", role: "Founder", source: "Message" },
-              { stars: 5, text: "Simple and clean. I know exactly what's trending and what's saturated. Helps me focus on the right stuff.", name: "Rachel W.", role: "Solo Dev", source: "𝕏" },
-              { stars: 5, text: "The niche roulette thing is fun lol. Spun it a few times and actually found something interesting.", name: "Kevin T.", role: "Builder", source: "𝕏" },
-            ].map((t, i) => (
-              <div key={i} className="flex-shrink-0 w-[300px] md:w-[380px] p-5 md:p-6 rounded-2xl bg-white/[0.03] border border-white/10">
-                <div className="flex gap-0.5 mb-3 text-yellow-400">
-                  {Array.from({ length: t.stars }).map((_, j) => <span key={j}>★</span>)}
-                </div>
-                <p className="text-sm md:text-base text-white/80 mb-4 leading-relaxed">"{t.text}"</p>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium text-white text-sm">{t.name}</div>
-                    <div className="text-xs text-white/40">{t.role}</div>
-                  </div>
-                  <div className="text-xs text-white/30">{t.source}</div>
-                </div>
-              </div>
-            ))}
-            {/* Duplicate for infinite scroll */}
-            {[
-              { stars: 5, text: "Super useful to have everything in one dashboard. I can track my progress, save ideas, and check competitors without switching tabs.", name: "David R.", role: "Maker", source: "𝕏" },
-              { stars: 5, text: "The newsletter is actually good? Like I actually read it every morning. Short, useful, no fluff.", name: "Emily C.", role: "Product Designer", source: "Email" },
-              { stars: 5, text: "Was skeptical at first but the data quality surprised me. Way better than doing manual research.", name: "Mike S.", role: "Founder", source: "Message" },
-              { stars: 5, text: "Simple and clean. I know exactly what's trending and what's saturated. Helps me focus on the right stuff.", name: "Rachel W.", role: "Solo Dev", source: "𝕏" },
-              { stars: 5, text: "The niche roulette thing is fun lol. Spun it a few times and actually found something interesting.", name: "Kevin T.", role: "Builder", source: "𝕏" },
-            ].map((t, i) => (
-              <div key={`dup-${i}`} className="flex-shrink-0 w-[300px] md:w-[380px] p-5 md:p-6 rounded-2xl bg-white/[0.03] border border-white/10">
-                <div className="flex gap-0.5 mb-3 text-yellow-400">
-                  {Array.from({ length: t.stars }).map((_, j) => <span key={j}>★</span>)}
-                </div>
-                <p className="text-sm md:text-base text-white/80 mb-4 leading-relaxed">"{t.text}"</p>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium text-white text-sm">{t.name}</div>
-                    <div className="text-xs text-white/40">{t.role}</div>
-                  </div>
-                  <div className="text-xs text-white/30">{t.source}</div>
-                </div>
-              </div>
             ))}
           </div>
         </div>
