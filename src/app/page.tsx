@@ -397,7 +397,7 @@ export default function Home() {
             <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-x-4 gap-y-2 text-xs text-[rgba(255,255,255,0.6)] font-mono">
               <span className="flex items-center gap-1.5">
                 <span className="text-[var(--primary)]">●</span>
-                <span className="font-bold text-white">73+</span> builders
+                <span className="font-bold text-white">75+</span> builders
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="text-[var(--primary)]">●</span>
@@ -480,30 +480,30 @@ export default function Home() {
       </section>
 
       {/* Live Data Dashboard */}
-      <section className="py-24 px-4 sm:px-6 relative z-10">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-16 md:py-24 px-4 sm:px-6 relative z-10">
+        <div className="max-w-5xl mx-auto">
           {/* Header */}
-          <div className="flex flex-col md:flex-row justify-between md:items-end items-start mb-16 gap-6 reveal-base reveal-up">
-            <div className="w-full md:w-auto">
-              <h2 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-4 md:mb-6 text-white tracking-tight">
-                This Week's Top Niches
-              </h2>
-              <p className="text-base sm:text-lg md:text-xl text-[rgba(255,255,255,0.7)] max-w-xl">3 niches. Real revenue. Apps you can copy. Updated daily.</p>
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 shrink-0">
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center gap-2 mb-4">
               <span className="w-2 h-2 rounded-full bg-[var(--primary)] animate-pulse" />
               <span className="text-xs font-mono text-white/70">UPDATED {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase()}</span>
             </div>
+            <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white">
+              This Week's <span className="text-flashy-green">Top Niches</span>
+            </h2>
+            <p className="text-base md:text-lg text-white/50 max-w-xl mx-auto">
+              3 niches. Real revenue. Apps you can copy. Updated daily.
+            </p>
           </div>
 
-          {/* MOBILE: 3 niches stacked */}
+          {/* MOBILE: Cards stacked */}
           {isMobile ? (
             <div className="space-y-4">
               {focusNiches.map((niche, index) => (
                 <div 
                   key={niche.id}
-                  className="p-5 rounded-2xl bg-white/[0.03] border border-white/10"
-                  onClick={handleNicheCardClick}
+                  className="p-5 rounded-2xl bg-white/[0.03] border border-white/10 cursor-pointer"
+                  onClick={() => router.push(`/niches/${niche.id}`)}
                 >
                   {/* Header */}
                   <div className="flex items-start justify-between mb-3">
@@ -546,184 +546,63 @@ export default function Home() {
               ))}
             </div>
           ) : (
-            /* DESKTOP: Carousel with apps */
-            <>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
-              {/* Feature Niche Card - CAROUSEL (Col 1 & 2) */}
-              <LiquidCard
-                key={activeFocusIndex}
-                animate="animate-flip-in"
-                className="col-span-1 lg:col-span-2 p-6 sm:p-8 lg:p-10 group deep-relief flex flex-col justify-between h-full"
-                onClick={handleNicheCardClick}
-                clickableOnMobile={true}
-              >
-                  <div>
-                    {/* Glow */}
-                    <div className="absolute top-0 right-0 p-40 bg-[var(--primary)]/10 blur-[90px] rounded-full group-hover:bg-[var(--primary)]/20 transition-all duration-700 pointer-events-none" />
+            /* DESKTOP: Horizontal list rows */
+            <div className="space-y-3">
+              {focusNiches.map((niche, index) => (
+                <div 
+                  key={niche.id}
+                  className="flex items-center gap-4 md:gap-6 p-4 md:p-5 rounded-xl bg-white/[0.03] border border-white/10 hover:border-white/20 hover:bg-white/[0.05] transition-all cursor-pointer"
+                  onClick={() => router.push(`/niches/${niche.id}`)}
+                >
+                  {/* Score */}
+                  <div className="flex-shrink-0 w-14 h-14 rounded-xl bg-[var(--primary)]/10 border border-[var(--primary)]/20 flex items-center justify-center">
+                    <span className="text-lg font-bold text-[var(--primary)]">{niche.score}</span>
+                  </div>
 
-                    <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6 sm:mb-8 relative z-10">
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4 break-words leading-tight">{focusNiches[activeFocusIndex].title}</h3>
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="text-[10px] sm:text-xs font-bold text-[var(--primary)] uppercase tracking-widest">#{focusNiches[activeFocusIndex].id}</span>
-                          <span className="text-white/20">·</span>
-                          {focusNiches[activeFocusIndex].tags.map(tag => (
-                            <span key={tag} className="px-2 py-0.5 rounded border border-white/20 bg-white/10 text-[10px] text-white">{tag}</span>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-[var(--primary)] text-black text-[10px] sm:text-xs font-bold shadow-[0_0_20px_rgba(0,204,61,0.4)] whitespace-nowrap shrink-0">
-                        {focusNiches[activeFocusIndex].score}/100 SCORE
+                  {/* Title & Tags */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs text-white/40 font-mono">#{niche.id}</span>
+                      <span className="px-2 py-0.5 rounded bg-white/10 text-[10px] text-white/60">{niche.tags[0]}</span>
+                    </div>
+                    <h3 className="text-base md:text-lg font-bold text-white truncate">{niche.title}</h3>
+                  </div>
+
+                  {/* Stats */}
+                  <div className="flex items-center gap-6">
+                    <div className="text-center">
+                      <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1">Competition</div>
+                      <div className={`text-sm font-bold ${niche.stats.competition === 'Low' ? 'text-[var(--primary)]' : niche.stats.competition === 'Medium' ? 'text-yellow-400' : 'text-orange-400'}`}>
+                        {niche.stats.competition}
                       </div>
                     </div>
-
-                    <div className="space-y-5 mb-8 sm:mb-10 relative z-10">
-                      <p className="text-white text-lg sm:text-xl lg:text-2xl leading-relaxed">
-                        {focusNiches[activeFocusIndex].opportunity}
-                      </p>
-                      <p className="text-[rgba(255,255,255,0.6)] text-base sm:text-lg lg:text-xl leading-relaxed">
-                        {focusNiches[activeFocusIndex].gap}
-                      </p>
-                      <p className="text-[rgba(255,255,255,0.6)] text-base sm:text-lg lg:text-xl leading-relaxed">
-                        {focusNiches[activeFocusIndex].move}
-                      </p>
+                    <div className="text-center">
+                      <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1">Revenue</div>
+                      <div className="text-sm font-bold text-white">{niche.stats.revenue}</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1">Market</div>
+                      <div className="text-sm font-bold text-white">{niche.stats.market}</div>
                     </div>
                   </div>
 
-                  {/* BOTTOM BLOCK: Stats */}
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 relative z-10">
-                    {[
-                      { label: "Competition", value: focusNiches[activeFocusIndex].stats.competition, color: "text-[var(--primary)]" },
-                      { label: "Potential", value: focusNiches[activeFocusIndex].stats.potential, color: "text-[var(--primary)]" },
-                      { label: "MRR", value: focusNiches[activeFocusIndex].stats.revenue, color: "text-white" },
-                      { label: "Best Market", value: focusNiches[activeFocusIndex].stats.market, color: "text-white" },
-                    ].map((stat, i) => (
-                      <div key={i} className="p-3 sm:p-4 lg:p-5 rounded-xl bg-black/40 border border-white/10 backdrop-blur-md">
-                        <div className="text-[10px] sm:text-xs text-white/40 uppercase mb-1 sm:mb-2 tracking-wider">{stat.label}</div>
-                        <div className={`font-mono text-base sm:text-lg lg:text-xl font-bold ${stat.color} whitespace-nowrap`}>{stat.value}</div>
-                      </div>
-                    ))}
+                  {/* Arrow */}
+                  <div className="flex-shrink-0 text-white/30">
+                    →
                   </div>
-              </LiquidCard>
-
-            {/* Trending List / Detail View Switcher */}
-            <LiquidCard 
-              animate="reveal-right" 
-              className="col-span-1 p-6 sm:p-8 deep-relief overflow-hidden relative flex flex-col h-full"
-              onClick={handleNicheCardClick}
-              clickableOnMobile={true}
-            >
-
-                {selectedApp ? (
-                  // --- DETAIL VIEW ---
-                  <div className="h-full flex flex-col justify-between animate-flip-in">
-                    <div>
-                      <div className="flex justify-between items-start mb-6">
-                        <div>
-                          <h3 className="text-2xl font-bold text-white mb-1">{selectedApp.name}</h3>
-                          <div className="text-xs text-white/50 bg-white/10 px-2 py-1 rounded inline-block">{selectedApp.category}</div>
-                        </div>
-                        <button
-                          onClick={() => setSelectedApp(null)}
-                          className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition-colors"
-                        >
-                          ✕
-                        </button>
-                      </div>
-
-                      <div className="mb-6">
-                        <div className="text-sm text-[rgba(255,255,255,0.7)] leading-relaxed">
-                          {selectedApp.description}
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-3 mb-6">
-                        <div className="p-3 rounded-lg bg-white/5 border border-white/10">
-                          <div className="text-[10px] text-white/40 uppercase tracking-widest mb-1">Growth</div>
-                          <div className="text-xl font-bold text-[var(--primary)]">{selectedApp.growth}</div>
-                        </div>
-                        <div className="p-3 rounded-lg bg-white/5 border border-white/10">
-                          <div className="text-[10px] text-white/40 uppercase tracking-widest mb-1">Strong Market</div>
-                          <div className="text-xl font-bold text-white">{selectedApp.strongMarket}</div>
-                        </div>
-                      </div>
-
-                      <div className="space-y-4">
-                        <div>
-                          <div className="text-[10px] text-[var(--primary)] font-bold uppercase mb-2">Key Strengths</div>
-                          <ul className="space-y-1">
-                            {selectedApp.keyPoints.map((p: string, i: number) => (
-                              <li key={i} className="flex items-start gap-2 text-xs text-white/70">
-                                <span className="text-[var(--primary)] mt-0.5">✓</span> {p}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                        <div>
-                          <div className="text-[10px] text-orange-400 font-bold uppercase mb-2">Weaknesses</div>
-                          <ul className="space-y-1">
-                            {selectedApp.weakPoints.map((p: string, i: number) => (
-                              <li key={i} className="flex items-start gap-2 text-xs text-white/70">
-                                <span className="text-orange-400 mt-0.5">!</span> {p}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => setShowSubscribeModal(true)}
-                      className="w-full py-3 mt-6 rounded-xl bg-[var(--primary)]/10 text-[var(--primary)] text-sm font-bold hover:bg-[var(--primary)]/20 transition-colors"
-                    >
-                      Track this App →
-                    </button>
-                  </div>
-                ) : (
-                  // --- LIST VIEW ---
-                  <div className="flex flex-col h-full">
-                    <h3 className="text-xl lg:text-2xl font-bold mb-6 flex items-center gap-3">
-                      <span className="text-2xl">📈</span> Competitors Apps
-                    </h3>
-                    <div className="flex-1 flex flex-col justify-between space-y-4">
-                      {focusNiches[activeFocusIndex].trending.map((app, i) => (
-                        <div
-                          key={`${activeFocusIndex}-${i}`}
-                          onClick={() => setSelectedApp(app)}
-                          className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/20 transition-all cursor-pointer group animate-flap-drop"
-                          style={{ animationDelay: `${i * 100}ms` }}
-                        >
-                          <div className="flex items-center gap-4">
-                            <span className="text-sm lg:text-base font-mono text-white/30 group-hover:text-[var(--primary)] transition-colors">0{i + 1}</span>
-                            <div>
-                              <div className="text-base lg:text-lg font-bold text-white group-hover:text-[var(--primary)] transition-colors">{app.name}</div>
-                              <div className="text-[10px] lg:text-xs text-white/50">{app.category}</div>
-                            </div>
-                          </div>
-                          <div className="flex flex-col items-end">
-                            <span className="text-sm lg:text-base font-bold text-[var(--primary)]">{app.growth}</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-            </LiquidCard>
-            </div>
-
-            {/* Pagination Dots */}
-            <div className="flex justify-center gap-4 mt-8">
-              {focusNiches.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActiveFocusIndex(i)}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${activeFocusIndex === i ? 'bg-[var(--primary)] scale-125 shadow-[0_0_10px_#00CC3D]' : 'bg-white/20 hover:bg-white/40'}`}
-                />
+                </div>
               ))}
             </div>
-            </>
           )}
+
+          <div className="text-center mt-8">
+            <Link 
+              href="/niches"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/10 text-white font-medium hover:bg-white/20 transition-all"
+            >
+              Explore all niches →
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -773,7 +652,7 @@ export default function Home() {
             Loved by <span className="text-flashy-green">Builders</span> Worldwide
           </h2>
           <p className="text-base md:text-lg text-white/50 max-w-xl mx-auto">
-            Join 70+ developers and entrepreneurs building their app dreams with Niches Hunter
+            Join 75+ developers and entrepreneurs building their app dreams with Niches Hunter
           </p>
         </div>
 
@@ -1287,7 +1166,7 @@ export default function Home() {
               <div className="mt-8 text-center">
                 <div className="flex justify-center gap-1 mb-2 text-[var(--primary)] text-xs">★★★★★</div>
                 <p className="text-[10px] text-white/30">
-                  Join <span className="text-white/60 font-medium">73+ indie devs</span> already hunting niches. <br />
+                  Join <span className="text-white/60 font-medium">75+ indie devs</span> already hunting niches. <br />
                   <span className="opacity-50">100% free • Unsubscribe anytime • No spam ever</span>
                 </p>
               </div>

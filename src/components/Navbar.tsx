@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -10,6 +10,8 @@ export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isPro, setIsPro] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
+  const [navHidden, setNavHidden] = useState(false);
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
     // Vérifier si l'utilisateur est connecté et s'il est Pro
@@ -29,9 +31,38 @@ export default function Navbar() {
     checkAuth();
   }, [pathname]);
 
+  // Hide navbar on scroll down, show on scroll up (mobile only)
+  useEffect(() => {
+    const handleScroll = () => {
+      // Only apply on mobile (< 768px)
+      if (window.innerWidth >= 768) {
+        setNavHidden(false);
+        return;
+      }
+
+      const currentScrollY = window.scrollY;
+      
+      // Show navbar when at top of page
+      if (currentScrollY < 50) {
+        setNavHidden(false);
+      } 
+      // Hide when scrolling down, show when scrolling up
+      else if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
+        setNavHidden(true);
+      } else if (currentScrollY < lastScrollY.current) {
+        setNavHidden(false);
+      }
+      
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 nav-blur">
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 nav-blur ${navHidden ? '-translate-y-full' : 'translate-y-0'}`}>
         <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between relative">
 
           {/* Left: Logo */}
