@@ -7,6 +7,7 @@ import "./globals.css";
 
 const GA_MEASUREMENT_ID = "G-MV228L76KT";
 const REDDIT_PIXEL_ID = "a2_idm7qyipkyo1";
+const X_PIXEL_ID = "r2hs9";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://nicheshunter.app"),
@@ -157,6 +158,17 @@ export default function RootLayout({
             !function(w,d){if(!w.rdt){var p=w.rdt=function(){p.sendEvent?p.sendEvent.apply(p,arguments):p.callQueue.push(arguments)};p.callQueue=[];var t=d.createElement("script");t.src="https://www.redditstatic.com/ads/pixel.js",t.async=!0;var s=d.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}}(window,document);
             rdt('init','${REDDIT_PIXEL_ID}');
             rdt('track', 'PageVisit');
+          `}
+        </Script>
+
+        {/* X (Twitter) Pixel */}
+        <Script id="x-pixel" strategy="afterInteractive">
+          {`
+            !function(e,t,n,s,u,a){e.twq||(s=e.twq=function(){s.exe?s.exe.apply(s,arguments):s.queue.push(arguments);
+            },s.version='1.1',s.queue=[],u=t.createElement(n),u.async=!0,u.src='https://static.ads-twitter.com/uwt.js',
+            a=t.getElementsByTagName(n)[0],a.parentNode.insertBefore(u,a))}(window,document,'script');
+            twq('config','${X_PIXEL_ID}');
+            twq('track','PageView');
           `}
         </Script>
         
