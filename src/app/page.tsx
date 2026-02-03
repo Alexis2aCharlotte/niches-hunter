@@ -168,9 +168,23 @@ function TestimonialsSection() {
         <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white">
           Loved by <span className="text-flashy-green">Builders</span> Worldwide
         </h2>
-        <p className="text-base md:text-lg text-white/50 max-w-xl mx-auto">
+        <p className="text-base md:text-lg text-white/50 max-w-xl mx-auto mb-6">
           Join 80+ developers and entrepreneurs building their app dreams with Niches Hunter
         </p>
+        {/* Product Hunt Badge */}
+        <a 
+          href="https://www.producthunt.com/products/niches-hunter-2?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-niches-hunter-3" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="inline-block hover:opacity-80 transition-opacity"
+        >
+          <img 
+            src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1071640&theme=dark&t=1770155105905" 
+            alt="Niches Hunter - Spot Profitable iOS Niches | Product Hunt" 
+            width="250" 
+            height="54"
+          />
+        </a>
       </div>
 
       {/* Static Testimonials Grid */}
