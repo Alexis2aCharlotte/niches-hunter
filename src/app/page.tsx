@@ -707,6 +707,22 @@ export default function Home() {
               twitterUrl: "https://x.com/Tobby_scraper",
               verified: true
             },
+            {
+              text: "What I like most is how quickly it takes me from \"interesting niche\" to \"ok, here's what I'd build.\" The score, market snapshot, monetization, and suggested tech stack in one place is super practical. The niche pages are also nicely structured (analysis, opportunities, risks) without feeling noisy.",
+              name: "Rouzbeh",
+              handle: "@JustRouzbeh",
+              image: "/testimonials/JustRouzbeh.jpg",
+              twitterUrl: "https://x.com/JustRouzbeh",
+              verified: true
+            },
+            {
+              text: "The regional comparison (US vs EU trending) is underrated. Most tools assume US = everywhere, but there's real money in being early to replicate what's working in one market into another.",
+              name: "Sanket 🛠️ClawKraft",
+              handle: "@tinkerersanky",
+              image: "/testimonials/tinkerersanky.jpg",
+              twitterUrl: "https://x.com/tinkerersanky",
+              verified: true
+            },
           ].map((t, i) => (
             <a
               key={i}
