@@ -397,7 +397,7 @@ export default function Home() {
             <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-x-4 gap-y-2 text-xs text-[rgba(255,255,255,0.6)] font-mono">
               <span className="flex items-center gap-1.5">
                 <span className="text-[var(--primary)]">●</span>
-                <span className="font-bold text-white">75+</span> builders
+                <span className="font-bold text-white">80+</span> builders
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="text-[var(--primary)]">●</span>
