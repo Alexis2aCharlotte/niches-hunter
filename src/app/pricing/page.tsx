@@ -345,10 +345,10 @@ export default function PricingPage() {
               
               {/* Bar background */}
               <div className="h-3 bg-white/10 rounded-full overflow-hidden">
-                {/* 80 users = premier palier (50) complété + 30 users sur le 2ème = 60% */}
+                {/* 87 users = premier palier (50) complété + 37 users sur le 2ème = 74% */}
                 <div 
                   className="h-full bg-gradient-to-r from-[var(--primary)] to-[#00E847] rounded-full transition-all duration-1000"
-                  style={{ width: '60%' }}
+                  style={{ width: '74%' }}
                 />
               </div>
               
@@ -362,7 +362,7 @@ export default function PricingPage() {
             </div>
             
             <p className="text-xs text-white/40 mt-4">
-              <span className="text-[var(--primary)] font-bold">80 users</span> already joined • Next price increase at 100 users
+              <span className="text-[var(--primary)] font-bold">87 users</span> already joined • Next price increase at 100 users
             </p>
           </LiquidCard>
         </div>

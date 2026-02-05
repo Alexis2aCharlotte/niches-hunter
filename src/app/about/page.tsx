@@ -67,7 +67,7 @@ export default function AboutPage() {
     },
     {
       year: "Today",
-      title: "Helping 80+ Builders Ship Faster",
+      title: "Helping 87+ Builders Ship Faster",
       description: "Now I can focus on what I love: coding. And I'm sharing this tool with other indie developers who want to skip the research phase and go straight to building profitable apps."
     },
   ]
