@@ -169,7 +169,7 @@ function TestimonialsSection() {
           Loved by <span className="text-flashy-green">Builders</span> Worldwide
         </h2>
         <p className="text-base md:text-lg text-white/50 max-w-xl mx-auto mb-6">
-          Join 80+ developers and entrepreneurs building their app dreams with Niches Hunter
+          Join 89+ developers and entrepreneurs building their app dreams with Niches Hunter
         </p>
         {/* Product Hunt Badge */}
         <a 

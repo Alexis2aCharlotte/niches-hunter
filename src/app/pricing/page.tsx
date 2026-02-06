@@ -362,7 +362,7 @@ export default function PricingPage() {
             </div>
             
             <p className="text-xs text-white/40 mt-4">
-              <span className="text-[var(--primary)] font-bold">87 users</span> already joined • Next price increase at 100 users
+              <span className="text-[var(--primary)] font-bold">89 users</span> already joined • Next price increase at 100 users
             </p>
           </LiquidCard>
         </div>
