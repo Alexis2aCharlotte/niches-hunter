@@ -120,13 +120,6 @@ const jsonLdSoftwareApplication = {
     availability: "https://schema.org/InStock",
     priceValidUntil: "2026-12-31",
   },
-  aggregateRating: {
-    "@type": "AggregateRating",
-    ratingValue: "4.8",
-    ratingCount: "127",
-    bestRating: "5",
-    worstRating: "1",
-  },
   description: "Find profitable iOS app niches with AI-powered validation, revenue estimates, and competitor analysis.",
 };
 
