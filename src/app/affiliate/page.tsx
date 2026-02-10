@@ -276,10 +276,10 @@ export default function AffiliatePage() {
               
               {/* Bar background */}
               <div className="h-3 bg-white/10 rounded-full overflow-hidden">
-                {/* 87 users sur 150 = 58% */}
+                {/* 97 users sur 150 = 65% */}
                 <div 
                   className="h-full bg-gradient-to-r from-[var(--primary)] to-[#00E847] rounded-full transition-all duration-1000"
-                  style={{ width: '58%' }}
+                  style={{ width: '65%' }}
                 />
               </div>
               
@@ -293,7 +293,7 @@ export default function AffiliatePage() {
             </div>
             
             <p className="text-xs text-white/40 mt-4">
-              <span className="text-[var(--primary)] font-bold">87 users</span> already joined • Next commission increase at 100 users
+              <span className="text-[var(--primary)] font-bold">97 users</span> already joined • Next commission increase at 100 users
             </p>
             
             <p className="text-sm text-white/50 mt-6">
