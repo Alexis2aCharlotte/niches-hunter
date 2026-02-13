@@ -67,7 +67,7 @@ export default function AboutPage() {
     },
     {
       year: "Today",
-      title: "Helping 97+ Builders Ship Faster",
+      title: "Helping 100+ Builders Ship Faster",
       description: "Now I can focus on what I love: coding. And I'm sharing this tool with other indie developers who want to skip the research phase and go straight to building profitable apps."
     },
   ]
@@ -359,7 +359,7 @@ export default function AboutPage() {
             Ready to Find Your <span className="text-flashy-green">Next App Idea</span>?
           </h2>
           <p className="text-lg text-white/60 mb-8 max-w-xl mx-auto">
-            Stop researching. Start building. Join 97+ indie developers who are already hunting profitable niches.
+            Stop researching. Start building. Join 100+ indie developers who are already hunting profitable niches.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link 

@@ -25,8 +25,8 @@ export default function PricingPage() {
   }
   const lifetime = {
     original: 49,
-    discounted: 29,
-    savings: 40,
+    discounted: 39,
+    savings: 20,
   }
 
   const currentPlan = isLifetime ? lifetime : monthly
@@ -111,7 +111,7 @@ export default function PricingPage() {
     },
     {
       q: "What's the difference between Monthly and Lifetime?",
-      a: "Monthly is a recurring subscription at $9.99/month. Lifetime is a one-time payment of $29 for permanent access - no recurring fees ever!"
+      a: "Monthly is a recurring subscription at $9.99/month. Lifetime is a one-time payment of $39 for permanent access - no recurring fees ever!"
     },
     {
       q: "Do you offer refunds?",
@@ -338,17 +338,17 @@ export default function PricingPage() {
               {/* Labels */}
               <div className="flex justify-between text-sm mb-2">
                 <span className="text-white/30 line-through">$19</span>
-                <span className="text-[var(--primary)] font-bold">$29</span>
-                <span className="text-white/40">$39</span>
+                <span className="text-white/30 line-through">$29</span>
+                <span className="text-[var(--primary)] font-bold">$39</span>
                 <span className="text-white/40">$49</span>
               </div>
               
               {/* Bar background */}
               <div className="h-3 bg-white/10 rounded-full overflow-hidden">
-                {/* 97 users sur 150 = 65% */}
+                {/* 100 users sur 150 = 67% */}
                 <div 
                   className="h-full bg-gradient-to-r from-[var(--primary)] to-[#00E847] rounded-full transition-all duration-1000"
-                  style={{ width: '65%' }}
+                  style={{ width: '67%' }}
                 />
               </div>
               
@@ -362,7 +362,7 @@ export default function PricingPage() {
             </div>
             
             <p className="text-xs text-white/40 mt-4">
-              <span className="text-[var(--primary)] font-bold">97 users</span> already joined • Next price increase at 100 users
+              <span className="text-[var(--primary)] font-bold">100 users</span> already joined • Next price increase at 150 users
             </p>
           </LiquidCard>
         </div>
@@ -444,7 +444,7 @@ export default function PricingPage() {
               Ready to Find Your Next <span className="text-flashy-green">Winning Niche</span>?
             </h2>
             <p className="text-white/50 mb-8 relative z-10">
-              Join 68+ indie developers already hunting profitable iOS niches.
+              Join 100+ indie developers already hunting profitable iOS niches.
             </p>
             
             <button
@@ -452,7 +452,7 @@ export default function PricingPage() {
               disabled={checkoutLoading}
               className="inline-flex items-center gap-2 px-10 py-5 bg-[var(--primary)] text-black font-bold rounded-xl hover:bg-[#00E847] transition-all shadow-[0_0_30px_rgba(0,204,61,0.3)] hover:shadow-[0_0_50px_rgba(0,204,61,0.5)] disabled:opacity-50 relative z-10"
             >
-              {checkoutLoading ? 'Processing...' : (isLifetime ? 'Get Lifetime for $29 →' : 'Start Monthly for $9.99 →')}
+              {checkoutLoading ? 'Processing...' : (isLifetime ? 'Get Lifetime for $39 →' : 'Start Monthly for $9.99 →')}
             </button>
             
             <p className="mt-6 text-xs text-white/30 relative z-10">
