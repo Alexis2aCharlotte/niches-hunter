@@ -269,14 +269,14 @@ export default function AffiliatePage() {
               {/* Labels - Commission amounts */}
               <div className="flex justify-between text-sm mb-2">
                 <span className="text-white/30 line-through">$6/sale</span>
-                <span className="text-[var(--primary)] font-bold">$10/sale</span>
-                <span className="text-white/40">$14/sale</span>
+                <span className="text-white/30 line-through">$10/sale</span>
+                <span className="text-[var(--primary)] font-bold">$14/sale</span>
                 <span className="text-white/40">$18/sale</span>
               </div>
               
               {/* Bar background */}
               <div className="h-3 bg-white/10 rounded-full overflow-hidden">
-                {/* 100 users sur 150 = 67% */}
+                {/* 101 users sur 150 = 67% */}
                 <div 
                   className="h-full bg-gradient-to-r from-[var(--primary)] to-[#00E847] rounded-full transition-all duration-1000"
                   style={{ width: '67%' }}
@@ -293,7 +293,7 @@ export default function AffiliatePage() {
             </div>
             
             <p className="text-xs text-white/40 mt-4">
-              <span className="text-[var(--primary)] font-bold">100 users</span> already joined • Next commission increase at 150 users
+              <span className="text-[var(--primary)] font-bold">101 users</span> already joined • Next commission increase at 150 users
             </p>
             
             <p className="text-sm text-white/50 mt-6">
