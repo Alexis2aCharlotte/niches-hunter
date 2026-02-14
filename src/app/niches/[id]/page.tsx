@@ -408,8 +408,8 @@ export default function NicheDetailPage() {
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
             <span className="font-bold text-sm tracking-widest text-white/40">NICHES HUNTER</span>
             <div className="flex items-center gap-6 text-xs text-white/30">
-              <Link href="#" className="hover:text-white transition-colors">Privacy</Link>
-              <Link href="#" className="hover:text-white transition-colors">Terms</Link>
+              <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+              <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
               <Link href="https://x.com/nicheshunter" className="hover:text-white transition-colors">Twitter</Link>
             </div>
             <span className="text-xs text-white/20">© 2026 Niches Hunter. All rights reserved.</span>
@@ -900,8 +900,8 @@ export default function NicheDetailPage() {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <span className="font-bold text-sm tracking-widest text-white/40">NICHES HUNTER</span>
           <div className="flex items-center gap-6 text-xs text-white/30">
-            <Link href="#" className="hover:text-white transition-colors">Privacy</Link>
-            <Link href="#" className="hover:text-white transition-colors">Terms</Link>
+            <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
             <Link href="https://x.com/nicheshunter" className="hover:text-white transition-colors">Twitter</Link>
           </div>
           <span className="text-xs text-white/20">© 2026 Niches Hunter. All rights reserved.</span>

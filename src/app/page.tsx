@@ -1127,8 +1127,8 @@ export default function Home() {
             <span className="font-bold text-sm tracking-widest">NICHES HUNTER</span>
           </div>
           <div className="flex gap-8 text-sm text-[rgba(255,255,255,0.4)]">
-            <a href="#" className="hover:text-white transition-colors">Privacy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms</a>
+            <a href="/privacy" className="hover:text-white transition-colors">Privacy</a>
+            <a href="/terms" className="hover:text-white transition-colors">Terms</a>
             <a href="https://x.com/nicheshunter" className="hover:text-white transition-colors">Twitter</a>
           </div>
           <div className="text-xs text-[rgba(255,255,255,0.2)]">
