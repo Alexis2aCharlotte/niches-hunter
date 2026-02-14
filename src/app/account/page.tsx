@@ -535,7 +535,7 @@ export default function AccountPage() {
                           Affiliate Program
                         </h2>
                         <p className="text-white/40 text-sm">
-                          Earn $10 per referral (40%)
+                          Earn $14 per referral (40%)
                         </p>
                       </div>
                     </div>

@@ -158,7 +158,7 @@ export default function AffiliatePage() {
   }, [firstName, lastName, paymentMethod, twitterHandle, promotionPlatform, promotionUrl, audienceSize, externalEmail, userEmail])
 
   const benefits = [
-    { title: '40% Commission', description: 'Earn $10 for every sale you refer' },
+    { title: '40% Commission', description: 'Earn $14 for every sale you refer' },
     { title: '$4 Off for Friends', description: 'Your referrals get a discount too' },
     { title: 'Lifetime Tracking', description: 'Your code works forever' },
     { title: 'Flexible Payouts', description: 'PayPal, Stripe, Wise, or Revolut' },
@@ -187,7 +187,7 @@ export default function AffiliatePage() {
           </div>
           
           <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">
-            Earn <span className="text-flashy-green">$10</span> Per Referral
+            Earn <span className="text-flashy-green">$14</span> Per Referral
           </h1>
           
           <p className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-10">
@@ -349,7 +349,7 @@ export default function AffiliatePage() {
                 </div>
                 
                 <p className="text-sm text-white/40">
-                  Your referrals get <span className="text-white font-medium">$4 off</span> • You earn <span className="text-[var(--primary)] font-medium">$10 per sale</span>
+                  Your referrals get <span className="text-white font-medium">$4 off</span> • You earn <span className="text-[var(--primary)] font-medium">$14 per sale</span>
                 </p>
               </div>
             </LiquidCard>
@@ -696,7 +696,7 @@ export default function AffiliatePage() {
           <div className="space-y-4">
             <FAQItem 
               question="How much can I earn?"
-              answer="You earn 40% commission on every sale. With the lifetime plan at $25 (after your referral's $4 discount), that's $10 per sale. There's no cap on earnings!"
+              answer="You earn 40% commission on every sale. That's $14 per sale right now. There's no cap on earnings!"
             />
             <FAQItem 
               question="When do I get paid?"
@@ -708,7 +708,7 @@ export default function AffiliatePage() {
             />
             <FAQItem 
               question="Is there a minimum payout?"
-              answer="No minimum! Even if you refer just one person, we'll send you your $10 commission."
+              answer="No minimum! Even if you refer just one person, we'll send you your $14 commission."
             />
             <FAQItem 
               question="Can I promote on social media?"

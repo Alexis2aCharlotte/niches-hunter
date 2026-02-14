@@ -1078,7 +1078,7 @@ export default function Home() {
                       Become an Affiliate
                     </h3>
                     <p className="text-sm md:text-base text-white/50">
-                      Earn <span className="text-[var(--primary)] font-semibold">$10</span> for every sale you refer • 40% commission
+                      Earn <span className="text-[var(--primary)] font-semibold">$14</span> for every sale you refer • 40% commission
                     </p>
                   </div>
                 </div>

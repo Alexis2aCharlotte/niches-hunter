@@ -180,7 +180,7 @@ export default function Navbar() {
                       Affiliate Program
                       <span className="text-[8px] px-1.5 py-0.5 rounded bg-green-500/20 text-green-400 font-bold">40%</span>
                     </div>
-                    <div className="text-[10px] text-white/40">Earn $10 per referral</div>
+                    <div className="text-[10px] text-white/40">Earn $14 per referral</div>
                   </div>
                 </Link>
               </div>
