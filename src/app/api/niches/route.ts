@@ -82,7 +82,7 @@ export async function GET() {
     const processedNiches = (niches || []).map(niche => {
       const isFreeNiche = FREE_NICHES.includes(niche.display_code)
       
-      // Si l'utilisateur est abonné OU si c'est une niche gratuite, renvoyer les données complètes
+      // Si l'utilisateur est abonné ou niche gratuite → données complètes
       if (hasActiveSubscription || isFreeNiche) {
         return niche
       }
@@ -93,7 +93,7 @@ export async function GET() {
 
     return NextResponse.json({ 
       niches: processedNiches, 
-      hasActiveSubscription 
+      hasActiveSubscription,
     })
 
   } catch (error) {

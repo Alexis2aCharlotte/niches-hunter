@@ -329,7 +329,7 @@ export default function NichesPage() {
     setSelectedCategory(val);
   }, []);
 
-  // Charger les niches depuis l'API sécurisée (inclut la vérification d'abonnement)
+  // Charger les niches depuis l'API sécurisée
   useEffect(() => {
     async function loadNiches() {
       setLoading(true);
@@ -342,13 +342,13 @@ export default function NichesPage() {
     loadNiches();
   }, []);
 
-  // Vérifier si une niche est déverrouillée (gratuite OU abonné)
-  // Pendant le chargement, seules les niches gratuites sont accessibles
+  // Vérifier si une niche est déverrouillée
   const isNicheUnlocked = (displayCode: string) => {
     if (!subscriptionChecked) {
       return FREE_NICHES.includes(displayCode);
     }
-    return FREE_NICHES.includes(displayCode) || hasSubscription;
+    if (hasSubscription) return true;
+    return FREE_NICHES.includes(displayCode);
   };
 
   // Filtrer et trier les niches
@@ -425,7 +425,7 @@ export default function NichesPage() {
       </div>
 
       {/* Header */}
-      <section className="relative pt-32 pb-8 px-6">
+      <section className="relative pb-8 px-6 pt-32">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8">
             <div>

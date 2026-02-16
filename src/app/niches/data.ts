@@ -147,7 +147,7 @@ export async function fetchAllNiches(): Promise<{ niches: Niche[], hasActiveSubs
   try {
     const response = await fetch('/api/niches', {
       method: 'GET',
-      credentials: 'include', // Important pour envoyer les cookies
+      credentials: 'include',
     });
 
     if (!response.ok) {

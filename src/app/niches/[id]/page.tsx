@@ -229,7 +229,7 @@ export default function NicheDetailPage() {
           <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-500/5 blur-[150px] rounded-full" />
         </div>
 
-        <div className="relative pt-32 pb-20 px-6">
+        <div className="relative pb-20 px-6 pt-32">
           <div className="max-w-5xl mx-auto">
             {/* Back Link */}
             <Link href="/niches" className="inline-flex items-center gap-2 text-white/50 hover:text-white mb-8 transition-colors">
@@ -427,7 +427,7 @@ export default function NicheDetailPage() {
         <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-500/5 blur-[150px] rounded-full" />
       </div>
 
-      <div className="relative pt-32 pb-20 px-6">
+      <div className="relative pb-20 px-6 pt-32">
         <div className="max-w-5xl mx-auto">
           {/* Back Link */}
           <Link href="/niches" className="inline-flex items-center gap-2 text-white/50 hover:text-white mb-8 transition-colors">

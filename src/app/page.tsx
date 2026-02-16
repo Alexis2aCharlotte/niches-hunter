@@ -561,6 +561,19 @@ export default function Home() {
               </span>
             </div>
 
+            {/* Demo CTA - simple secondary link */}
+            <div className="mt-6 flex items-center justify-center lg:justify-start">
+              <Link
+                href="/demo/niches"
+                className="group flex items-center gap-2 text-sm text-white/40 hover:text-white/60 transition-all duration-300"
+              >
+                <svg className="w-3.5 h-3.5 text-white/25 group-hover:text-[var(--primary)] transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+                <span className="group-hover:underline underline-offset-4">Or try the interactive demo</span>
+              </Link>
+            </div>
+
           </div>
 
           {/* Right Visual - Radar (Desktop only, hidden on mobile via CSS) */}
@@ -1252,6 +1265,77 @@ export default function Home() {
           </LiquidCard>
         </div>
       )}
+
+      {/* Demo popup toast - appears after 4s of scrolling */}
+      <DemoPopup />
+
     </main>
+  );
+}
+
+function DemoPopup() {
+  const [visible, setVisible] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
+  const scrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hasScrolled = useRef(false);
+
+  useEffect(() => {
+    if (dismissed) return;
+
+    const onScroll = () => {
+      if (hasScrolled.current) return;
+      hasScrolled.current = true;
+
+      scrollTimer.current = setTimeout(() => {
+        setVisible(true);
+      }, 3000);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (scrollTimer.current) clearTimeout(scrollTimer.current);
+    };
+  }, [dismissed]);
+
+  if (dismissed || !visible) return null;
+
+  return (
+    <div className="fixed bottom-6 left-6 z-[70] w-[320px] animate-[slideUp_0.4s_ease-out]">
+      <Link
+        href="/demo/niches"
+        className="group block relative p-4 rounded-2xl bg-[#111] border border-white/10 shadow-2xl shadow-black/60 hover:border-[var(--primary)]/30 transition-all duration-300"
+        onClick={() => setDismissed(true)}
+      >
+        {/* Close button */}
+        <button
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setDismissed(true); }}
+          className="absolute top-2 right-2 w-6 h-6 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/30 hover:text-white/60 transition-all"
+        >
+          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div className="flex items-center gap-3">
+          <span className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-[var(--primary)]/15 shrink-0">
+            <svg className="w-4 h-4 text-[var(--primary)]" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+            <span className="absolute -top-0.5 -right-0.5 flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--primary)] opacity-60" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--primary)]" />
+            </span>
+          </span>
+          <div className="flex-1 min-w-0 pr-4">
+            <p className="text-sm font-semibold text-white group-hover:text-[var(--primary)] transition-colors">Try the Pro experience</p>
+            <p className="text-[11px] text-white/30 mt-0.5">Interactive demo — no sign-up needed</p>
+          </div>
+          <svg className="w-4 h-4 text-white/15 group-hover:text-[var(--primary)] group-hover:translate-x-0.5 transition-all shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </Link>
+    </div>
   );
 }
