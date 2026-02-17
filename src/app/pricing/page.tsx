@@ -24,9 +24,7 @@ export default function PricingPage() {
     price: 9.99,
   }
   const lifetime = {
-    original: 49,
-    discounted: 39,
-    savings: 20,
+    price: 29,
   }
 
   const currentPlan = isLifetime ? lifetime : monthly
@@ -111,7 +109,7 @@ export default function PricingPage() {
     },
     {
       q: "What's the difference between Monthly and Lifetime?",
-      a: "Monthly is a recurring subscription at $9.99/month. Lifetime is a one-time payment of $39 for permanent access - no recurring fees ever!"
+      a: "Monthly is a recurring subscription at $9.99/month. Lifetime is a one-time payment of $29 for permanent access - no recurring fees ever! Note: lifetime access will only be available until we reach 150 users."
     },
     {
       q: "Do you offer refunds?",
@@ -223,7 +221,7 @@ export default function PricingPage() {
             {isLifetime && (
               <div className="absolute top-4 right-4">
                 <span className="px-3 py-1 rounded-full bg-[var(--primary)] text-black text-xs font-bold animate-pulse">
-  -{lifetime.savings}% LAUNCH
+  LIFETIME DEAL
                 </span>
               </div>
             )}
@@ -242,11 +240,8 @@ export default function PricingPage() {
               {isLifetime ? (
                 <>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-2xl text-white/40 line-through">
-                      ${lifetime.original}
-                    </span>
                     <span className="text-5xl font-bold text-[var(--primary)]">
-                      ${lifetime.discounted}
+                      ${lifetime.price}
                     </span>
                   </div>
                   <p className="text-sm text-white/40 mt-2">One-time payment</p>
@@ -330,39 +325,53 @@ export default function PricingPage() {
           </h2>
           <LiquidCard className="p-8 text-center">
             <p className="text-white/60 mb-6">
-              Every <span className="text-white font-bold">50 users</span>, the price increases by <span className="text-white font-bold">$10</span>. Lock your price now.
+              At <span className="text-white font-bold">150 users</span>, lifetime access goes away <span className="text-red-400 font-bold">forever</span>. The only option will be a monthly subscription.
             </p>
+            
+            {/* Timeline steps */}
+            <div className="flex flex-col md:flex-row items-stretch gap-4 mb-6">
+              {/* Step 1 - Done */}
+              <div className="flex-1 rounded-xl bg-white/5 border border-white/10 p-5 opacity-50">
+                <div className="text-xs text-white/40 uppercase tracking-wider mb-2">0 to 50 users</div>
+                <div className="text-2xl font-bold text-white/40 line-through">$19</div>
+                <div className="text-xs text-white/30 mt-1">Lifetime • Sold out</div>
+              </div>
+              
+              {/* Step 2 - Current */}
+              <div className="flex-1 rounded-xl bg-[var(--primary)]/10 border-2 border-[var(--primary)]/40 p-5 relative">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-[var(--primary)] text-black text-[10px] font-bold uppercase">
+                  Current
+                </div>
+                <div className="text-xs text-[var(--primary)] uppercase tracking-wider mb-2">50 to 150 users</div>
+                <div className="text-2xl font-bold text-[var(--primary)]">$29</div>
+                <div className="text-xs text-white/50 mt-1">Lifetime • One-time payment</div>
+              </div>
+              
+              {/* Step 3 - Future */}
+              <div className="flex-1 rounded-xl bg-white/5 border border-white/10 border-dashed p-5">
+                <div className="text-xs text-white/40 uppercase tracking-wider mb-2">150+ users</div>
+                <div className="text-2xl font-bold text-white/40">Monthly only</div>
+                <div className="text-xs text-white/30 mt-1">No more lifetime deal</div>
+              </div>
+            </div>
             
             {/* Progress bar */}
             <div className="relative">
-              {/* Labels */}
-              <div className="flex justify-between text-sm mb-2">
-                <span className="text-white/30 line-through">$19</span>
-                <span className="text-white/30 line-through">$29</span>
-                <span className="text-[var(--primary)] font-bold">$39</span>
-                <span className="text-white/40">$49</span>
-              </div>
-              
-              {/* Bar background */}
               <div className="h-3 bg-white/10 rounded-full overflow-hidden">
-                {/* 101 users sur 150 = 67% */}
                 <div 
                   className="h-full bg-gradient-to-r from-[var(--primary)] to-[#00E847] rounded-full transition-all duration-1000"
                   style={{ width: '67%' }}
                 />
               </div>
-              
-              {/* Markers */}
               <div className="flex justify-between mt-1">
                 <span className="text-xs text-white/30">0</span>
-                <span className="text-xs text-white/30">50</span>
-                <span className="text-xs text-white/30">100</span>
-                <span className="text-xs text-white/30">150</span>
+                <span className="text-xs text-[var(--primary)] font-bold">101 users</span>
+                <span className="text-xs text-white/40">150</span>
               </div>
             </div>
             
-            <p className="text-xs text-white/40 mt-4">
-              <span className="text-[var(--primary)] font-bold">101 users</span> already joined • Next price increase at 150 users
+            <p className="text-sm text-white/50 mt-5">
+              <span className="text-[var(--primary)] font-bold">49 spots left</span> before lifetime access is gone forever.
             </p>
           </LiquidCard>
         </div>
@@ -452,7 +461,7 @@ export default function PricingPage() {
               disabled={checkoutLoading}
               className="inline-flex items-center gap-2 px-10 py-5 bg-[var(--primary)] text-black font-bold rounded-xl hover:bg-[#00E847] transition-all shadow-[0_0_30px_rgba(0,204,61,0.3)] hover:shadow-[0_0_50px_rgba(0,204,61,0.5)] disabled:opacity-50 relative z-10"
             >
-              {checkoutLoading ? 'Processing...' : (isLifetime ? 'Get Lifetime for $39 →' : 'Start Monthly for $9.99 →')}
+              {checkoutLoading ? 'Processing...' : (isLifetime ? 'Get Lifetime for $29 →' : 'Start Monthly for $9.99 →')}
             </button>
             
             <p className="mt-6 text-xs text-white/30 relative z-10">

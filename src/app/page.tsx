@@ -916,7 +916,7 @@ export default function Home() {
               {isLifetime && (
                 <div className="absolute top-3 right-3 sm:top-4 sm:right-4">
                   <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-[var(--primary)] text-black text-[9px] sm:text-[10px] font-bold">
-                    -20% LAUNCH
+                    LIFETIME DEAL
                   </span>
                 </div>
               )}
@@ -934,11 +934,8 @@ export default function Home() {
 
                 <div className="mb-4 md:mb-6">
                   <div className="flex items-baseline gap-2">
-                    {isLifetime && (
-                      <span className="text-lg sm:text-xl text-white/40 line-through">$49</span>
-                    )}
                     <span className="text-3xl sm:text-4xl font-bold text-[var(--primary)]">
-                      ${isLifetime ? '39' : '9.99'}
+                      ${isLifetime ? '29' : '9.99'}
                     </span>
                     {!isLifetime && <span className="text-white/40 text-sm">/mo</span>}
                   </div>
