@@ -56,6 +56,9 @@ function LiquidCard({
   );
 }
 
+const FREE_SPIN_LIMIT = 3;
+const SPIN_COUNT_KEY = 'niche_roulette_spins';
+
 export default function NicheRoulettePage() {
   const [showSubscribeModal, setShowSubscribeModal] = useState(false);
   const [isSpinning, setIsSpinning] = useState(false);
@@ -72,6 +75,17 @@ export default function NicheRoulettePage() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
   const [hasActiveSubscription, setHasActiveSubscription] = useState<boolean>(false);
 
+  const hasReachedLimit = !hasActiveSubscription && spinCount >= FREE_SPIN_LIMIT;
+  const remainingSpins = Math.max(0, FREE_SPIN_LIMIT - spinCount);
+
+  // Load persisted spin count from localStorage
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(SPIN_COUNT_KEY);
+      if (stored) setSpinCount(parseInt(stored, 10) || 0);
+    } catch {}
+  }, []);
+
   // Check if user is logged in AND has active subscription
   useEffect(() => {
     async function checkAuth() {
@@ -81,7 +95,6 @@ export default function NicheRoulettePage() {
         });
         const data = await response.json();
         setIsLoggedIn(!!data.user);
-        // Vérifier si l'abonnement est actif
         setHasActiveSubscription(data.subscription?.status === 'active');
       } catch {
         setIsLoggedIn(false);
@@ -104,19 +117,17 @@ export default function NicheRoulettePage() {
 
   // Spin the roulette
   const handleSpin = () => {
-    if (isSpinning || niches.length === 0) return;
+    if (isSpinning || niches.length === 0 || hasReachedLimit) return;
     
     setIsSpinning(true);
     setCurrentNiche(null);
     
-    // Filter niches by difficulty if selected
     const filteredNiches = selectedDifficulty === "All" 
       ? niches 
       : niches.filter(n => n.stats?.difficulty === selectedDifficulty);
     
     const nichesToUse = filteredNiches.length > 0 ? filteredNiches : niches;
     
-    // Simulate spinning through niches
     let spins = 0;
     const maxSpins = 15 + Math.floor(Math.random() * 10);
     const spinInterval = setInterval(() => {
@@ -126,11 +137,14 @@ export default function NicheRoulettePage() {
       
       if (spins >= maxSpins) {
         clearInterval(spinInterval);
-        // Final selection
         const finalIndex = Math.floor(Math.random() * nichesToUse.length);
         setCurrentNiche(nichesToUse[finalIndex]);
         setIsSpinning(false);
-        setSpinCount(prev => prev + 1);
+        setSpinCount(prev => {
+          const newCount = prev + 1;
+          try { localStorage.setItem(SPIN_COUNT_KEY, String(newCount)); } catch {}
+          return newCount;
+        });
       }
     }, 100);
   };
@@ -196,23 +210,46 @@ export default function NicheRoulettePage() {
             {/* Loading state - Skeleton avec même dimensions que l'état initial */}
             {loading ? (
               <div className="text-center relative z-10 min-h-[400px] flex flex-col items-center justify-center">
-                {/* Skeleton du bouton SPIN */}
                 <div className="mb-8">
                   <div className="w-44 h-44 md:w-52 md:h-52 rounded-full mx-auto bg-white/5 border-2 border-white/10 animate-pulse flex items-center justify-center">
                     <div className="w-12 h-12 rounded-full bg-white/10" />
                   </div>
                 </div>
-                {/* Skeleton du texte */}
                 <div className="h-4 w-48 bg-white/10 rounded mb-8 animate-pulse" />
-                {/* Skeleton des filtres */}
                 <div className="flex flex-wrap justify-center gap-3">
                   {[1, 2, 3, 4].map((i) => (
                     <div key={i} className="h-10 w-20 bg-white/5 rounded-full animate-pulse" />
                   ))}
                 </div>
               </div>
+            ) : hasReachedLimit && !currentNiche ? (
+              // Limit reached - no result showing
+              <div className="text-center relative z-10 min-h-[400px] flex flex-col items-center justify-center">
+                <div className="mb-8">
+                  <div className="w-44 h-44 md:w-52 md:h-52 rounded-full mx-auto bg-black/60 border-2 border-white/10 flex items-center justify-center">
+                    <div className="flex flex-col items-center">
+                      <span className="text-4xl mb-3">🔒</span>
+                      <span className="text-white/40 font-bold text-lg">0 left</span>
+                    </div>
+                  </div>
+                </div>
+
+                <h3 className="text-xl md:text-2xl font-bold text-white mb-3">
+                  You've used your {FREE_SPIN_LIMIT} free spins
+                </h3>
+                <p className="text-white/50 text-sm mb-8 max-w-md">
+                  Unlock unlimited spins and access all {niches.length}+ validated niches with full analysis, competitor data, and marketing playbooks.
+                </p>
+
+                <Link
+                  href="/pricing"
+                  className="inline-block px-10 py-4 rounded-xl bg-[var(--primary)] text-black font-bold text-lg hover:bg-[#00E847] transition-all shadow-[0_0_30px_rgba(0,204,61,0.3)]"
+                >
+                  Unlock Unlimited Spins →
+                </Link>
+              </div>
             ) : !currentNiche ? (
-              // Initial State - Spin Button - Hauteur fixe pour éviter CLS
+              // Initial State - Spin Button
               <div className="text-center relative z-10 min-h-[400px] flex flex-col items-center justify-center">
                 <div className="mb-8">
                   <button
@@ -226,10 +263,8 @@ export default function NicheRoulettePage() {
                       ${isSpinning ? 'cursor-not-allowed' : 'cursor-pointer'}
                     `}
                   >
-                    {/* Outer glow ring */}
                     <div className="absolute inset-0 rounded-full bg-[var(--primary)]/5 group-hover:bg-[var(--primary)]/10 transition-colors" />
                     
-                    {/* Inner content */}
                     <div className="relative z-10 flex flex-col items-center">
                       {isSpinning ? (
                         <>
@@ -238,7 +273,6 @@ export default function NicheRoulettePage() {
                         </>
                       ) : (
                         <>
-                          {/* Dice icon */}
                           <svg className="w-12 h-12 md:w-14 md:h-14 text-[var(--primary)] mb-3 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                             <rect x="3" y="3" width="18" height="18" rx="3" />
                             <circle cx="8" cy="8" r="1.5" fill="currentColor" />
@@ -255,9 +289,16 @@ export default function NicheRoulettePage() {
                   </button>
                 </div>
 
-                <p className="text-white/50 text-sm mb-8">
+                <p className="text-white/50 text-sm mb-2">
                   {niches.length} validated niches in the wheel
                 </p>
+
+                {!hasActiveSubscription && (
+                  <p className="text-white/30 text-xs mb-8">
+                    {remainingSpins} free spin{remainingSpins !== 1 ? 's' : ''} remaining
+                  </p>
+                )}
+                {hasActiveSubscription && <div className="mb-8" />}
 
                 {/* Filter chips */}
                 <div className="flex flex-wrap justify-center gap-3">
@@ -355,12 +396,21 @@ export default function NicheRoulettePage() {
 
                     {/* Action Buttons */}
                     <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                      <button
-                        onClick={handleSpin}
-                        className="flex-1 px-8 py-4 rounded-xl bg-white/10 border border-white/20 text-white font-bold hover:bg-white/20 transition-all flex items-center justify-center gap-2"
-                      >
-                        🎲 Spin Again
-                      </button>
+                      {hasReachedLimit ? (
+                        <Link
+                          href="/pricing"
+                          className="flex-1 px-8 py-4 rounded-xl bg-[var(--primary)] text-black font-bold hover:bg-[#00E847] transition-all shadow-[0_0_30px_rgba(0,204,61,0.3)] text-center"
+                        >
+                          Unlock Unlimited Spins →
+                        </Link>
+                      ) : (
+                        <button
+                          onClick={handleSpin}
+                          className="flex-1 px-8 py-4 rounded-xl bg-white/10 border border-white/20 text-white font-bold hover:bg-white/20 transition-all flex items-center justify-center gap-2"
+                        >
+                          🎲 Spin Again {!hasActiveSubscription && <span className="text-white/40 text-sm ml-1">({remainingSpins} left)</span>}
+                        </button>
+                      )}
                       
                       {hasActiveSubscription && (
                         <Link
