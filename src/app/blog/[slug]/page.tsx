@@ -2,6 +2,7 @@ import { Metadata } from "next"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
+import ReactMarkdown from "react-markdown"
 import { fetchPostBySlug, fetchAllSlugs } from "../data"
 
 // Generate static paths for all posts
@@ -138,8 +139,12 @@ export default async function BlogPostPage({
                 {publishedDate && (
                   <span className="text-sm text-white/40">{publishedDate}</span>
                 )}
-                <span className="text-sm text-white/30">·</span>
-                <span className="text-sm text-white/40">{post.views} views</span>
+                {post.views > 0 && (
+                  <>
+                    <span className="text-sm text-white/30">·</span>
+                    <span className="text-sm text-white/40">{post.views} views</span>
+                  </>
+                )}
               </div>
 
               {/* Title */}
@@ -180,8 +185,8 @@ export default async function BlogPostPage({
             )}
 
             {/* Content */}
-            <div 
-              className="prose prose-invert prose-lg max-w-none
+            {post.source === 'octoboost' ? (
+              <div className="prose prose-invert prose-lg max-w-none
                 prose-headings:font-bold prose-headings:text-white
                 prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4
                 prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
@@ -192,9 +197,26 @@ export default async function BlogPostPage({
                 prose-li:marker:text-[var(--primary)]
                 prose-blockquote:border-[var(--primary)] prose-blockquote:text-white/60
                 prose-code:bg-white/10 prose-code:px-1 prose-code:py-0.5 prose-code:rounded
-                prose-pre:bg-[#0a0a0a] prose-pre:border prose-pre:border-white/10"
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
+                prose-pre:bg-[#0a0a0a] prose-pre:border prose-pre:border-white/10">
+                <ReactMarkdown>{post.content}</ReactMarkdown>
+              </div>
+            ) : (
+              <div 
+                className="prose prose-invert prose-lg max-w-none
+                  prose-headings:font-bold prose-headings:text-white
+                  prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4
+                  prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
+                  prose-p:text-white/70 prose-p:leading-relaxed
+                  prose-a:text-[var(--primary)] prose-a:no-underline hover:prose-a:underline
+                  prose-strong:text-white
+                  prose-ul:text-white/70 prose-ol:text-white/70
+                  prose-li:marker:text-[var(--primary)]
+                  prose-blockquote:border-[var(--primary)] prose-blockquote:text-white/60
+                  prose-code:bg-white/10 prose-code:px-1 prose-code:py-0.5 prose-code:rounded
+                  prose-pre:bg-[#0a0a0a] prose-pre:border prose-pre:border-white/10"
+                dangerouslySetInnerHTML={{ __html: post.content }}
+              />
+            )}
 
             {/* Tags */}
             {post.tags && post.tags.length > 0 && (
