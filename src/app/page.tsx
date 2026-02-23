@@ -169,7 +169,7 @@ function TestimonialsSection() {
           Loved by <span className="text-flashy-green">Builders</span> Worldwide
         </h2>
         <p className="text-base md:text-lg text-white/50 max-w-xl mx-auto mb-6">
-          Join 100+ developers and entrepreneurs finding profitable niches with Niches Hunter
+          Join 110+ developers and entrepreneurs finding profitable niches with Niches Hunter
         </p>
         {/* Product Hunt Badge */}
         <a 
@@ -549,7 +549,7 @@ export default function Home() {
             <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-x-4 gap-y-2 text-xs text-[rgba(255,255,255,0.6)] font-mono">
               <span className="flex items-center gap-1.5">
                 <span className="text-[var(--primary)]">●</span>
-                <span className="font-bold text-white">100+</span> builders
+                <span className="font-bold text-white">110+</span> builders
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="text-[var(--primary)]">●</span>
@@ -1237,7 +1237,7 @@ export default function Home() {
               <div className="mt-8 text-center">
                 <div className="flex justify-center gap-1 mb-2 text-[var(--primary)] text-xs">★★★★★</div>
                 <p className="text-[10px] text-white/30">
-                  Join <span className="text-white/60 font-medium">100+ indie devs</span> already hunting niches. <br />
+                  Join <span className="text-white/60 font-medium">110+ indie devs</span> already hunting niches. <br />
                   <span className="opacity-50">100% free • Unsubscribe anytime • No spam ever</span>
                 </p>
               </div>
