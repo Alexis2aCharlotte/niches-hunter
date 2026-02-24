@@ -63,6 +63,7 @@ export async function POST(request: NextRequest) {
         topup_id: topup.id,
         user_id: user.id,
         amount_cents: String(amountCents),
+        customer_email: user.email || '',
       },
       success_url: `${appUrl}/developer?topup=success`,
       cancel_url: `${appUrl}/developer?topup=cancelled`,

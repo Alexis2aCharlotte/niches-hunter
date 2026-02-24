@@ -11,7 +11,7 @@ function getResend(): Resend {
   return resend
 }
 
-const FROM_EMAIL = 'Niches Hunter API <api@nicheshunter.app>'
+const FROM_EMAIL = 'Niches Hunter <hello@nicheshunter.app>'
 
 export async function sendDeveloperWelcomeEmail(email: string, balanceCents: number) {
   const balance = (balanceCents / 100).toFixed(2)
