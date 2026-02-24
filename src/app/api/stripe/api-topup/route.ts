@@ -51,8 +51,8 @@ export async function POST(request: NextRequest) {
             currency: 'usd',
             unit_amount: amountCents,
             product_data: {
-              name: `API Credits - $${(amountCents / 100).toFixed(0)}`,
-              description: `${amountCents} credits for Niches Hunter API`,
+              name: 'Niches Hunter - API Top Up',
+              description: `$${(amountCents / 100).toFixed(0)} in API credits`,
             },
           },
           quantity: 1,
