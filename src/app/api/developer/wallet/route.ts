@@ -69,6 +69,17 @@ export async function GET(request: NextRequest) {
           .upsert({ user_id: user.id, email: user.email, source: 'signup' }, { onConflict: 'user_id' })
 
         sendDeveloperWelcomeEmail(user.email, initialBalance).catch(console.error)
+
+        // Telegram notification
+        const tgToken = process.env.TELEGRAM_BOT_TOKEN
+        const tgChat = process.env.TELEGRAM_CHAT_ID
+        if (tgToken && tgChat) {
+          fetch(`https://api.telegram.org/bot${tgToken}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: tgChat, text: 'New API account created ⚙️' }),
+          }).catch(console.error)
+        }
       }
     }
 
