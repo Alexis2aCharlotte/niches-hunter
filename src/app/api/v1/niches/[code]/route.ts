@@ -12,7 +12,7 @@ export async function GET(
 
   const { data: niche, error } = await supabaseAdmin
     .from('niches')
-    .select('*')
+    .select('display_code, title, category, tags, score, opportunity, gap, move, stats, market_analysis, key_learnings, improvements, risks, tech_stack, marketing_strategies, monetization, trending, aso_optimization, source_type, published_at')
     .eq('display_code', code)
     .single()
 

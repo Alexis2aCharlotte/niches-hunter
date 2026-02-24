@@ -520,7 +520,7 @@ export default function DeveloperPage() {
                   <thead>
                     <tr className="border-b border-white/10 text-white/40 text-xs uppercase tracking-wider">
                       <th className="text-left pb-3 font-medium">Endpoint</th>
-                      <th className="text-right pb-3 font-medium">Cost</th>
+                      <th className="text-right pb-3 font-medium">Credits</th>
                       <th className="text-right pb-3 font-medium">Date</th>
                     </tr>
                   </thead>
@@ -528,7 +528,7 @@ export default function DeveloperPage() {
                     {recentCalls.map((call, i) => (
                       <tr key={i} className="border-b border-white/5 hover:bg-white/[0.02]">
                         <td className="py-3 font-mono text-white/70">{call.endpoint}</td>
-                        <td className="py-3 text-right text-[var(--primary)]">${(call.cost_cents / 100).toFixed(2)}</td>
+                        <td className="py-3 text-right text-[var(--primary)]">{call.cost_cents} credits</td>
                         <td className="py-3 text-right text-white/40">
                           {new Date(call.created_at).toLocaleString('en-US', {
                             month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',

@@ -12,12 +12,8 @@ export function hashApiKey(key: string): string {
 }
 
 export function generateApiKey(): string {
-  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789'
-  let key = 'nh_live_'
-  for (let i = 0; i < 32; i++) {
-    key += chars[Math.floor(Math.random() * chars.length)]
-  }
-  return key
+  const bytes = crypto.randomBytes(24)
+  return 'nh_live_' + bytes.toString('base64url')
 }
 
 const ENDPOINT_COSTS: Record<string, number> = {
