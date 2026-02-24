@@ -79,8 +79,8 @@ export async function POST(request: Request) {
     
     // Email configuration
     const RESEND_API_KEY = process.env.RESEND_API_KEY
-    const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'contact@nicheshunter.com'
-    const EMAIL_FROM_ADDRESS = process.env.EMAIL_FROM || 'onboarding@resend.dev'
+    const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'contact@nicheshunter.app'
+    const EMAIL_FROM_ADDRESS = process.env.EMAIL_FROM || 'hello@nicheshunter.app'
     const EMAIL_FROM = `Niches Hunter <${EMAIL_FROM_ADDRESS}>`
 
     // Format payment method
