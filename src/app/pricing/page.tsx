@@ -114,6 +114,14 @@ export default function PricingPage() {
     {
       q: "Do you offer refunds?",
       a: "Yes, we offer a 7-day money-back guarantee. If you're not satisfied, contact us within 7 days of your purchase."
+    },
+    {
+      q: "What is the Developer API?",
+      a: "The Developer API gives you programmatic access to our niche data, App Store rankings, and scored opportunities via REST endpoints. It's pay-as-you-go: you load credits starting from $10. Perfect for developers who want to integrate our data into their own tools or apps."
+    },
+    {
+      q: "Can I use the API if I'm already a Pro subscriber?",
+      a: "Yes! If you're a monthly subscriber, you'll get $5 in free API credits when you activate your API access. All new developer accounts receive $1 in free credits to get started."
     }
   ]
 
@@ -165,10 +173,10 @@ export default function PricingPage() {
 
       {/* Pricing Cards */}
       <section className="relative px-6 pb-20">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-6">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-6">
           
           {/* Free Plan */}
-          <LiquidCard className="p-8 md:p-10 relative overflow-hidden">
+          <LiquidCard className="p-8 md:p-10 relative overflow-hidden flex flex-col h-full">
             <div className="mb-8">
               <h3 className="text-2xl font-bold mb-2">Free</h3>
               <p className="text-white/50 text-sm">Perfect to get started</p>
@@ -204,16 +212,18 @@ export default function PricingPage() {
               ))}
             </div>
 
-            <Link
-              href="/"
-              className="block w-full py-4 text-center rounded-xl bg-white/10 text-white font-bold hover:bg-white/15 transition-all"
-            >
-              Get Started Free
-            </Link>
+            <div className="mt-auto pt-6">
+              <Link
+                href="/"
+                className="block w-full py-4 text-center rounded-xl bg-white/10 text-white font-bold hover:bg-white/15 transition-all"
+              >
+                Get Started Free
+              </Link>
+            </div>
           </LiquidCard>
 
           {/* Pro Plan */}
-          <LiquidCard className="p-8 md:p-10 relative overflow-hidden border-2 border-[var(--primary)]/30">
+          <LiquidCard className="p-8 md:p-10 relative overflow-hidden border-2 border-[var(--primary)]/30 flex flex-col h-full">
             {/* Glow effect - Hidden on mobile */}
             <div className="absolute top-0 right-0 w-40 h-40 bg-[var(--primary)]/20 blur-[80px] rounded-full pointer-events-none hidden md:block" />
             
@@ -269,28 +279,86 @@ export default function PricingPage() {
               ))}
             </div>
 
-            <button
-              onClick={handleCheckout}
-              disabled={checkoutLoading}
-              className="block w-full py-4 text-center rounded-xl bg-[var(--primary)] text-black font-bold hover:bg-[#00E847] transition-all mb-6 shadow-[0_0_30px_rgba(0,204,61,0.3)] hover:shadow-[0_0_40px_rgba(0,204,61,0.5)] disabled:opacity-50"
-            >
-              {checkoutLoading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
-                  Processing...
-                </span>
-              ) : (
-                isLifetime ? 'Get Lifetime Access →' : 'Start Monthly →'
-              )}
-            </button>
+            <div className="mt-auto pt-6">
+              <p className="text-sm text-white/40 text-center mb-6">
+                + {features.proOthers.join(' • ')}
+              </p>
 
-            {/* Autres features en ligne */}
-            <p className="text-sm text-white/40 text-center">
-              + {features.proOthers.join(' • ')}
-            </p>
+              <button
+                onClick={handleCheckout}
+                disabled={checkoutLoading}
+                className="block w-full py-4 text-center rounded-xl bg-[var(--primary)] text-black font-bold hover:bg-[#00E847] transition-all shadow-[0_0_30px_rgba(0,204,61,0.3)] hover:shadow-[0_0_40px_rgba(0,204,61,0.5)] disabled:opacity-50"
+              >
+                {checkoutLoading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    Processing...
+                  </span>
+                ) : (
+                  isLifetime ? 'Get Lifetime Access →' : 'Start Monthly →'
+                )}
+              </button>
+            </div>
+          </LiquidCard>
+
+          {/* Developer API Plan */}
+          <LiquidCard className="p-8 md:p-10 relative overflow-hidden flex flex-col h-full">
+            <div className="absolute top-4 right-4">
+              <span className="px-3 py-1 rounded-full bg-[var(--primary)]/20 text-[var(--primary)] text-xs font-bold">
+                API
+              </span>
+            </div>
+
+            <div className="mb-6">
+              <h3 className="text-2xl font-bold mb-2 flex items-center gap-2">
+                Developer API
+              </h3>
+              <p className="text-white/50 text-sm">
+                Access raw data, pay as you go
+              </p>
+            </div>
+
+            <div className="mb-6">
+              <div className="flex items-baseline gap-2">
+                <span className="text-2xl font-bold text-[var(--primary)]">
+                  Pay as you go
+                </span>
+              </div>
+            </div>
+
+            <div className="space-y-3 mb-6">
+              {[
+                { name: 'REST API access', description: '' },
+                { name: '160+ niches data', description: 'Full analysis & insights' },
+                { name: 'App Store rankings', description: 'Multi-country data' },
+                { name: 'Scored opportunities', description: 'Filtered & ranked apps' },
+                { name: 'Usage dashboard', description: 'Track your consumption' },
+              ].map((feature, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <span className="text-[var(--primary)] text-lg mt-0.5">✓</span>
+                  <div>
+                    <span className="font-bold text-white">{feature.name}</span>
+                    {feature.description && <span className="text-white/50"> - {feature.description}</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-auto pt-6">
+              <p className="text-sm text-white/40 text-center mb-6">
+                + Full documentation • Rate limits • Credit system
+              </p>
+
+              <Link
+                href="/developer"
+                className="block w-full py-4 text-center rounded-xl bg-white/10 text-white font-bold hover:bg-white/15 transition-all"
+              >
+                Get API Key →
+              </Link>
+            </div>
           </LiquidCard>
         </div>
 
@@ -384,32 +452,38 @@ export default function PricingPage() {
             Compare <span className="text-flashy-green">Plans</span>
           </h2>
 
-          <LiquidCard className="overflow-hidden">
+          <LiquidCard className="overflow-hidden overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-white/10">
                   <th className="text-left p-6 text-white/50 font-medium">Features</th>
                   <th className="p-6 text-center font-bold">Free</th>
                   <th className="p-6 text-center font-bold text-[var(--primary)]">Pro</th>
+                  <th className="p-6 text-center font-bold text-[var(--primary)]">Developer API</th>
                 </tr>
               </thead>
               <tbody>
                 {[
-                  { feature: 'Daily newsletter', free: 'On trend', pro: 'Full analysis' },
-                  { feature: 'Niche Roulette', free: '✓', pro: '✓' },
-                  { feature: 'Revenue Estimator', free: '✓', pro: '✓' },
-                  { feature: '99+ Niches Analyzed', free: '—', pro: '✓' },
-                  { feature: 'Save & track niches', free: '—', pro: '✓' },
-                  { feature: 'TikTok Spot', free: '—', pro: '✓' },
-                  { feature: 'AI Niche Validator', free: '—', pro: 'Unlimited' },
-                  { feature: 'Full niche database', free: '—', pro: '✓' },
-                  { feature: 'Competitor deep-dive', free: '—', pro: '✓' },
-                  { feature: 'Support', free: 'Community', pro: 'Priority' },
+                  { feature: 'Daily newsletter', free: 'On trend', pro: 'Full analysis', dev: 'On trend' },
+                  { feature: 'Niche Roulette', free: '✓', pro: '✓', dev: '✗' },
+                  { feature: 'Revenue Estimator', free: '✓', pro: '✓', dev: '✗' },
+                  { feature: '160+ Niches Analyzed', free: '✗', pro: '✓', dev: 'Via API' },
+                  { feature: 'Save & track niches', free: '✗', pro: '✓', dev: '✗' },
+                  { feature: 'TikTok Spot', free: '✗', pro: '✓', dev: 'Via API' },
+                  { feature: 'AI Niche Validator', free: '✗', pro: 'Unlimited', dev: '✗' },
+                  { feature: 'Full niche database', free: '✗', pro: '✓', dev: 'Via API' },
+                  { feature: 'App Store rankings', free: '✗', pro: '✗', dev: 'Via API' },
+                  { feature: 'Scored opportunities', free: '✗', pro: '✗', dev: 'Via API' },
+                  { feature: 'REST API access', free: '✗', pro: '✗', dev: '✓' },
+                  { feature: 'Usage dashboard', free: '✗', pro: '✗', dev: '✓' },
+                  { feature: 'Competitor deep-dive', free: '✗', pro: '✓', dev: '✗' },
+                  { feature: 'Support', free: 'Community', pro: 'Priority', dev: 'Documentation' },
                 ].map((row, i) => (
                   <tr key={i} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                     <td className="p-5 text-white/70">{row.feature}</td>
                     <td className="p-5 text-center text-white/50">{row.free}</td>
                     <td className="p-5 text-center text-[var(--primary)] font-medium">{row.pro}</td>
+                    <td className="p-5 text-center text-[var(--primary)] font-medium">{row.dev}</td>
                   </tr>
                 ))}
               </tbody>

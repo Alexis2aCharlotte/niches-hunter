@@ -850,7 +850,7 @@ export default function Home() {
           </div>
 
           {/* Pricing Cards - Mobile Stack, Desktop Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             
             {/* Free Plan */}
             <LiquidCard animate="reveal-up" className="p-5 sm:p-6 md:p-8 relative overflow-hidden">
@@ -968,6 +968,52 @@ export default function Home() {
                     { name: 'AI Niche Validator (unlimited)', included: true },
                     { name: 'Daily newsletter - Full analysis', included: true },
                     { name: 'Competitor deep-dive', included: true },
+                  ].map((feature, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-[var(--primary)]/20 flex items-center justify-center shrink-0">
+                        <svg className="w-2.5 h-2.5 text-[var(--primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <span className="text-xs sm:text-sm text-white/80">{feature.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </LiquidCard>
+
+            {/* Developer API Plan */}
+            <LiquidCard animate={isMobile ? "" : "reveal-up"} className="p-5 sm:p-6 md:p-8 relative overflow-hidden" style={{ transitionDelay: '200ms' }}>
+              <div className="flex flex-col h-full">
+                <div className="mb-4 md:mb-6">
+                  <h3 className="text-lg sm:text-xl font-bold mb-1 flex items-center gap-2">
+                    Developer API
+                    <span className="text-[8px] px-1.5 py-0.5 rounded bg-[var(--primary)]/20 text-[var(--primary)] font-bold">API</span>
+                  </h3>
+                  <p className="text-white/50 text-xs sm:text-sm">Access raw data, pay as you go</p>
+                </div>
+
+                <div className="mb-4 md:mb-6">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-xl sm:text-2xl font-bold">Pay as you go</span>
+                  </div>
+                </div>
+
+                <Link
+                  href="/developer"
+                  className="block w-full py-3 sm:py-3.5 text-center rounded-xl bg-white/10 text-white text-sm font-bold hover:bg-white/15 transition-all mb-4 md:mb-6"
+                >
+                  Get API Key →
+                </Link>
+
+                <div className="space-y-2 sm:space-y-2.5">
+                  {[
+                    { name: 'Full niche database via API', included: true },
+                    { name: 'App Store rankings', included: true },
+                    { name: 'Scored opportunities', included: true },
+                    { name: 'TikTok Spot data', included: true },
+                    { name: 'REST API access', included: true },
+                    { name: 'Usage dashboard', included: true },
                   ].map((feature, i) => (
                     <div key={i} className="flex items-center gap-2">
                       <div className="w-4 h-4 rounded-full bg-[var(--primary)]/20 flex items-center justify-center shrink-0">

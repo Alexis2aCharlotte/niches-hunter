@@ -412,6 +412,35 @@ export default function AccountPage() {
             </LiquidCard>
           </Link>
 
+          {/* Developer API */}
+          <Link href="/developer" className="block mt-6">
+            <LiquidCard className="p-8 hover:bg-white/[0.03] transition-all group cursor-pointer">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-5">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--primary)]/20 to-emerald-500/20 flex items-center justify-center border border-[var(--primary)]/20">
+                    <span className="text-2xl font-bold text-[var(--primary)]">{'</>'}</span>
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold mb-1 group-hover:text-[var(--primary)] transition-colors">
+                      Developer API
+                    </h2>
+                    <p className="text-white/40 text-sm">
+                      Manage your API keys, credits and usage
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="px-3 py-1.5 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] text-xs font-medium border border-[var(--primary)]/20">
+                    API
+                  </span>
+                  <svg className="w-5 h-5 text-white/30 group-hover:text-[var(--primary)] group-hover:translate-x-1 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M9 18l6-6-6-6"/>
+                  </svg>
+                </div>
+              </div>
+            </LiquidCard>
+          </Link>
+
           {/* Feedback & Affiliate */}
           <div className="grid md:grid-cols-2 gap-6 mt-6">
             {/* Feedback */}

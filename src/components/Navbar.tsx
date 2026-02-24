@@ -158,6 +158,22 @@ export default function Navbar() {
                   </>
                 )}
                 <div className="px-3 py-2">
+                  <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest px-2">Developers</span>
+                </div>
+                <Link 
+                  href="/developer"
+                  className="flex items-center gap-3 mx-2 px-3 py-2.5 rounded-xl hover:bg-[var(--primary)]/10 text-white/80 hover:text-white transition-all"
+                >
+                  <div>
+                    <div className="text-sm font-semibold flex items-center gap-2">
+                      Developer API
+                      <span className="text-[8px] px-1.5 py-0.5 rounded bg-[var(--primary)]/20 text-[var(--primary)] font-bold">API</span>
+                    </div>
+                    <div className="text-[10px] text-white/40">Access raw data via REST</div>
+                  </div>
+                </Link>
+                <div className="my-2 mx-4 h-px bg-white/[0.06]" />
+                <div className="px-3 py-2">
                   <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest px-2">Explore</span>
                 </div>
                 <Link href="/blog" className="block mx-2 px-3 py-2.5 rounded-xl hover:bg-[var(--primary)]/10 text-white/80 hover:text-white transition-all">
@@ -283,6 +299,9 @@ export default function Navbar() {
                 </Link>
                 <Link href="/affiliate" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[var(--primary)] transition-colors flex items-center justify-center gap-2 text-lg">
                   Affiliate <span className="text-[10px] px-2 py-0.5 rounded bg-green-500/20 text-green-400">40%</span>
+                </Link>
+                <Link href="/developer" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-[var(--primary)] transition-colors flex items-center justify-center gap-2 text-lg">
+                  Developer API <span className="text-[10px] px-2 py-0.5 rounded bg-[var(--primary)]/20 text-[var(--primary)]">API</span>
                 </Link>
               </div>
             </div>

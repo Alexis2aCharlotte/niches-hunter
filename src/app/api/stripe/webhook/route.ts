@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import { createClient } from '@supabase/supabase-js'
 import Stripe from 'stripe'
+import { sendTopupConfirmationEmail } from '@/lib/email'
 
 // Client Supabase Admin pour bypasser RLS
 const supabaseAdmin = createClient(
@@ -43,13 +44,60 @@ export async function POST(request: NextRequest) {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session
-        
-        // Récupérer les infos du client
+
+        // --- Handle API top-up ---
+        if (session.metadata?.type === 'api_topup') {
+          const topupId = session.metadata.topup_id
+          const userId = session.metadata.user_id
+          const amountCents = parseInt(session.metadata.amount_cents || '0')
+
+          console.log('API top-up completed:', { topupId, userId, amountCents })
+
+          await supabaseAdmin
+            .from('api_topups')
+            .update({
+              status: 'completed',
+              stripe_payment_id: session.payment_intent as string,
+            })
+            .eq('id', topupId)
+
+          const { data: wallet } = await supabaseAdmin
+            .from('api_wallets')
+            .select('id, balance_cents')
+            .eq('user_id', userId)
+            .single()
+
+          let newBalance = amountCents
+          if (wallet) {
+            newBalance = wallet.balance_cents + amountCents
+            await supabaseAdmin
+              .from('api_wallets')
+              .update({
+                balance_cents: newBalance,
+                updated_at: new Date().toISOString(),
+              })
+              .eq('user_id', userId)
+          } else {
+            await supabaseAdmin.from('api_wallets').insert({
+              user_id: userId,
+              balance_cents: amountCents,
+            })
+          }
+
+          // Send confirmation email
+          const customerEmail = session.customer_details?.email || session.metadata?.customer_email
+          if (customerEmail) {
+            sendTopupConfirmationEmail(customerEmail, amountCents, newBalance).catch(console.error)
+          }
+          break
+        }
+
+        // --- Handle regular checkout (subscription / lifetime) ---
         const customerEmail = session.customer_details?.email
         const customerId = session.customer as string | null
         const subscriptionId = session.subscription as string | null
         const paymentIntentId = session.payment_intent as string | null
-        const mode = session.mode // 'payment' pour lifetime, 'subscription' pour monthly
+        const mode = session.mode
         const isLifetime = mode === 'payment'
 
         console.log('Checkout completed:', { 
@@ -61,13 +109,11 @@ export async function POST(request: NextRequest) {
           isLifetime 
         })
 
-        // Vérifier qu'on a un email et un customer ID
         if (!customerEmail || !customerId) {
           console.error('No email or customer ID found in session')
           break
         }
 
-        // Récupérer les détails de la subscription depuis Stripe (si subscription)
         let periodStart = new Date().toISOString()
         let periodEnd: string | null = null
         
@@ -82,7 +128,6 @@ export async function POST(request: NextRequest) {
           console.log('Subscription periods:', { periodStartTs, periodEndTs, periodStart, periodEnd })
         }
 
-        // Créer/mettre à jour dans la table customers
         const customerData = {
           email: customerEmail,
           stripe_customer_id: customerId,
@@ -95,8 +140,6 @@ export async function POST(request: NextRequest) {
 
         console.log('Upserting customer data:', customerData)
 
-        // Upsert par email (clé unique)
-        // Le trigger PostgreSQL synchronise automatiquement vers paid_newsletter_subscribers
         const { error: customerError } = await supabaseAdmin
           .from('customers')
           .upsert(customerData, { onConflict: 'email' })
@@ -122,7 +165,6 @@ export async function POST(request: NextRequest) {
         
         console.log('Subscription event:', event.type, subscription.id, subscription.status, subscription.customer)
 
-        // Mettre à jour le customer par stripe_customer_id
         const { error } = await supabaseAdmin
           .from('customers')
           .update({
