@@ -65,6 +65,9 @@ export async function POST(request: NextRequest) {
         amount_cents: String(amountCents),
         customer_email: user.email || '',
       },
+      payment_intent_data: {
+        description: 'Niches Hunter - API Top Up',
+      },
       success_url: `${appUrl}/developer?topup=success`,
       cancel_url: `${appUrl}/developer?topup=cancelled`,
       customer_email: user.email,
