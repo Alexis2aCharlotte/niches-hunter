@@ -428,18 +428,18 @@ export default function PricingPage() {
               <div className="h-3 bg-white/10 rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-gradient-to-r from-[var(--primary)] to-[#00E847] rounded-full transition-all duration-1000"
-                  style={{ width: '73%' }}
+                  style={{ width: '78%' }}
                 />
               </div>
               <div className="flex justify-between mt-1">
                 <span className="text-xs text-white/30">0</span>
-                <span className="text-xs text-[var(--primary)] font-bold">110 users</span>
+                <span className="text-xs text-[var(--primary)] font-bold">117 users</span>
                 <span className="text-xs text-white/40">150</span>
               </div>
             </div>
             
             <p className="text-sm text-white/50 mt-5">
-              <span className="text-[var(--primary)] font-bold">40 spots left</span> before lifetime access is gone forever.
+              <span className="text-[var(--primary)] font-bold">33 spots left</span> before lifetime access is gone forever.
             </p>
           </LiquidCard>
         </div>
@@ -527,7 +527,7 @@ export default function PricingPage() {
               Ready to Find Your Next <span className="text-flashy-green">Winning Niche</span>?
             </h2>
             <p className="text-white/50 mb-8 relative z-10">
-              Join 110+ indie developers already hunting profitable iOS niches.
+              Join 117+ indie developers already hunting profitable iOS niches.
             </p>
             
             <button
