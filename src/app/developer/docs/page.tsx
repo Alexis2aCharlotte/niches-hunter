@@ -10,7 +10,7 @@ const endpoints = [
     method: 'GET',
     path: '/api/v1/niches',
     description: 'List all analyzed niches with pagination.',
-    cost: '5 credits',
+    cost: '20 credits',
     params: [
       { name: 'page', type: 'integer', desc: 'Page number (default: 1)' },
       { name: 'category', type: 'string', desc: 'Filter by category name' },
@@ -42,7 +42,7 @@ const endpoints = [
     method: 'GET',
     path: '/api/v1/niches/:code',
     description: 'Get full details for a specific niche including market analysis, risks, tech stack, and marketing strategies.',
-    cost: '50 credits',
+    cost: '85 credits',
     params: [
       { name: 'code', type: 'string', desc: 'Niche display code (e.g. 0042)' },
     ],
@@ -67,7 +67,7 @@ const endpoints = [
     method: 'GET',
     path: '/api/v1/opportunities',
     description: 'List App Store opportunities detected by our scraper. Ranked by score.',
-    cost: '5 credits',
+    cost: '20 credits',
     params: [
       { name: 'page', type: 'integer', desc: 'Page number (default: 1)' },
       { name: 'category', type: 'string', desc: 'Filter by App Store category' },

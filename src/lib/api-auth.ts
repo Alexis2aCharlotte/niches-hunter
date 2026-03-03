@@ -17,13 +17,13 @@ export function generateApiKey(): string {
 }
 
 const ENDPOINT_COSTS: Record<string, number> = {
-  '/api/v1/niches': 5,
-  '/api/v1/opportunities': 5,
+  '/api/v1/niches': 20,
+  '/api/v1/opportunities': 20,
   '/api/v1/rankings': 3,
   '/api/v1/categories': 1,
 }
 
-const NICHE_DETAIL_COST = 50
+const NICHE_DETAIL_COST = 85
 const SEARCH_COST = 10
 
 export function getEndpointCost(pathname: string, hasSearch = false): number {
