@@ -15,6 +15,7 @@ const endpoints = [
       { name: 'page', type: 'integer', desc: 'Page number (default: 1)' },
       { name: 'category', type: 'string', desc: 'Filter by category name' },
       { name: 'min_score', type: 'integer', desc: 'Minimum niche score' },
+      { name: 'search', type: 'string', desc: 'Search by keyword in title (costs 10 credits)' },
     ],
     response: `{
   "data": [
@@ -72,6 +73,7 @@ const endpoints = [
       { name: 'category', type: 'string', desc: 'Filter by App Store category' },
       { name: 'min_score', type: 'number', desc: 'Minimum opportunity score' },
       { name: 'country', type: 'string', desc: 'Filter by country code (e.g. US, FR)' },
+      { name: 'search', type: 'string', desc: 'Search by keyword in app name (costs 10 credits)' },
     ],
     response: `{
   "data": [
@@ -100,6 +102,7 @@ const endpoints = [
       { name: 'category', type: 'string', desc: 'App Store category name' },
       { name: 'date', type: 'string', desc: 'Filter by date (YYYY-MM-DD)' },
       { name: 'limit', type: 'integer', desc: 'Max results (default: 50, max: 100)' },
+      { name: 'search', type: 'string', desc: 'Search by keyword in app name (costs 10 credits)' },
     ],
     response: `{
   "data": [

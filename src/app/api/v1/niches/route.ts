@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
   const page = Math.max(1, parseInt(searchParams.get('page') || '1'))
   const category = searchParams.get('category')
   const minScore = searchParams.get('min_score')
+  const search = searchParams.get('search')
   const perPage = 20
 
   let query = supabaseAdmin
@@ -18,6 +19,7 @@ export async function GET(request: NextRequest) {
 
   if (category) query = query.eq('category', category)
   if (minScore) query = query.gte('score', parseInt(minScore))
+  if (search) query = query.ilike('title', `%${search}%`)
 
   query = query.range((page - 1) * perPage, page * perPage - 1)
 
@@ -33,7 +35,7 @@ export async function GET(request: NextRequest) {
     .eq('user_id', auth.userId)
     .single()
 
-  const cost = getEndpointCost(request.nextUrl.pathname)
+  const cost = getEndpointCost(request.nextUrl.pathname, !!search)
   const response = NextResponse.json({
     data: niches || [],
     pagination: {

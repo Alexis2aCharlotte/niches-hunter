@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
   const country = searchParams.get('country')
   const category = searchParams.get('category')
   const date = searchParams.get('date')
+  const search = searchParams.get('search')
   const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '50')))
 
   if (!country && !category) {
@@ -27,6 +28,7 @@ export async function GET(request: NextRequest) {
   if (country) query = query.eq('country', country)
   if (category) query = query.eq('category_name', category)
   if (date) query = query.eq('run_date', date)
+  if (search) query = query.ilike('name', `%${search}%`)
 
   const { data, error } = await query
 
@@ -40,7 +42,7 @@ export async function GET(request: NextRequest) {
     .eq('user_id', auth.userId)
     .single()
 
-  const cost = getEndpointCost(request.nextUrl.pathname)
+  const cost = getEndpointCost(request.nextUrl.pathname, !!search)
   const response = NextResponse.json({
     data: data || [],
     count: data?.length || 0,

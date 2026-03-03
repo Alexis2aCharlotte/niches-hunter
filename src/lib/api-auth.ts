@@ -24,9 +24,11 @@ const ENDPOINT_COSTS: Record<string, number> = {
 }
 
 const NICHE_DETAIL_COST = 50
+const SEARCH_COST = 10
 
-export function getEndpointCost(pathname: string): number {
+export function getEndpointCost(pathname: string, hasSearch = false): number {
   if (/^\/api\/v1\/niches\/[^/]+$/.test(pathname)) return NICHE_DETAIL_COST
+  if (hasSearch) return SEARCH_COST
   return ENDPOINT_COSTS[pathname] || 5
 }
 
@@ -88,7 +90,8 @@ export async function authenticateApiRequest(
     )
   }
 
-  const cost = getEndpointCost(request.nextUrl.pathname)
+  const hasSearch = !!request.nextUrl.searchParams.get('search')
+  const cost = getEndpointCost(request.nextUrl.pathname, hasSearch)
 
   const { data: wallet } = await supabaseAdmin
     .from('api_wallets')

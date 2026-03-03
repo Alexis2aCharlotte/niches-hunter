@@ -335,6 +335,7 @@ export default function PricingPage() {
                 { name: '160+ niches data', description: 'Full analysis & insights' },
                 { name: 'App Store rankings', description: 'Multi-country data' },
                 { name: 'Scored opportunities', description: 'Filtered & ranked apps' },
+                { name: 'Keyword search', description: 'Search niches & apps by name' },
                 { name: 'Usage dashboard', description: 'Track your consumption' },
               ].map((feature, i) => (
                 <div key={i} className="flex items-start gap-3">
@@ -474,6 +475,7 @@ export default function PricingPage() {
                   { feature: 'Full niche database', free: '✗', pro: '✓', dev: 'Via API' },
                   { feature: 'App Store rankings', free: '✗', pro: '✗', dev: 'Via API' },
                   { feature: 'Scored opportunities', free: '✗', pro: '✗', dev: 'Via API' },
+                  { feature: 'Keyword search', free: '✗', pro: '✗', dev: 'Via API' },
                   { feature: 'REST API access', free: '✗', pro: '✗', dev: '✓' },
                   { feature: 'Usage dashboard', free: '✗', pro: '✗', dev: '✓' },
                   { feature: 'Competitor deep-dive', free: '✗', pro: '✓', dev: '✗' },

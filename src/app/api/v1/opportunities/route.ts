@@ -10,6 +10,7 @@ export async function GET(request: NextRequest) {
   const category = searchParams.get('category')
   const minScore = searchParams.get('min_score')
   const country = searchParams.get('country')
+  const search = searchParams.get('search')
   const perPage = 50
 
   let query = supabaseAdmin
@@ -20,6 +21,7 @@ export async function GET(request: NextRequest) {
   if (category) query = query.eq('category_name', category)
   if (minScore) query = query.gte('total_score', parseFloat(minScore))
   if (country) query = query.contains('countries', [country])
+  if (search) query = query.ilike('name', `%${search}%`)
 
   query = query.range((page - 1) * perPage, page * perPage - 1)
 
@@ -35,7 +37,7 @@ export async function GET(request: NextRequest) {
     .eq('user_id', auth.userId)
     .single()
 
-  const cost = getEndpointCost(request.nextUrl.pathname)
+  const cost = getEndpointCost(request.nextUrl.pathname, !!search)
   const response = NextResponse.json({
     data: data || [],
     pagination: {
