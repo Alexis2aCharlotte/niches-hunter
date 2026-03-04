@@ -1,4 +1,4 @@
-const OCTOBOOST_KEY = "ob_pk_cafdEwDSMYT2sulOZTblNCx6hEuBpjOY";
+const OCTOBOOST_KEY = "ob_pk_cKA8bYgaYPvuT07TEKWXWg9WUkQCEiGa";
 const BASE_URL = "https://octoboost.app/api/public/articles";
 
 export type OctoArticle = {
