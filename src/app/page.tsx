@@ -171,20 +171,35 @@ function TestimonialsSection() {
         <p className="text-base md:text-lg text-white/50 max-w-xl mx-auto mb-6">
           Join 125+ developers and entrepreneurs finding profitable niches with Niches Hunter
         </p>
-        {/* Product Hunt Badge */}
-        <a 
-          href="https://www.producthunt.com/products/niches-hunter-2?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-niches-hunter-3" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="inline-block hover:opacity-80 transition-opacity"
-        >
-          <img 
-            src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1071640&theme=dark&t=1770155105905" 
-            alt="Niches Hunter - Spot Profitable iOS Niches | Product Hunt" 
-            width="250" 
-            height="54"
-          />
-        </a>
+        {/* Product Hunt & Twelve Tools Badges */}
+        <div className="flex items-center justify-center gap-4 flex-wrap">
+          <a 
+            href="https://www.producthunt.com/products/niches-hunter-2?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-niches-hunter-3" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="inline-block hover:opacity-80 transition-opacity"
+          >
+            <img 
+              src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1071640&theme=dark&t=1770155105905" 
+              alt="Niches Hunter - Spot Profitable iOS Niches | Product Hunt" 
+              width="250" 
+              height="54"
+            />
+          </a>
+          <a
+            href="https://twelve.tools"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block hover:opacity-80 transition-opacity"
+          >
+            <img
+              src="https://twelve.tools/badge1-dark.svg"
+              alt="Featured on Twelve Tools"
+              width="200"
+              height="54"
+            />
+          </a>
+        </div>
       </div>
 
       {/* Static Testimonials Grid */}
