@@ -429,12 +429,12 @@ export default function PricingPage() {
               <div className="h-3 bg-white/10 rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-gradient-to-r from-[var(--primary)] to-[#00E847] rounded-full transition-all duration-1000"
-                  style={{ width: '92%' }}
+                  style={{ width: '97%' }}
                 />
               </div>
               <div className="flex justify-between mt-1">
                 <span className="text-xs text-white/30">0</span>
-                <span className="text-xs text-[var(--primary)] font-bold">138 users</span>
+                <span className="text-xs text-[var(--primary)] font-bold">146 users</span>
                 <span className="text-xs text-white/40">150</span>
               </div>
             </div>
