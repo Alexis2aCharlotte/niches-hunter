@@ -440,7 +440,7 @@ export default function PricingPage() {
             </div>
             
             <p className="text-sm text-white/50 mt-5">
-              <span className="text-[var(--primary)] font-bold">22 spots left</span> before lifetime access is gone forever.
+              <span className="text-[var(--primary)] font-bold">4 spots left</span> before lifetime access is gone forever.
             </p>
           </LiquidCard>
         </div>
