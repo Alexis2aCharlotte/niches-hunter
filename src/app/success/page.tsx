@@ -6,6 +6,7 @@ import Link from 'next/link'
 
 declare global {
   interface Window {
+    gtag?: (...args: unknown[]) => void
     rdt?: (...args: unknown[]) => void
   }
 }
@@ -30,10 +31,24 @@ function SuccessContent() {
   const [success, setSuccess] = useState(false)
   const conversionTracked = useRef(false)
 
-  // Track purchase conversion (GA4 is handled server-side via Stripe webhook)
+  // Track purchase conversion (client-side for full session attribution, server-side as fallback via Stripe webhook)
   useEffect(() => {
     if (sessionId && !conversionTracked.current) {
       conversionTracked.current = true
+
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'purchase', {
+          transaction_id: sessionId,
+          value: 29.00,
+          currency: 'USD',
+          items: [{
+            item_id: 'niches_hunter_pro',
+            item_name: 'Niches Hunter Pro',
+            price: 29.00,
+            quantity: 1
+          }]
+        })
+      }
 
       // Send purchase event to Reddit Pixel
       if (typeof window !== 'undefined' && window.rdt) {
