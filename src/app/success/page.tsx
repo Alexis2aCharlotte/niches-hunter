@@ -182,7 +182,7 @@ function SuccessContent() {
             <h3 className="text-sm font-semibold text-white mb-3">Your access includes:</h3>
             <ul className="space-y-2 text-sm text-[rgba(255,255,255,0.6)]">
               <li className="flex items-center gap-2">
-                <span className="text-[#00ff88]">✓</span> 50+ validated app niches
+                <span className="text-[#00ff88]">✓</span> 150+ validated app niches
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-[#00ff88]">✓</span> Daily trending apps & insights

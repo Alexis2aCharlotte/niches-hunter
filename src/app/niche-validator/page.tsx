@@ -698,7 +698,7 @@ export default function NicheValidatorPage() {
               <div className="space-y-3 mb-8">
                 {[
                   "Unlimited AI validations",
-                  "50+ curated niche ideas",
+                  "150+ curated niche ideas",
                   "Full market analysis",
                   "Marketing playbooks"
                 ].map((item, i) => (

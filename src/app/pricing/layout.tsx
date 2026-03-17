@@ -2,7 +2,7 @@ import { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Pricing - Unlock All Niche Ideas | NICHES HUNTER",
-  description: "Get lifetime access to 99+ validated iOS app niches, AI niche validator, TikTok viral trends, and competitor analysis. One-time payment, forever access.",
+  description: "Get lifetime access to 150+ validated iOS app niches, AI niche validator, TikTok viral trends, and competitor analysis. One-time payment, forever access.",
   keywords: [
     "niches hunter pricing",
     "app niche research tool",
@@ -12,14 +12,14 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "Pricing - Unlock All Niche Ideas | NICHES HUNTER",
-    description: "Get lifetime access to 99+ validated iOS app niches, AI niche validator, and competitor analysis.",
+    description: "Get lifetime access to 150+ validated iOS app niches, AI niche validator, and competitor analysis.",
     type: "website",
     url: "https://nicheshunter.app/pricing",
   },
   twitter: {
     card: "summary_large_image",
     title: "Pricing - Unlock All Niche Ideas | NICHES HUNTER",
-    description: "Get lifetime access to 99+ validated iOS app niches, AI niche validator, and competitor analysis.",
+    description: "Get lifetime access to 150+ validated iOS app niches, AI niche validator, and competitor analysis.",
   },
   alternates: {
     canonical: "https://nicheshunter.app/pricing",

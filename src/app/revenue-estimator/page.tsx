@@ -621,7 +621,7 @@ export default function RevenueEstimatorPage() {
                         <div className="flex-1">
                           <h3 className="text-xl font-bold mb-2">🚀 Want the Full Picture?</h3>
                           <p className="text-white/60 text-sm">
-                            Get access to all 50+ validated niches with complete market analysis, competitor breakdown, and monetization strategies.
+                            Get access to all 150+ validated niches with complete market analysis, competitor breakdown, and monetization strategies.
                           </p>
                         </div>
                         <button

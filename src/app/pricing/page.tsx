@@ -59,7 +59,7 @@ export default function PricingPage() {
     // Features mises en avant pour Pro (highlights)
     proHighlights: [
       { 
-        name: '99+ Niches Analyzed', 
+        name: '150+ Niches Analyzed', 
         description: '',
         icon: '📊'
       },
@@ -468,7 +468,7 @@ export default function PricingPage() {
                   { feature: 'Daily newsletter', free: 'On trend', pro: 'Full analysis', dev: 'On trend' },
                   { feature: 'Niche Roulette', free: '✓', pro: '✓', dev: '✗' },
                   { feature: 'Revenue Estimator', free: '✓', pro: '✓', dev: '✗' },
-                  { feature: '160+ Niches Analyzed', free: '✗', pro: '✓', dev: 'Via API' },
+                  { feature: '150+ Niches Analyzed', free: '✗', pro: '✓', dev: 'Via API' },
                   { feature: 'Save & track niches', free: '✗', pro: '✓', dev: '✗' },
                   { feature: 'TikTok Spot', free: '✗', pro: '✓', dev: 'Via API' },
                   { feature: 'AI Niche Validator', free: '✗', pro: 'Unlimited', dev: '✗' },
@@ -529,7 +529,7 @@ export default function PricingPage() {
               Ready to Find Your Next <span className="text-flashy-green">Winning Niche</span>?
             </h2>
             <p className="text-white/50 mb-8 relative z-10">
-              Join 138+ indie developers already hunting profitable iOS niches.
+              Join 146+ indie developers already hunting profitable iOS niches.
             </p>
             
             <button

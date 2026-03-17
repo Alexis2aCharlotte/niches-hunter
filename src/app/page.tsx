@@ -637,7 +637,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-12 md:mb-20 reveal-base reveal-up">
             <h2 className="text-4xl md:text-6xl font-bold mb-6">Hunt <span className="text-flashy-green">Smarter</span> <br /><span className="text-flashy-green">Ship</span> Faster</h2>
-            <p className="text-lg md:text-xl text-[rgba(255,255,255,0.6)]">99+ validated niches ready to build. We spot winners early so you can ship before competition hits.</p>
+            <p className="text-lg md:text-xl text-[rgba(255,255,255,0.6)]">150+ validated niches ready to build. We spot winners early so you can ship before competition hits.</p>
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
@@ -895,7 +895,7 @@ export default function Home() {
                     { name: 'Daily newsletter on trend', included: true },
                     { name: 'Niche Roulette', included: true },
                     { name: 'Revenue Estimator', included: true },
-                    { name: '99+ Niches Analyzed', included: false },
+                    { name: '150+ Niches Analyzed', included: false },
                     { name: 'TikTok Spot', included: false },
                     { name: 'AI Niche Validator', included: false },
                   ].map((feature, i) => (
@@ -977,7 +977,7 @@ export default function Home() {
                 {/* Features - Compact */}
                 <div className="space-y-2 sm:space-y-2.5">
                   {[
-                    { name: '99+ Niches Analyzed', included: true },
+                    { name: '150+ Niches Analyzed', included: true },
                     { name: 'Save & track niches', included: true },
                     { name: 'TikTok Spot', included: true },
                     { name: 'AI Niche Validator (unlimited)', included: true },
@@ -1088,7 +1088,7 @@ export default function Home() {
               },
               {
                 q: "What do I get with the Pro plan?",
-                a: "Full access to our database of 99+ validated niches with detailed analysis, competition scores, revenue estimates, and market gaps. You also get the Workspace to save and organize your favorite niches, track competitors, and take notes. Plus the daily newsletter with fresh insights."
+                a: "Full access to our database of 150+ validated niches with detailed analysis, competition scores, revenue estimates, and market gaps. You also get the Workspace to save and organize your favorite niches, track competitors, and take notes. Plus the daily newsletter with fresh insights."
               },
               {
                 q: "How does the tool work?",
