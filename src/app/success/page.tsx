@@ -4,10 +4,8 @@ import { Suspense, useEffect, useState, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 
-// Declare gtag and rdt for TypeScript
 declare global {
   interface Window {
-    gtag?: (...args: unknown[]) => void
     rdt?: (...args: unknown[]) => void
   }
 }
@@ -32,26 +30,10 @@ function SuccessContent() {
   const [success, setSuccess] = useState(false)
   const conversionTracked = useRef(false)
 
-  // Track purchase conversion in Google Analytics
+  // Track purchase conversion (GA4 is handled server-side via Stripe webhook)
   useEffect(() => {
     if (sessionId && !conversionTracked.current) {
       conversionTracked.current = true
-      
-      // Send purchase event to GA4
-      if (typeof window !== 'undefined' && window.gtag) {
-        window.gtag('event', 'purchase', {
-          transaction_id: sessionId,
-          value: 29.00,
-          currency: 'USD',
-          items: [{
-            item_id: 'niches_hunter_pro',
-            item_name: 'Niches Hunter Pro',
-            price: 29.00,
-            quantity: 1
-          }]
-        })
-        console.log('GA4: Purchase event sent')
-      }
 
       // Send purchase event to Reddit Pixel
       if (typeof window !== 'undefined' && window.rdt) {

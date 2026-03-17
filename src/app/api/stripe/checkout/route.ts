@@ -26,6 +26,9 @@ export async function POST(request: NextRequest) {
 
     const isLifetime = mode === 'lifetime'
 
+    const gaCookie = request.cookies.get('_ga')?.value
+    const gaClientId = gaCookie?.match(/GA\d+\.\d+\.(.+)/)?.[1] || null
+
     // Créer la session Stripe Checkout
     let session: Stripe.Checkout.Session
 
@@ -35,7 +38,7 @@ export async function POST(request: NextRequest) {
         mode: 'payment',
         payment_method_types: ['card'],
         line_items: [{ price: priceId, quantity: 1 }],
-        metadata: { nicheId: nicheId || 'homepage', mode: 'lifetime' },
+        metadata: { nicheId: nicheId || 'homepage', mode: 'lifetime', ...(gaClientId && { ga_client_id: gaClientId }) },
         success_url: `${appUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${appUrl}/pricing`,
         billing_address_collection: 'auto',
@@ -54,7 +57,7 @@ export async function POST(request: NextRequest) {
         mode: 'subscription',
         payment_method_types: ['card'],
         line_items: [{ price: priceId, quantity: 1 }],
-        metadata: { nicheId: nicheId || 'homepage', mode: 'monthly' },
+        metadata: { nicheId: nicheId || 'homepage', mode: 'monthly', ...(gaClientId && { ga_client_id: gaClientId }) },
         success_url: `${appUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${appUrl}/pricing`,
         billing_address_collection: 'auto',

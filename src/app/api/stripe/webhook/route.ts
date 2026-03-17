@@ -149,6 +149,42 @@ export async function POST(request: NextRequest) {
         } else {
           console.log('Customer saved successfully (trigger syncs to paid_newsletter)')
         }
+
+        // Send purchase event to GA4 via Measurement Protocol
+        const gaApiSecret = process.env.GA4_API_SECRET
+        const gaMeasurementId = process.env.GA4_MEASUREMENT_ID || 'G-MV228L76KT'
+
+        if (gaApiSecret) {
+          const gaClientId = session.metadata?.ga_client_id || `stripe.${Date.now()}`
+          try {
+            await fetch(
+              `https://www.google-analytics.com/mp/collect?measurement_id=${gaMeasurementId}&api_secret=${gaApiSecret}`,
+              {
+                method: 'POST',
+                body: JSON.stringify({
+                  client_id: gaClientId,
+                  events: [{
+                    name: 'purchase',
+                    params: {
+                      transaction_id: session.id,
+                      value: (session.amount_total || 0) / 100,
+                      currency: (session.currency || 'usd').toUpperCase(),
+                      items: [{
+                        item_name: isLifetime ? 'Niches Hunter Lifetime' : 'Niches Hunter Monthly',
+                        price: (session.amount_total || 0) / 100,
+                        quantity: 1,
+                      }],
+                    },
+                  }],
+                }),
+              }
+            )
+            console.log('GA4: purchase event sent via Measurement Protocol')
+          } catch (gaError) {
+            console.error('GA4 Measurement Protocol error:', gaError)
+          }
+        }
+
         break
       }
 
