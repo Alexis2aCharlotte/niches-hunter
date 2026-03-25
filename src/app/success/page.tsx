@@ -48,6 +48,12 @@ function SuccessContent() {
             quantity: 1
           }]
         })
+
+        window.gtag('event', 'conversion_event_purchase', {
+          value: 29.00,
+          currency: 'USD',
+          transaction_id: sessionId,
+        })
       }
 
       // Send purchase event to Reddit Pixel
